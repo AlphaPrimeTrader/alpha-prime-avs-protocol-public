@@ -1,0 +1,34 @@
+{
+  "name": "workspace",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "demo:node": "hardhat node --hostname 0.0.0.0 --port 8545",
+    "demo:deploy": "hardhat --network localhost run scripts/src/deploy-phase2.ts",
+    "demo:app": "pnpm --filter @workspace/passkey-demo run dev -- --host 0.0.0.0",
+    "hardhat": "hardhat",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm -r --filter \"./apps/**\" --filter \"./scripts\" --if-present run typecheck"
+  },
+  "private": true,
+  "dependencies": {
+    "@openzeppelin/contracts": "5.5.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "4.0.15",
+    "@nomicfoundation/hardhat-ethers-chai-matchers": "3.0.11",
+    "@nomicfoundation/hardhat-mocha": "3.1.0",
+    "@types/node": "25.3.3",
+    "chai": "6.2.2",
+    "ethers": "6.16.0",
+    "hardhat": "3.15.0",
+    "mocha": "11.8.0",
+    "prettier": "^3.9.6",
+    "typescript": "5.9.2"
+  }
+}
