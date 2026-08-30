@@ -84,6 +84,7 @@ contract AVSEvolutionController is IAVSEvolutionController {
     error WrongRequestId();
     error UpgradeNotReady(uint48 executableAt);
     error UpgradeExpired(uint48 deadline);
+    error StaleTransactionKeyVersion(uint64 expected, uint64 current);
 
     constructor(address authority_) {
         if (authority_.code.length == 0) {
@@ -178,7 +179,8 @@ contract AVSEvolutionController is IAVSEvolutionController {
             executableAt: executableAt,
             deadline: request.deadline,
             requestId: request.requestId,
-            nonce: accountEvolution.nonce
+            nonce: accountEvolution.nonce,
+            transactionKeyVersion: authority.transactionKeyVersion(account)
         });
 
         emit UpgradeRequested(
@@ -241,6 +243,15 @@ contract AVSEvolutionController is IAVSEvolutionController {
         }
         if (block.timestamp > pending.deadline) {
             revert UpgradeExpired(pending.deadline);
+        }
+        uint64 currentTransactionKeyVersion = authority.transactionKeyVersion(
+            account
+        );
+        if (currentTransactionKeyVersion != pending.transactionKeyVersion) {
+            revert StaleTransactionKeyVersion(
+                pending.transactionKeyVersion,
+                currentTransactionKeyVersion
+            );
         }
 
         _validateImplementation(

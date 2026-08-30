@@ -4,22 +4,34 @@ pragma solidity ^0.8.28;
 import {P256} from "@openzeppelin/contracts/utils/cryptography/P256.sol";
 import {WebAuthn} from "@openzeppelin/contracts/utils/cryptography/WebAuthn.sol";
 
-import {IAVSAccountAuthority} from "./interfaces/IAVSAccountAuthority.sol";
+import {IAVSAccountRecoveryAuthority} from "./interfaces/IAVSAccountRecoveryAuthority.sol";
 
 /**
- * @title AVSAccountAuthority
- * @notice Immutable, ownerless signer authority for Phase 3A accounts.
+ * @title AVSAccountRecoveryAuthority
+ * @notice Phase 3B ownerless authority with bounded offline recovery.
  *
- * Proxy or Kernel origin is never sufficient authorization. Every signature is
- * verified against the exact digest supplied by the immutable Kernel or
- * EvolutionController.
+ * The Recovery key is a raw P-256 signing key stored only in the encrypted
+ * Offline Recovery Kit. It is deliberately not accepted by UserOperation or
+ * Evolution verification paths.
  */
-contract AVSAccountAuthority is IAVSAccountAuthority {
+contract AVSAccountRecoveryAuthority is IAVSAccountRecoveryAuthority {
     bytes32 public constant CREATION_TYPEHASH = keccak256(
         "AVSAccountCreation(address account,address authority,address factory,uint256 chainId,bytes32 securityConfigurationHash)"
     );
     bytes32 public constant SECURITY_CONFIGURATION_TYPEHASH = keccak256(
         "AVSSecurityConfiguration(bytes32 transactionKeyHash,bytes32 recoveryKeyHash,bytes32 evolutionKeyHash,bytes32 rpIdHash,bytes32 userSalt,address initialImplementation,bytes32 initialImplementationCodehash,uint64 initialStandardVersion)"
+    );
+    bytes32 public constant RECOVERY_DOMAIN =
+        keccak256(
+            "AVS_ACCOUNT_RECOVERY_PHASE_3B_ATOMIC_ROOT_ROTATION_V1"
+        );
+    bytes32
+        public constant RECOVERY_ACTION_ROTATE_TRANSACTION_AND_RECOVERY_KEYS =
+        keccak256(
+            "AVS_RECOVERY_ACTION_ROTATE_TRANSACTION_AND_RECOVERY_KEYS"
+        );
+    bytes32 public constant RECOVERY_TYPEHASH = keccak256(
+        "AVSAccountRecovery(bytes32 domain,address account,address authority,uint256 chainId,bytes32 currentTransactionKeyHash,uint64 currentTransactionKeyVersion,bytes32 currentRecoveryKeyHash,uint64 currentRecoveryKeyVersion,bytes32 newTransactionKeyHash,bytes32 newRecoveryKeyHash,bytes32 actionType,uint256 recoveryNonce,bytes32 requestId)"
     );
     bytes32 public constant PUBLIC_KEY_TYPEHASH = keccak256(
         "AVSP256PublicKey(bytes32 qx,bytes32 qy)"
@@ -30,6 +42,9 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
         PublicKey recoveryKey;
         PublicKey evolutionKey;
         bytes32 rpIdHash;
+        uint64 transactionKeyVersion;
+        uint64 recoveryKeyVersion;
+        uint256 recoveryNonce;
         bool initialized;
     }
 
@@ -44,11 +59,27 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
         bytes32 evolutionKeyX,
         bytes32 evolutionKeyY
     );
+    event RecoveryExecuted(
+        address indexed account,
+        bytes32 indexed requestId,
+        bytes32 newTransactionKeyHash,
+        bytes32 newRecoveryKeyHash,
+        uint64 transactionKeyVersion,
+        uint64 recoveryKeyVersion,
+        uint256 consumedRecoveryNonce
+    );
 
     error AccountAlreadyInitialized(address account);
     error InvalidInitializationCaller(address caller, address account);
     error InvalidPublicKey();
     error InvalidCreationSignature();
+    error AccountNotInitialized(address account);
+    error UnauthorizedAccountCaller(address caller, address account);
+    error InvalidRecoveryNonce(uint256 expected, uint256 received);
+    error InvalidRecoveryRequestId();
+    error TransactionKeyUnchanged();
+    error RecoveryKeyUnchanged();
+    error InvalidRecoverySignature();
 
     function initializeAccount(
         address account,
@@ -65,18 +96,9 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
         }
 
         if (
-            !P256.isValidPublicKey(
-                initialization.transactionKey.qx,
-                initialization.transactionKey.qy
-            ) ||
-            !P256.isValidPublicKey(
-                initialization.recoveryKey.qx,
-                initialization.recoveryKey.qy
-            ) ||
-            !P256.isValidPublicKey(
-                initialization.evolutionKey.qx,
-                initialization.evolutionKey.qy
-            )
+            !_isValidPublicKey(initialization.transactionKey) ||
+            !_isValidPublicKey(initialization.recoveryKey) ||
+            !_isValidPublicKey(initialization.evolutionKey)
         ) {
             revert InvalidPublicKey();
         }
@@ -97,6 +119,9 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
         accountAuthority.recoveryKey = initialization.recoveryKey;
         accountAuthority.evolutionKey = initialization.evolutionKey;
         accountAuthority.rpIdHash = initialization.rpIdHash;
+        accountAuthority.transactionKeyVersion = 1;
+        accountAuthority.recoveryKeyVersion = 1;
+        accountAuthority.recoveryNonce = 0;
         accountAuthority.initialized = true;
 
         emit AccountAuthorityInitialized(
@@ -149,6 +174,82 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
             );
     }
 
+    function requestRecovery(
+        address account,
+        RecoveryRequest calldata request,
+        bytes calldata recoverySignature
+    ) external {
+        _requireAccountCaller(account);
+        AccountAuthority storage accountAuthority = _initialized(account);
+        if (request.requestId == bytes32(0)) {
+            revert InvalidRecoveryRequestId();
+        }
+        if (request.recoveryNonce != accountAuthority.recoveryNonce) {
+            revert InvalidRecoveryNonce(
+                accountAuthority.recoveryNonce,
+                request.recoveryNonce
+            );
+        }
+
+        if (
+            !_isValidPublicKey(request.newTransactionKey) ||
+            !_isValidPublicKey(request.newRecoveryKey)
+        ) {
+            revert InvalidPublicKey();
+        }
+
+        bytes32 currentTransactionKeyHash = _publicKeyHash(
+            accountAuthority.transactionKey
+        );
+        bytes32 newTransactionKeyHash = _publicKeyHash(
+            request.newTransactionKey
+        );
+        if (currentTransactionKeyHash == newTransactionKeyHash) {
+            revert TransactionKeyUnchanged();
+        }
+
+        bytes32 currentRecoveryKeyHash = _publicKeyHash(
+            accountAuthority.recoveryKey
+        );
+        bytes32 newRecoveryKeyHash = _publicKeyHash(request.newRecoveryKey);
+        if (currentRecoveryKeyHash == newRecoveryKeyHash) {
+            revert RecoveryKeyUnchanged();
+        }
+
+        bytes32 digest = _recoveryDigest(
+            account,
+            request,
+            accountAuthority
+        );
+        if (
+            !_verifyP256(
+                digest,
+                recoverySignature,
+                accountAuthority.recoveryKey
+            )
+        ) {
+            revert InvalidRecoverySignature();
+        }
+
+        accountAuthority.transactionKey = request.newTransactionKey;
+        accountAuthority.recoveryKey = request.newRecoveryKey;
+        unchecked {
+            ++accountAuthority.transactionKeyVersion;
+            ++accountAuthority.recoveryKeyVersion;
+            ++accountAuthority.recoveryNonce;
+        }
+
+        emit RecoveryExecuted(
+            account,
+            request.requestId,
+            newTransactionKeyHash,
+            newRecoveryKeyHash,
+            accountAuthority.transactionKeyVersion,
+            accountAuthority.recoveryKeyVersion,
+            request.recoveryNonce
+        );
+    }
+
     function getCreationDigest(
         address account,
         Initialization calldata initialization
@@ -179,6 +280,14 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
             );
     }
 
+    function getRecoveryDigest(
+        address account,
+        RecoveryRequest calldata request
+    ) external view returns (bytes32) {
+        AccountAuthority storage accountAuthority = _initialized(account);
+        return _recoveryDigest(account, request, accountAuthority);
+    }
+
     function transactionKey(
         address account
     ) external view returns (bytes32 qx, bytes32 qy) {
@@ -200,19 +309,66 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
         return (key.qx, key.qy);
     }
 
-    function isInitialized(address account) external view returns (bool) {
-        return _authorities[account].initialized;
-    }
-
     function rpIdHash(address account) external view returns (bytes32) {
         return _authorities[account].rpIdHash;
     }
 
-    /// @notice Phase 3A transaction keys are immutable, so their version is always one.
     function transactionKeyVersion(
         address account
     ) external view returns (uint64) {
-        return _authorities[account].initialized ? 1 : 0;
+        return _authorities[account].transactionKeyVersion;
+    }
+
+    function recoveryKeyVersion(
+        address account
+    ) external view returns (uint64) {
+        return _authorities[account].recoveryKeyVersion;
+    }
+
+    function recoveryNonce(address account) external view returns (uint256) {
+        return _authorities[account].recoveryNonce;
+    }
+
+    function isInitialized(address account) external view returns (bool) {
+        return _authorities[account].initialized;
+    }
+
+    function _recoveryDigest(
+        address account,
+        RecoveryRequest calldata request,
+        AccountAuthority storage accountAuthority
+    ) private view returns (bytes32) {
+        return
+            keccak256(
+                abi.encode(
+                    RECOVERY_TYPEHASH,
+                    RECOVERY_DOMAIN,
+                    account,
+                    address(this),
+                    block.chainid,
+                    _publicKeyHash(accountAuthority.transactionKey),
+                    accountAuthority.transactionKeyVersion,
+                    _publicKeyHash(accountAuthority.recoveryKey),
+                    accountAuthority.recoveryKeyVersion,
+                    _publicKeyHash(request.newTransactionKey),
+                    _publicKeyHash(request.newRecoveryKey),
+                    RECOVERY_ACTION_ROTATE_TRANSACTION_AND_RECOVERY_KEYS,
+                    request.recoveryNonce,
+                    request.requestId
+                )
+            );
+    }
+
+    function _verifyP256(
+        bytes32 digest,
+        bytes calldata signature,
+        PublicKey storage key
+    ) private view returns (bool) {
+        if (signature.length != 64) {
+            return false;
+        }
+        (bytes32 r, bytes32 s) = abi.decode(signature, (bytes32, bytes32));
+        return P256.verify(digest, r, s, key.qx, key.qy);
     }
 
     function _verifyWebAuthn(
@@ -255,9 +411,36 @@ contract AVSAccountAuthority is IAVSAccountAuthority {
             );
     }
 
+    function _isValidPublicKey(
+        PublicKey calldata key
+    ) private view returns (bool) {
+        return P256.isValidPublicKey(key.qx, key.qy);
+    }
+
     function _publicKeyHash(
         PublicKey calldata key
     ) private pure returns (bytes32) {
         return keccak256(abi.encode(PUBLIC_KEY_TYPEHASH, key.qx, key.qy));
+    }
+
+    function _publicKeyHash(
+        PublicKey storage key
+    ) private view returns (bytes32) {
+        return keccak256(abi.encode(PUBLIC_KEY_TYPEHASH, key.qx, key.qy));
+    }
+
+    function _initialized(
+        address account
+    ) private view returns (AccountAuthority storage accountAuthority) {
+        accountAuthority = _authorities[account];
+        if (!accountAuthority.initialized) {
+            revert AccountNotInitialized(account);
+        }
+    }
+
+    function _requireAccountCaller(address account) private view {
+        if (msg.sender != account) {
+            revert UnauthorizedAccountCaller(msg.sender, account);
+        }
     }
 }

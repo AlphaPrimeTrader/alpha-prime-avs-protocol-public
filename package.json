@@ -11,15 +11,27 @@
     "demo:node": "hardhat node --hostname 0.0.0.0 --port 8545",
     "demo:deploy": "hardhat --network localhost run scripts/src/deploy-phase2.ts",
     "demo:app": "pnpm --filter @workspace/passkey-demo run dev -- --host 0.0.0.0",
+    "phase3b:bsc:preflight": "hardhat --network bscTestnet run scripts/src/preflight-phase3b-bsc.ts",
+    "phase3b:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase3b-bsc.ts",
+    "phase3b:bsc:verify": "hardhat --network bscTestnet run scripts/src/verify-phase3b-bsc.ts",
     "hardhat": "hardhat",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm -r --filter \"./apps/**\" --filter \"./scripts\" --if-present run typecheck"
   },
   "private": true,
+  "pnpm": {
+    "overrides": {
+      "js-yaml": "4.3.1",
+      "nanoid": "3.3.18",
+      "serialize-javascript": "7.0.3",
+      "ws": "8.21.0"
+    }
+  },
   "dependencies": {
     "@openzeppelin/contracts": "5.5.0"
   },
   "devDependencies": {
+    "@noble/curves": "1.4.2",
     "@nomicfoundation/hardhat-ethers": "4.0.15",
     "@nomicfoundation/hardhat-ethers-chai-matchers": "3.0.11",
     "@nomicfoundation/hardhat-mocha": "3.1.0",

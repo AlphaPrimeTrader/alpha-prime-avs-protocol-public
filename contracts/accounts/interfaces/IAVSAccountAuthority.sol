@@ -57,5 +57,9 @@ interface IAVSAccountAuthority {
 
     function rpIdHash(address account) external view returns (bytes32);
 
+    function transactionKeyVersion(
+        address account
+    ) external view returns (uint64);
+
     function isInitialized(address account) external view returns (bool);
 }

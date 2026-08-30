@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --config vite.config.ts --host 0.0.0.0",
+    "dev": "vite --config vite.config.ts",
     "build": "vite build --config vite.config.ts",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:recovery-kit": "vitest run src/lib/recovery-kit.test.ts src/lib/phase3b.test.ts"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.14",
@@ -19,6 +20,11 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tailwindcss": "^4.1.14",
-    "vite": "^7.3.2"
+    "vite": "^7.3.2",
+    "vitest": "^4.1.11"
+  },
+  "dependencies": {
+    "@noble/curves": "1.4.2",
+    "hash-wasm": "4.12.0"
   }
 }

@@ -20,6 +20,7 @@ interface IAVSEvolutionController {
         uint48 deadline;
         bytes32 requestId;
         uint256 nonce;
+        uint64 transactionKeyVersion;
     }
 
     function initializeAccount(

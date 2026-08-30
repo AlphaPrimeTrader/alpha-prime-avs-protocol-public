@@ -1,172 +1,115 @@
 # Alpha Prime AVS Protocol
 
-Alpha Prime AVS Protocol is the foundation for an open on-chain protocol that
-Alpha Prime and third-party applications can use.
+Alpha Prime AVS Protocol is an open-source foundation for experimental
+on-chain Smart Accounts and Passkey authorization.
 
-> **EXPERIMENTAL / TESTNET ONLY**
+> **EXPERIMENTAL / BSC TESTNET ONLY**
 >
-> This code is not audited and must not be used to custody production funds.
-> There is no production or Mainnet deployment.
+> The current Smart Account and Recovery architecture is not final, is not
+> audited, is not Mainnet ready, and must not be used to custody production
+> funds. The account model may be revised before any Mainnet work.
 
-## Current status
+## Frozen checkpoint status
 
-- Smart Account Phase 1: **PASS**
-- ERC-4337 / Passkey Phase 2: **PASS**
-- BSC Testnet deployment: **PASS**
-- Real browser WebAuthn test: **PASS**
+- Smart Account foundation: **PASS**
+- ERC-4337 / Passkey authorization: **PASS**
+- Phase 3A security-kernel foundation: **PASS — EXPERIMENTAL**
+- Phase 3B atomic Recovery root rotation: **PASS — EXPERIMENTAL**
+- Same-account-address Recovery: **PASS ON BSC TESTNET**
+- Evolution authority separation: **PASS**
+- BSC Testnet deployment and verification: **PASS**
 - Mainnet deployment: **NOT STARTED**
-- Recovery: **NOT IMPLEMENTED**
-- Paymaster: **NOT IMPLEMENTED**
-- Pools / Shares / Marketplace: **NOT IMPLEMENTED**
-- Security audit: **NOT COMPLETED**
+- Production security audit: **NOT COMPLETED**
+- Paymaster, Pools, Shares, and Marketplace: **NOT IMPLEMENTED**
 
-This repository is an independent AVS Protocol project. The current workspace is
-the canonical development source for the `v0.2.0-testnet` baseline; it is not
-connected to or dependent on any Alpha Prime production server, legacy backend,
-or existing user system.
+This checkpoint freezes the tested source after the Phase 3B BSC Testnet work.
+It does not claim that the current Smart Account model is the final product
+account architecture.
 
-## Development status and roadmap
+## Current experimental account model
 
-### Completed
+The canonical browser reference is [`apps/passkey-demo/`](apps/passkey-demo/).
+It demonstrates:
 
-- [Phase 1 — Smart Account Foundation](docs/phases/phase-01-smart-account-foundation.md)
-- [Phase 2 — Real Passkey + ERC-4337](docs/phases/phase-02-passkey-erc4337.md)
-- [BSC Testnet deployment record](docs/deployments/bsc-testnet-phase-2.md)
+- platform Passkey / WebAuthn authorization;
+- ERC-4337 UserOperations through the canonical EntryPoint v0.8;
+- separate Transaction, Recovery, and Evolution authority;
+- an encrypted offline Recovery Kit using Argon2id and AES-256-GCM;
+- immediate atomic rotation of the Transaction and Recovery roots;
+- invalidation of the old Transaction credential and old Recovery Kit;
+- preservation of the same Smart Account address, assets, EntryPoint,
+  Authority, and EvolutionController across Recovery;
+- an Evolution path that remains separate from Recovery and retains its own
+  existing timelock.
 
-### Proposed
+Recovery has no backend signer and grants no authority to the relay. The
+browser creates and uses Recovery secret material locally. Public protocol
+source describes the cryptographic enforcement; security does not depend on
+hiding the algorithms.
 
-- [v0.2.0-testnet release notes](docs/releases/v0.2.0-testnet.md)
-
-Phase 3 has not started. Future protocol work remains subject to separate
-design, implementation, testing, security review, and explicit approval.
-
-## Testnet deployment
-
-The validated deployment is on BSC Testnet only.
-
-The complete deployment and verification record is in
-[`docs/deployments/bsc-testnet-phase-2.md`](docs/deployments/bsc-testnet-phase-2.md).
+## BSC Testnet checkpoint
 
 | Component | Value |
 | --- | --- |
 | Network | BSC Testnet |
 | Chain ID | `97` |
-| EntryPoint v0.8 | `0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108` |
-| AVSAccount Implementation | `0x86499A2a5390bbb40001c021aF6976F11144F9BC` |
-| AVSAccountFactory | `0x4EA3e3BEC6DC92e5fFB3275DF377e0792EeD7AdD` |
-| TestReceiver | `0x3d0d55295e81aA282688031f604A1B37E70009Ef` |
+| Canonical EntryPoint v0.8 | `0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108` |
+| Phase 3B Factory | `0xf3b30D7e6EB3639d056c66AABd10F904BA22487A` |
+| Phase 3B Authority | `0x23026F82317b82283537466d4ba3A5A05F74bb11` |
+| EvolutionController | `0x9d5d16C84D7E36a1436979fe164Af81D62B59A9e` |
+| Initial bounded implementation | `0x6aCA3dCA40A3d031163686547F42Fe6fb55E8797` |
+| TestReceiver | `0x99907924aBC19287E8f1e68b124bDFF31d06563e` |
 
-The canonical EntryPoint v0.8 contract above is reused; it is not modified or
-redeployed by this project.
+The sanitized deployment and validation record is in
+[`docs/deployments/bsc-testnet-phase-3b.md`](docs/deployments/bsc-testnet-phase-3b.md).
+Historical Phase 1, Phase 2, and Phase 3A records remain unchanged.
 
-## Real-device validation flow
+## Security boundaries
 
-The successful testnet flow is:
+1. User financial authorization is enforced on-chain.
+2. Passkey private keys remain inside the platform authenticator.
+3. Recovery private material remains in the encrypted offline kit and the
+   active local browser session.
+4. The relay may pay BSC Testnet gas but cannot authorize an account action.
+5. Recovery rotates Transaction and Recovery roots atomically; it does not
+   rotate or bypass Evolution authority.
+6. No Mainnet deployment or production-fund use is permitted before an
+   independent security review and explicit approval.
 
-```text
-Passkey
-  → WebAuthn
-  → ERC-4337 UserOperation
-  → EntryPoint v0.8
-  → AVSAccount
-  → TestReceiver
-  → TestExecuted
-```
+See [`SECURITY.md`](SECURITY.md) and
+[`SECURITY-DISCLOSURE-POLICY.md`](SECURITY-DISCLOSURE-POLICY.md).
 
-The Passkey private key remains inside the platform authenticator. The injected
-wallet is used only as the local deployer, account-funding wallet, and
-bundler transaction sender; it does not authorize the AVSAccount.
+## Repository layout
 
-```text
-Alpha Prime AVS Protocol
-        |
-        +-- Smart Account Layer
-        +-- Pool Layer
-        +-- Share Ownership
-        +-- Marketplace
-        +-- Liquidity Engine
-        +-- Strategy / Publisher Layer
-        +-- Partner SDK
-```
+- `contracts/` — historical account contracts plus the experimental Phase 3A
+  and Phase 3B account contracts.
+- `test/` — Hardhat protocol and adversarial regression tests.
+- `apps/passkey-demo/` — the only canonical browser application.
+- `scripts/src/` — reproducible Testnet deployment and verification scripts.
+- `docs/` — architecture, phase history, deployment evidence, and release
+  records.
 
-## Core architectural principles
+Generated artifacts, private environment files, uploads, internal workspace
+memory, Recovery Kit files, and browser/session dumps are not public source.
 
-1. User ownership and user financial execution are on-chain.
-2. The Alpha Prime backend never signs user financial transactions.
-3. Each user has an independent ERC-4337 Smart Account.
-4. User authorization will use Passkeys/WebAuthn.
-5. User-facing protocol reads do not depend on an Alpha Prime database.
-6. Off-chain infrastructure is reserved for activities blockchain cannot perform
-   directly, such as CEX trading execution.
-7. Off-chain trading results will later be published into protocol state through
-   a dedicated attestation/publisher layer.
-8. Third-party applications must interact with the protocol without depending
-   on Alpha Prime's frontend or user backend.
-9. SDK integrations communicate with blockchain/protocol contracts, not
-   `api.alphaprime.*` as the source of financial truth.
-10. No mainnet deployment occurs before security review and explicit approval.
-
-## Phase 2 local Passkey prototype
-
-The browser prototype is in `apps/passkey-demo`. It uses a real platform
-Passkey through `navigator.credentials.create()` and
-`navigator.credentials.get()`. The Passkey private key never leaves the
-authenticator.
-
-The prototype does not contain a backend signer. An injected browser wallet is
-used only as local infrastructure to deploy the account and submit the signed
-UserOperation. Account authorization remains the WebAuthn P-256 signature.
-
-### Local run
-
-1. Start a persistent local EVM:
-
-   ```bash
-   pnpm run demo:node
-   ```
-
-2. In another shell, install the official EntryPoint v0.8 runtime at
-   `0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108` and deploy the implementation,
-   Factory, and event-only `TestReceiver`:
-
-   ```bash
-   pnpm run demo:deploy
-   ```
-
-3. Copy `apps/passkey-demo/.env.example` to
-   `apps/passkey-demo/.env`, replace the Factory and Receiver addresses with
-   the deployment output, and restart the app:
-
-   ```bash
-   pnpm run demo:app
-   ```
-
-4. Point an injected browser wallet at the same local EVM and select one of its
-   funded development accounts. The wallet may submit and fund local
-   transactions, but it is not stored by the app and cannot authorize the AVS
-   account.
-
-The automated suite installs the official v0.8 runtime directly in Hardhat and
-tests valid operations for two distinct P-256 keys, tampering, replay, malformed
-WebAuthn data, wrong challenges, and bundler-only submission.
-
-## Validation commands
-
-Run these commands before publishing a baseline:
+## Validation
 
 ```bash
+pnpm install
+cp apps/passkey-demo/.env.example apps/passkey-demo/.env.local
 pnpm run compile
 pnpm test
 pnpm run typecheck
-pnpm --filter @workspace/avs-passkey-demo run build
+pnpm --filter @workspace/passkey-demo test:recovery-kit
+pnpm --filter @workspace/passkey-demo run build
+pnpm run phase3b:bsc:verify
 ```
 
-The expected protocol test result for this baseline is **22 passing, 0 failing**.
+The BSC verification command is read-only. Deployment commands require an
+explicit Testnet confirmation variable and are not part of ordinary validation.
 
-## Release proposal
+## Publication status
 
-- Tag: `v0.2.0-testnet`
-- Suggested title: **AVS Smart Account — Real Passkey + ERC-4337 Testnet Baseline**
-
-This is a proposal only. No GitHub push, tag, or release is performed by the
-baseline preparation step.
+This repository records a frozen experimental Testnet checkpoint. No Mainnet
+release is authorized, and further Smart Account / Recovery product work is
+paused after this publication.

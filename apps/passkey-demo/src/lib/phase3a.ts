@@ -16,6 +16,11 @@ import {
   toUtf8Bytes,
   zeroPadValue,
 } from "ethers";
+import { p256 } from "@noble/curves/p256";
+import {
+  connectPhase3BRelay,
+  relayPhase3BTransaction,
+} from "./phase3b-relay-client";
 
 declare global {
   interface Window {
@@ -134,7 +139,7 @@ const AUTHORITY_ABI = [
 const CONTROLLER_ABI = [
   `function getUpgradeDigest(address account,${UPGRADE_TUPLE} request) view returns (bytes32)`,
   "function getCancellationDigest(address account,bytes32 requestId) view returns (bytes32)",
-  "function pendingUpgrade(address account) view returns (address implementation,bytes32 codehash,uint64 standardVersion,uint48 requestedAt,uint48 executableAt,uint48 deadline,bytes32 requestId,uint256 nonce)",
+  "function pendingUpgrade(address account) view returns (address implementation,bytes32 codehash,uint64 standardVersion,uint48 requestedAt,uint48 executableAt,uint48 deadline,bytes32 requestId,uint256 nonce,uint64 transactionKeyVersion)",
   "function finalizeUpgrade(address account)",
   "function cancelUpgrade(address account,bytes32 requestId,bytes transactionSignature)",
 ];
@@ -191,7 +196,7 @@ const EXECUTE_MODE =
 const MIN_ACCOUNT_PREFUND = parseEther("0.01");
 
 type InjectedProvider = NonNullable<typeof window.ethereum>;
-type PackedUserOperation = {
+export type PackedUserOperation = {
   sender: string;
   nonce: bigint;
   initCode: string;
@@ -224,6 +229,12 @@ const base64UrlEncode = (bytes: Uint8Array): string =>
     .replace(/\//g, "_")
     .replace(/=+$/g, "");
 
+const base64UrlDecode = (value: string): Uint8Array => {
+  const padded = value.replace(/-/g, "+").replace(/_/g, "/")
+    .padEnd(Math.ceil(value.length / 4) * 4, "=");
+  return Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
+};
+
 const bytesToHex = (bytes: Uint8Array): string =>
   `0x${Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
 
@@ -249,7 +260,7 @@ const getInjectedProvider = (): InjectedProvider => {
   return candidates.find((candidate) => candidate.isMetaMask) ?? candidates[0];
 };
 
-const connectWallet = async () => {
+export const connectWallet = async () => {
   const injected = getInjectedProvider();
   const accounts = await injected.request({
     method: "eth_requestAccounts",
@@ -328,7 +339,7 @@ const encodeAssertion = (
   );
 };
 
-const signDigest = async (
+export const signDigest = async (
   passkey: PasskeyMaterial,
   digest: string,
 ): Promise<string> => {
@@ -390,6 +401,48 @@ export async function createBrowserPasskey(
     credentialId: base64UrlEncode(new Uint8Array(credential.rawId)),
     credentialIdBytes: new Uint8Array(credential.rawId),
     ...extractP256Coordinates(publicKey),
+  };
+}
+
+export async function reconnectBrowserPasskey(
+  role: CredentialRole,
+  expectedPublicKey: Pick<PasskeyMaterial, "qx" | "qy">,
+  credentialIdHint?: string,
+): Promise<PasskeyMaterial> {
+  const challenge = crypto.getRandomValues(new Uint8Array(32));
+  const credential = (await navigator.credentials.get({
+    publicKey: {
+      challenge,
+      rpId: window.location.hostname,
+      allowCredentials: credentialIdHint
+        ? [{
+            id: base64UrlDecode(credentialIdHint) as unknown as BufferSource,
+            type: "public-key",
+          }]
+        : undefined,
+      userVerification: "required",
+      timeout: 120_000,
+    },
+  })) as PublicKeyCredential | null;
+  if (!credential) throw new Error("The discoverable Passkey selection was cancelled.");
+  const response = credential.response as AuthenticatorAssertionResponse;
+  const authenticatorData = new Uint8Array(response.authenticatorData);
+  const clientDataJSON = new Uint8Array(response.clientDataJSON);
+  const signature = new Uint8Array(response.signature);
+  const signedDigest = sha256(
+    concat([authenticatorData, getBytes(sha256(clientDataJSON))]),
+  );
+  const { r, s } = parseDerSignature(signature);
+  const publicKey = concat(["0x04", expectedPublicKey.qx, expectedPublicKey.qy]);
+  if (!p256.verify(getBytes(concat([r, s])), getBytes(signedDigest), getBytes(publicKey))) {
+    throw new Error(`Selected discoverable credential is not the current ${role} Passkey.`);
+  }
+  return {
+    role,
+    credentialId: base64UrlEncode(new Uint8Array(credential.rawId)),
+    credentialIdBytes: new Uint8Array(credential.rawId),
+    qx: expectedPublicKey.qx,
+    qy: expectedPublicKey.qy,
   };
 }
 
@@ -544,7 +597,7 @@ const encodeExecution = (
     [[{ target, value, callData }]],
   );
 
-const buildUserOperation = async (
+export const buildUserOperation = async (
   entryPoint: Contract,
   account: string,
   callData: string,
@@ -560,7 +613,7 @@ const buildUserOperation = async (
   signature: "0x",
 });
 
-const signUserOperation = async (
+export const signUserOperation = async (
   entryPoint: Contract,
   userOp: PackedUserOperation,
   transactionPasskey: PasskeyMaterial,
@@ -588,11 +641,22 @@ export async function signAndSubmitTestOperation(
   transactionPasskey: PasskeyMaterial,
   deployment: AccountDeployment,
 ): Promise<OperationResult> {
-  const receiverAddress = requireAddress("Receiver", config.receiver);
-  const { signer, chainId, walletAddress } = await connectWallet();
+  const walletless = deployment.debug.walletConnected === "NO";
+  const receiverAddress = requireAddress(
+    "Receiver",
+    walletless
+      ? import.meta.env.VITE_PHASE3B_TEST_RECEIVER_ADDRESS
+      : config.receiver,
+  );
+  const relay = walletless ? await connectPhase3BRelay() : null;
+  const wallet = walletless ? null : await connectWallet();
+  const provider = relay?.provider ?? wallet!.provider;
+  const chainId = relay?.chainId ?? wallet!.chainId;
+  const walletAddress = relay?.relayerAddress ?? wallet!.walletAddress;
+  const signerOrProvider = walletless ? provider : wallet!.signer;
   if (chainId !== deployment.chainId) throw new Error("Account is on another chain.");
-  const entryPoint = new Contract(ENTRYPOINT_V08_ADDRESS, ENTRYPOINT_ABI, signer);
-  const account = new Contract(deployment.account, ACCOUNT_ABI, signer);
+  const entryPoint = new Contract(ENTRYPOINT_V08_ADDRESS, ENTRYPOINT_ABI, signerOrProvider);
+  const account = new Contract(deployment.account, ACCOUNT_ABI, signerOrProvider);
   const receiverCall = RECEIVER_INTERFACE.encodeFunctionData("emitTest", [
     toUtf8Bytes("alpha-prime-phase-3a"),
   ]);
@@ -652,13 +716,22 @@ export async function signAndSubmitTestOperation(
   ) {
     throw new Error("One or more adversarial operation checks unexpectedly passed.");
   }
-  const tx = await entryPoint.handleOps([built.signed], walletAddress, {
-    gasLimit: 2_500_000n,
-  });
-  const receipt = await tx.wait();
+  const receipt = walletless
+    ? await relayPhase3BTransaction(
+        "userOperation",
+        ENTRYPOINT_V08_ADDRESS,
+        entryPoint.interface.encodeFunctionData("handleOps", [[built.signed], walletAddress]),
+      )
+    : await (await entryPoint.handleOps([built.signed], walletAddress, {
+        gasLimit: 2_500_000n,
+      })).wait();
   if (!receipt || receipt.status !== 1) throw new Error("UserOperation reverted.");
-  const receiverEventFound = receipt.logs.some(
-    (log: { topics: string[]; data: string }) => {
+  const chainReceipt = await provider.getTransactionReceipt(
+    "transactionHash" in receipt ? receipt.transactionHash : receipt.hash,
+  );
+  if (!chainReceipt) throw new Error("UserOperation receipt is unavailable.");
+  const receiverEventFound = chainReceipt.logs.some(
+    (log: { topics: readonly string[]; data: string }) => {
       try {
         const parsed = RECEIVER_INTERFACE.parseLog(log);
         return (
@@ -676,7 +749,7 @@ export async function signAndSubmitTestOperation(
   }
   return {
     userOpHash: built.userOpHash,
-    transactionHash: receipt.hash,
+    transactionHash: chainReceipt.hash,
     receiverEventFound,
     modifiedTargetRejected,
     modifiedCalldataRejected,

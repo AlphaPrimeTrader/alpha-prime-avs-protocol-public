@@ -9,27 +9,25 @@ application code, tests, documentation, and reproducible tooling.
 | Path | Purpose |
 | --- | --- |
 | `contracts/` | AVS Smart Account, Phase 3A security-kernel, Factory, test receiver, and test-token contracts. |
-| `contracts/accounts/interfaces/` | Public Phase 3A Authority, bounded-logic, Kernel Factory, and EvolutionController interfaces. |
-| `test/` | Phase 1 foundation tests, Phase 2 Passkey/UserOperation tests, Phase 3A security-kernel tests, and EntryPoint fixtures. |
+| `contracts/accounts/interfaces/` | Public Phase 3A and experimental Phase 3B Authority, Kernel, and EvolutionController interfaces. |
+| `test/` | Phase 1 foundation tests, Phase 2 Passkey/UserOperation tests, Phase 3A security-kernel tests, Phase 3B Recovery tests, and EntryPoint fixtures. |
 | `test/phase3a/` | Phase 3A authorization, evolution, boundary, and hostile-implementation tests. |
-| `apps/passkey-demo/` | Canonical standalone browser reference application for the Phase 3A Passkey flow. |
-| `scripts/src/` | Reproducible Phase 2 deployment and post-deployment verification scripts. |
-| `docs/architecture/` | Phase 3A security-kernel architecture and authority-boundary documentation. |
+| `test/phase3b/` | Atomic Transaction/Recovery root rotation and authority-boundary tests. |
+| `apps/passkey-demo/` | The only canonical browser application for the Phase 3A Passkey and Phase 3B atomic recovery flows. |
+| `scripts/src/` | Reproducible Phase 2 and Phase 3B deployment and post-deployment verification scripts. |
+| `docs/architecture/` | Phase 3A security-kernel and Phase 3B recovery architecture and authority-boundary documentation. |
 | `docs/` | Phase history, deployment record, repository structure, and release notes. |
 | Root configuration | Hardhat, TypeScript, pnpm workspace, and package-locking configuration required to build and test the public source. |
 
 ## Canonical reference application
 
 `apps/passkey-demo/` is the only published Passkey demo and the canonical
-Phase 3A browser reference. It is the lean, standalone version that an
-independent developer can install, build, and run without workspace preview
-infrastructure.
+browser reference for Phases 3A and 3B. It is the lean, standalone version that
+an independent developer can install, build, and run without workspace preview
+infrastructure. Managed/generated artifact directories are not public source
+and must not contain a second application implementation.
 
-The Phase 3A source was migrated from the managed development copy before the
-public release was rebuilt. `artifacts/avs-passkey-demo/` must not become a
-second public canonical implementation and is excluded from the public tree.
-
-## Phase 3A canonical contracts
+## Experimental account contracts
 
 The public Phase 3A contract set is:
 
@@ -41,14 +39,22 @@ The public Phase 3A contract set is:
 The Phase 3A additions are intentionally separate from the historical Phase 1
 and Phase 2 contract records.
 
+The Phase 3B additions are:
+
+- `AVSAccountRecoverySecurityKernel.sol`;
+- `AVSAccountRecoveryAuthority.sol`;
+- `AVSAccountRecoveryKernelFactory.sol`.
+
+They preserve the Phase 3A separation of Transaction and Evolution authority
+while adding immediate atomic Transaction/Recovery root rotation. This is a
+frozen experimental Testnet checkpoint, not a final product account model.
+
 ## Excluded workspace material
 
 The following paths are intentionally not part of the public repository:
 
 - `artifacts/api-server/` — generic API and health-check server unrelated to
   AVS Phase 1 or Phase 2.
-- `artifacts/avs-passkey-demo/` — managed duplicate of the canonical Passkey
-  demo, including preview UI and workspace-specific scaffolding.
 - `artifacts/mockup-sandbox/` — generic component-preview and mockup server.
 - `lib/` — generic API client, OpenAPI, and database support not used by the
   AVS protocol build or tests.
@@ -77,8 +83,10 @@ public source files.
 ## Phase boundary
 
 - Phase 1 is the completed Smart Account Foundation.
-- Phase 2 is the completed Passkey + ERC-4337 testnet baseline.
-- Recovery, Paymaster, Pools, Marketplace, NAV, Mainnet, and production
-  custody are outside this public baseline.
-- Phase 3A is experimental, BSC Testnet only, unaudited, and not for
-  production funds.
+- Phase 2 is the completed Passkey + ERC-4337 Testnet baseline.
+- Phase 3A and Phase 3B remain experimental, BSC Testnet only, unaudited, and
+  not for production funds.
+- Phase 3B Recovery preserves the same account address and atomically rotates
+  Transaction and Recovery roots without backend authority.
+- Paymaster, Pools, Marketplace, NAV, Mainnet, and production custody remain
+  outside this checkpoint.
