@@ -14,6 +14,8 @@
     "phase3b:bsc:preflight": "hardhat --network bscTestnet run scripts/src/preflight-phase3b-bsc.ts",
     "phase3b:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase3b-bsc.ts",
     "phase3b:bsc:verify": "hardhat --network bscTestnet run scripts/src/verify-phase3b-bsc.ts",
+    "phase4a:bsc:preflight": "hardhat --network bscTestnet run scripts/src/preflight-phase4a-bsc.ts",
+    "phase4a:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4a-bsc.ts",
     "hardhat": "hardhat",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm -r --filter \"./apps/**\" --filter \"./scripts\" --if-present run typecheck"

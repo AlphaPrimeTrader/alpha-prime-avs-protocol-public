@@ -15,16 +15,17 @@ on-chain Smart Accounts and Passkey authorization.
 - ERC-4337 / Passkey authorization: **PASS**
 - Phase 3A security-kernel foundation: **PASS — EXPERIMENTAL**
 - Phase 3B atomic Recovery root rotation: **PASS — EXPERIMENTAL**
+- Phase 4A AVS Ledger foundation: **PASS — BSC TESTNET VERIFIED**
 - Same-account-address Recovery: **PASS ON BSC TESTNET**
 - Evolution authority separation: **PASS**
 - BSC Testnet deployment and verification: **PASS**
 - Mainnet deployment: **NOT STARTED**
 - Production security audit: **NOT COMPLETED**
-- Paymaster, Pools, Shares, and Marketplace: **NOT IMPLEMENTED**
+- AVS Token, Vault, Paymaster, Pools, Shares, and Marketplace: **NOT IMPLEMENTED**
 
-This checkpoint freezes the tested source after the Phase 3B BSC Testnet work.
-It does not claim that the current Smart Account model is the final product
-account architecture.
+This checkpoint includes the frozen Phase 3B account deployment and the
+canonical Phase 4A BSC Testnet Ledger. It does not claim that the current Smart
+Account or economic model is the final product architecture.
 
 ## Current experimental account model
 
@@ -59,9 +60,12 @@ hiding the algorithms.
 | EvolutionController | `0x9d5d16C84D7E36a1436979fe164Af81D62B59A9e` |
 | Initial bounded implementation | `0x6aCA3dCA40A3d031163686547F42Fe6fb55E8797` |
 | TestReceiver | `0x99907924aBC19287E8f1e68b124bDFF31d06563e` |
+| Phase 4A AVSLedger | `0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` |
 
-The sanitized deployment and validation record is in
-[`docs/deployments/bsc-testnet-phase-3b.md`](docs/deployments/bsc-testnet-phase-3b.md).
+The sanitized deployment and validation records are in
+[`docs/deployments/bsc-testnet-phase-3b.md`](docs/deployments/bsc-testnet-phase-3b.md)
+and
+[`docs/deployments/bsc-testnet-phase-4a.md`](docs/deployments/bsc-testnet-phase-4a.md).
 Historical Phase 1, Phase 2, and Phase 3A records remain unchanged.
 
 ## Security boundaries
@@ -82,7 +86,7 @@ See [`SECURITY.md`](SECURITY.md) and
 ## Repository layout
 
 - `contracts/` — historical account contracts plus the experimental Phase 3A
-  and Phase 3B account contracts.
+  and Phase 3B account contracts, and the Phase 4A Ledger.
 - `test/` — Hardhat protocol and adversarial regression tests.
 - `apps/passkey-demo/` — the only canonical browser application.
 - `scripts/src/` — reproducible Testnet deployment and verification scripts.
@@ -103,6 +107,7 @@ pnpm run typecheck
 pnpm --filter @workspace/passkey-demo test:recovery-kit
 pnpm --filter @workspace/passkey-demo run build
 pnpm run phase3b:bsc:verify
+pnpm run phase4a:bsc:preflight
 ```
 
 The BSC verification command is read-only. Deployment commands require an
@@ -110,6 +115,7 @@ explicit Testnet confirmation variable and are not part of ordinary validation.
 
 ## Publication status
 
-This repository records a frozen experimental Testnet checkpoint. No Mainnet
-release is authorized, and further Smart Account / Recovery product work is
-paused after this publication.
+This repository records a frozen experimental Testnet account checkpoint plus
+the deployed and source-verified Phase 4A Ledger. No Mainnet release is
+authorized, and AVS Token, Vault, Issuer, Trade Settlement, Marketplace, and
+later protocol work remain paused.

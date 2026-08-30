@@ -10,12 +10,14 @@ application code, tests, documentation, and reproducible tooling.
 | --- | --- |
 | `contracts/` | AVS Smart Account, Phase 3A security-kernel, Factory, test receiver, and test-token contracts. |
 | `contracts/accounts/interfaces/` | Public Phase 3A and experimental Phase 3B Authority, Kernel, and EvolutionController interfaces. |
-| `test/` | Phase 1 foundation tests, Phase 2 Passkey/UserOperation tests, Phase 3A security-kernel tests, Phase 3B Recovery tests, and EntryPoint fixtures. |
+| `contracts/ledger/` | Phase 4A global economic Ledger and its narrow public interface. |
+| `test/` | Phase 1 foundation tests, Phase 2 Passkey/UserOperation tests, Phase 3A security-kernel tests, Phase 3B Recovery tests, Phase 4A Ledger tests, and EntryPoint fixtures. |
 | `test/phase3a/` | Phase 3A authorization, evolution, boundary, and hostile-implementation tests. |
 | `test/phase3b/` | Atomic Transaction/Recovery root rotation and authority-boundary tests. |
+| `test/ledger/` | Phase 4A economic accounting, authorization, precision, and boundary tests. |
 | `apps/passkey-demo/` | The only canonical browser application for the Phase 3A Passkey and Phase 3B atomic recovery flows. |
-| `scripts/src/` | Reproducible Phase 2 and Phase 3B deployment and post-deployment verification scripts. |
-| `docs/architecture/` | Phase 3A security-kernel and Phase 3B recovery architecture and authority-boundary documentation. |
+| `scripts/src/` | Reproducible Phase 2, Phase 3B, and Phase 4A deployment and verification scripts. |
+| `docs/architecture/` | Phase 3A/3B account-security documentation and the Phase 4A Ledger architecture. |
 | `docs/` | Phase history, deployment record, repository structure, and release notes. |
 | Root configuration | Hardhat, TypeScript, pnpm workspace, and package-locking configuration required to build and test the public source. |
 
@@ -48,6 +50,19 @@ The Phase 3B additions are:
 They preserve the Phase 3A separation of Transaction and Evolution authority
 while adding immediate atomic Transaction/Recovery root rotation. This is a
 frozen experimental Testnet checkpoint, not a final product account model.
+
+## Phase 4A Ledger
+
+`contracts/ledger/AVSLedger.sol` is the deployed BSC Testnet global accounting
+foundation. It tracks protocol-wide capital, realized profit/loss, and buyback
+reserve state. It does not implement user balances, AVS Token behavior,
+custody, minting, withdrawals, trade verification, or arbitrary economic
+setters.
+
+The architecture and fixed-point model are documented in
+`docs/architecture/avs-ledger.md`. The canonical address and exact-match source
+verification are recorded in `deployments/bsc-testnet/avs-ledger.json` and
+`docs/deployments/bsc-testnet-phase-4a.md`.
 
 ## Excluded workspace material
 
@@ -88,5 +103,7 @@ public source files.
   not for production funds.
 - Phase 3B Recovery preserves the same account address and atomically rotates
   Transaction and Recovery roots without backend authority.
-- Paymaster, Pools, Marketplace, NAV, Mainnet, and production custody remain
-  outside this checkpoint.
+- Phase 4A adds an unaudited, source-verified BSC Testnet global Ledger and
+  does not alter the deployed Phase 3B account checkpoint.
+- AVS Token, Vault, Issuer, Paymaster, Pools, Marketplace, Mainnet, and
+  production custody remain outside this checkpoint.

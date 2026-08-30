@@ -1,0 +1,27 @@
+{
+  "network": "bscTestnet",
+  "chainId": 97,
+  "contract": "AVSLedger",
+  "address": "0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04",
+  "deploymentTransaction": "0x8e2323f3584a7f790ee3f41c730bd0e3fca04944caeb1eb1e3b2e5b11b2718b7",
+  "deploymentBlock": 128172839,
+  "deployedAt": "2026-08-30T21:11:18Z",
+  "deployer": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "initialOwner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "constructorArguments": ["0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"],
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "runtimeBytecodeHash": "0xe4ea7c783c5a5558d6b89a2392473df58419a1bb170e1e4f7ff2880119be6329",
+  "sourceVerification": {
+    "status": "exact_match",
+    "verifiedAt": "2026-08-30T21:13:02Z",
+    "bscScan": "https://testnet.bscscan.com/address/0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04#code",
+    "sourcifyMatchId": "46918613"
+  }
+}
