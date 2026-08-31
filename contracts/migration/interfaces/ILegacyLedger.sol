@@ -5,8 +5,7 @@ interface ILegacyLedger {
     struct UserInfo {
         uint256 depositAmount;
         uint256 accumulatedProfit;
-        uint256 totalProfitEver;
-        uint256 lastUpdate;
+        uint256 totalProfit;
         uint256 totalBalance;
     }
 

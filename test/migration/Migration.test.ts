@@ -496,9 +496,27 @@ describe("Migration", function () {
     expect(oldVaultFunctionNames).to.include.members([
       "USDT",
       "ledger",
+      "executors",
       "withdraw",
     ]);
+    expect(oldVaultFunctionNames).to.not.include("isExecutor");
     expect(oldVaultFunctionNames).to.not.include("oldLedger");
+
+    const userInfoFragment =
+      system.oldLedger.interface.getFunction("getUserInfo");
+    expect(userInfoFragment?.outputs).to.have.length(1);
+    expect(userInfoFragment?.outputs?.[0].type).to.equal("tuple");
+    expect(
+      userInfoFragment?.outputs?.[0].components?.map((component) => ({
+        name: component.name,
+        type: component.type,
+      })),
+    ).to.deep.equal([
+      { name: "depositAmount", type: "uint256" },
+      { name: "accumulatedProfit", type: "uint256" },
+      { name: "totalProfit", type: "uint256" },
+      { name: "totalBalance", type: "uint256" },
+    ]);
     expect(await system.migration.owner()).to.equal(await owner.getAddress());
   });
 
@@ -518,7 +536,7 @@ describe("Migration", function () {
     const userInfo = await oldLedger.getUserInfo(OLD_USER);
     expect(userInfo.depositAmount).to.equal(10_000n * SCALE);
     expect(userInfo.accumulatedProfit).to.equal(2_000n * SCALE);
-    expect(userInfo.totalProfitEver).to.equal(999_000n * SCALE);
+    expect(userInfo.totalProfit).to.equal(999_000n * SCALE);
     expect(userInfo.totalBalance).to.equal(MIGRATION_AMOUNT);
     expect(await migration.capitalId(OLD_USER)).to.equal(capitalId);
     expect(await avsLedger.quoteCapitalInflow(MIGRATION_AMOUNT)).to.equal(

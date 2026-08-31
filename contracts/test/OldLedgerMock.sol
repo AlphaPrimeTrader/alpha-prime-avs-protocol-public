@@ -14,7 +14,14 @@ contract OldLedgerMock is ILegacyLedger {
     address public vault;
     uint256 public dailyAPYBps;
 
-    mapping(address user => UserInfo) private _users;
+    struct StoredUserInfo {
+        uint256 depositAmount;
+        uint256 accumulatedProfit;
+        uint256 totalProfitEver;
+        uint256 lastUpdate;
+    }
+
+    mapping(address user => StoredUserInfo) private _users;
 
     error Unauthorized(address caller);
     error InvalidOwner();
@@ -61,32 +68,34 @@ contract OldLedgerMock is ILegacyLedger {
         if (user == address(0)) revert InvalidAddress();
         if (lastUpdate > block.timestamp) revert InvalidTimestamp();
 
-        _users[user] = UserInfo({
+        _users[user] = StoredUserInfo({
             depositAmount: depositAmount,
             accumulatedProfit: accumulatedProfit,
             totalProfitEver: totalProfitEver,
-            lastUpdate: lastUpdate,
-            totalBalance: 0
+            lastUpdate: lastUpdate
         });
     }
 
     function getUserInfo(
         address user
     ) external view override returns (UserInfo memory info) {
-        UserInfo storage stored = _users[user];
+        StoredUserInfo storage stored = _users[user];
         uint256 liveProfit = _liveProfit(stored);
-        info = stored;
-        info.accumulatedProfit += liveProfit;
-        info.totalProfitEver += liveProfit;
-        info.totalBalance =
-            info.depositAmount +
-            info.accumulatedProfit;
+        uint256 accumulatedProfit =
+            stored.accumulatedProfit +
+            liveProfit;
+        info = UserInfo({
+            depositAmount: stored.depositAmount,
+            accumulatedProfit: accumulatedProfit,
+            totalProfit: stored.totalProfitEver + liveProfit,
+            totalBalance: stored.depositAmount + accumulatedProfit
+        });
     }
 
     function debit(address user, uint256 amount) external onlyVault {
         if (amount == 0) revert InvalidAmount();
 
-        UserInfo storage stored = _users[user];
+        StoredUserInfo storage stored = _users[user];
         uint256 liveProfit = _liveProfit(stored);
         stored.accumulatedProfit += liveProfit;
         stored.totalProfitEver += liveProfit;
@@ -109,7 +118,7 @@ contract OldLedgerMock is ILegacyLedger {
     }
 
     function _liveProfit(
-        UserInfo storage stored
+        StoredUserInfo storage stored
     ) private view returns (uint256) {
         if (stored.lastUpdate == 0 || dailyAPYBps == 0) return 0;
         uint256 elapsed = block.timestamp - stored.lastUpdate;

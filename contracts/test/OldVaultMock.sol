@@ -16,7 +16,7 @@ contract OldVaultMock is ReentrancyGuard {
     IERC20 public immutable USDT;
     ILegacyLedger public immutable ledger;
     address public owner;
-    mapping(address executor => bool) public isExecutor;
+    mapping(address executor => bool) public executors;
 
     event ExecutorUpdated(
         address indexed executor,
@@ -41,7 +41,7 @@ contract OldVaultMock is ReentrancyGuard {
     }
 
     modifier onlyExecutor() {
-        if (!isExecutor[msg.sender]) revert Unauthorized(msg.sender);
+        if (!executors[msg.sender]) revert Unauthorized(msg.sender);
         _;
     }
 
@@ -63,7 +63,7 @@ contract OldVaultMock is ReentrancyGuard {
         bool authorized
     ) external onlyOwner {
         if (executor == address(0)) revert InvalidAddress();
-        isExecutor[executor] = authorized;
+        executors[executor] = authorized;
         emit ExecutorUpdated(executor, authorized);
     }
 

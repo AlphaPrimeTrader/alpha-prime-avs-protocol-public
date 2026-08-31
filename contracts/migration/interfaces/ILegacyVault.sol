@@ -6,6 +6,8 @@ interface ILegacyVault {
 
     function ledger() external view returns (address);
 
+    function executors(address executor) external view returns (bool);
+
     function withdraw(
         address oldUser,
         address recipient,
