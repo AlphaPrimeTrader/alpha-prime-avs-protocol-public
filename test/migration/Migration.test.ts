@@ -50,6 +50,21 @@ async function deployMigrationSystem(useFeeToken = false) {
     trading.waitForDeployment(),
   ]);
 
+  await oldLedger.setVault(await oldVault.getAddress());
+  await oldLedger.setDailyAPYBps(0);
+
+  await avsLedger.bindAVSToken(await avsToken.getAddress());
+  await avsLedger.configureVault(await avsVault.getAddress());
+  await avsLedger.configureTradeSettlement(await tradeSettlement.getAddress());
+
+  await avsVault.setAVSToken(await avsToken.getAddress());
+  await avsVault.setAVSLedger(await avsLedger.getAddress());
+  await avsVault.setMarketplace(await marketplace.getAddress());
+  await avsVault.setTradingContract(await trading.getAddress());
+
+  await avsToken.setAccountPolicy(await policy.getAddress());
+  await avsToken.setVault(await avsVault.getAddress());
+
   const migration = await ethers.deployContract("Migration", [
     ownerAddress,
     await oldLedger.getAddress(),
@@ -61,23 +76,10 @@ async function deployMigrationSystem(useFeeToken = false) {
   ]);
   await migration.waitForDeployment();
 
-  await oldLedger.setVault(await oldVault.getAddress());
-  await oldLedger.setDailyAPYBps(0);
   await oldVault.setExecutor(await migration.getAddress(), true);
-
-  await avsLedger.bindAVSToken(await avsToken.getAddress());
-  await avsLedger.configureVault(await avsVault.getAddress());
-  await avsLedger.configureTradeSettlement(await tradeSettlement.getAddress());
-
-  await avsVault.setAVSToken(await avsToken.getAddress());
-  await avsVault.setAVSLedger(await avsLedger.getAddress());
   await avsVault.setMigration(await migration.getAddress());
-  await avsVault.setMarketplace(await marketplace.getAddress());
-  await avsVault.setTradingContract(await trading.getAddress());
   await avsVault.setReserveTarget(MIGRATION_AMOUNT);
 
-  await avsToken.setAccountPolicy(await policy.getAddress());
-  await avsToken.setVault(await avsVault.getAddress());
   await policy.authorize(await avsToken.getAddress(), BENEFICIARY);
 
   await oldLedger.seedUser(
@@ -115,7 +117,345 @@ function migrationCapitalId(oldUser: string): string {
   );
 }
 
+async function deployWiringFixture() {
+  const [owner] = await ethers.getSigners();
+  const usdt = await ethers.deployContract("TestUSDT", [
+    await owner.getAddress(),
+  ]);
+  const oldLedger = await ethers.deployContract("MigrationWiringMock");
+  const oldVault = await ethers.deployContract("MigrationWiringMock");
+  const avsVault = await ethers.deployContract("MigrationWiringMock");
+  const avsLedger = await ethers.deployContract("MigrationWiringMock");
+  const avsToken = await ethers.deployContract("MigrationWiringMock");
+
+  await Promise.all([
+    usdt.waitForDeployment(),
+    oldLedger.waitForDeployment(),
+    oldVault.waitForDeployment(),
+    avsVault.waitForDeployment(),
+    avsLedger.waitForDeployment(),
+    avsToken.waitForDeployment(),
+  ]);
+
+  const usdtAddress = await usdt.getAddress();
+  const oldLedgerAddress = await oldLedger.getAddress();
+  const oldVaultAddress = await oldVault.getAddress();
+  const avsVaultAddress = await avsVault.getAddress();
+  const avsLedgerAddress = await avsLedger.getAddress();
+  const avsTokenAddress = await avsToken.getAddress();
+
+  await Promise.all([
+    oldVault.configure(
+      usdtAddress,
+      oldLedgerAddress,
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+    ),
+    oldLedger.configure(
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+      oldVaultAddress,
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+    ),
+    avsVault.configure(
+      usdtAddress,
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+      avsLedgerAddress,
+      avsTokenAddress,
+    ),
+    avsLedger.configure(
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+      avsVaultAddress,
+      ethers.ZeroAddress,
+      avsTokenAddress,
+    ),
+    avsToken.configure(
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+      avsVaultAddress,
+      ethers.ZeroAddress,
+      ethers.ZeroAddress,
+    ),
+  ]);
+
+  return {
+    owner,
+    usdt,
+    oldLedger,
+    oldVault,
+    avsVault,
+    avsLedger,
+    avsToken,
+    addresses: {
+      usdt: usdtAddress,
+      oldLedger: oldLedgerAddress,
+      oldVault: oldVaultAddress,
+      avsVault: avsVaultAddress,
+      avsLedger: avsLedgerAddress,
+      avsToken: avsTokenAddress,
+    },
+  };
+}
+
 describe("Migration", function () {
+  it("rejects every constructor wiring mismatch exposed by current getters", async function () {
+    const factory = await ethers.getContractFactory("Migration");
+    const cases = [
+      {
+        name: "legacy vault USDT",
+        relationship: "OLD_VAULT_USDT",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.oldVault.configure(
+            fixture.addresses.avsToken,
+            fixture.addresses.oldLedger,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.usdt,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+      },
+      {
+        name: "legacy vault Ledger",
+        relationship: "OLD_VAULT_LEDGER",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.oldVault.configure(
+            fixture.addresses.usdt,
+            fixture.addresses.avsToken,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.oldLedger,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+      },
+      {
+        name: "legacy Ledger Vault",
+        relationship: "OLD_LEDGER_VAULT",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.oldLedger.configure(
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            fixture.addresses.avsToken,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.oldVault,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+      },
+      {
+        name: "AVS Vault USDT",
+        relationship: "AVS_VAULT_USDT",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.avsVault.configure(
+            fixture.addresses.avsToken,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            fixture.addresses.avsLedger,
+            fixture.addresses.avsToken,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.usdt,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+      },
+      {
+        name: "AVS Vault Ledger",
+        relationship: "AVS_VAULT_LEDGER",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.avsVault.configure(
+            fixture.addresses.usdt,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            fixture.addresses.avsToken,
+            fixture.addresses.avsToken,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsLedger,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+      },
+      {
+        name: "AVS Vault Token",
+        relationship: "AVS_VAULT_TOKEN",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.avsVault.configure(
+            fixture.addresses.usdt,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            fixture.addresses.avsLedger,
+            fixture.addresses.avsLedger,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsLedger,
+      },
+      {
+        name: "AVS Ledger Vault",
+        relationship: "AVS_LEDGER_VAULT",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.avsLedger.configure(
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            fixture.addresses.avsToken,
+            ethers.ZeroAddress,
+            fixture.addresses.avsToken,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsVault,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+      },
+      {
+        name: "AVS Ledger Token",
+        relationship: "AVS_LEDGER_TOKEN",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.avsLedger.configure(
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            fixture.addresses.avsVault,
+            ethers.ZeroAddress,
+            fixture.addresses.avsVault,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsToken,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsVault,
+      },
+      {
+        name: "AVS Token Vault",
+        relationship: "AVS_TOKEN_VAULT",
+        configure: async (
+          fixture: Awaited<ReturnType<typeof deployWiringFixture>>,
+        ) => {
+          await fixture.avsToken.configure(
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+            fixture.addresses.avsLedger,
+            ethers.ZeroAddress,
+            ethers.ZeroAddress,
+          );
+        },
+        expected: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsVault,
+        actual: (
+          addresses: Awaited<
+            ReturnType<typeof deployWiringFixture>
+          >["addresses"],
+        ) => addresses.avsLedger,
+      },
+    ];
+
+    for (const testCase of cases) {
+      const fixture = await deployWiringFixture();
+      await testCase.configure(fixture);
+
+      await expect(
+        ethers.deployContract("Migration", [
+          await fixture.owner.getAddress(),
+          fixture.addresses.oldLedger,
+          fixture.addresses.oldVault,
+          fixture.addresses.usdt,
+          fixture.addresses.avsVault,
+          fixture.addresses.avsLedger,
+          fixture.addresses.avsToken,
+        ]),
+      )
+        .to.be.revertedWithCustomError(factory, "WiringMismatch")
+        .withArgs(
+          ethers.id(testCase.relationship),
+          testCase.expected(fixture.addresses),
+          testCase.actual(fixture.addresses),
+        );
+    }
+  });
+
   it("constructs only with explicit deployed dependencies and exposes no owner money-out API", async function () {
     const [owner] = await ethers.getSigners();
     const system = await deployMigrationSystem();
@@ -262,66 +602,76 @@ describe("Migration", function () {
     expect(await owner.getAddress()).to.equal(await migration.owner());
   });
 
-  it("checks remaining AVS supply and capital collisions before touching legacy state", async function () {
-    const system = await deployMigrationSystem();
-    const { owner, oldLedger, oldVault, avsToken, avsVault, avsLedger, usdt } =
-      system;
-    const collisionLedger = await ethers.deployContract(
-      "MigrationLedgerReaderMock",
-      [MIGRATION_AMOUNT, true],
-    );
-    await collisionLedger.waitForDeployment();
-    const collisionMigration = await ethers.deployContract("Migration", [
-      await owner.getAddress(),
-      await oldLedger.getAddress(),
-      await oldVault.getAddress(),
+  it("checks capital collisions before touching legacy state", async function () {
+    const {
+      migration,
+      oldLedger,
+      oldVault,
+      avsLedger,
+      avsVault,
+      marketplace,
+      usdt,
+    } = await deployMigrationSystem();
+    const capitalId = migrationCapitalId(OLD_USER);
+    const seedAmount = SCALE;
+
+    await usdt.mint(await marketplace.getAddress(), seedAmount);
+    await marketplace.approveToken(
       await usdt.getAddress(),
       await avsVault.getAddress(),
-      await collisionLedger.getAddress(),
-      await avsToken.getAddress(),
-    ]);
-    await collisionMigration.waitForDeployment();
-    await expect(
-      collisionMigration.migrate(OLD_USER, BENEFICIARY),
-    ).to.be.revertedWithCustomError(
-      collisionMigration,
-      "CapitalAlreadyProcessed",
+      seedAmount,
     );
-
-    const sink = await ethers.getSigners().then((signers) => signers[2]);
-    const sinkAddress = await sink.getAddress();
-    const tokenMintActor = await ethers.deployContract("AVSTokenVaultMock");
-    await tokenMintActor.waitForDeployment();
-    await system.policy.authorize(await avsToken.getAddress(), sinkAddress);
-    await avsToken.setVault(await tokenMintActor.getAddress());
-    const maxSupply = await avsToken.MAX_SUPPLY();
-    await tokenMintActor.mint(
-      await avsToken.getAddress(),
-      sinkAddress,
-      maxSupply - 100n,
-    );
-    await avsToken.setVault(await avsVault.getAddress());
-
-    const supplyReader = await ethers.deployContract(
-      "MigrationLedgerReaderMock",
-      [MIGRATION_AMOUNT, false],
-    );
-    await supplyReader.waitForDeployment();
-    const supplyMigration = await ethers.deployContract("Migration", [
-      await owner.getAddress(),
-      await oldLedger.getAddress(),
-      await oldVault.getAddress(),
-      await usdt.getAddress(),
+    await marketplace.receiveMarketplaceCapital(
       await avsVault.getAddress(),
-      await supplyReader.getAddress(),
-      await avsToken.getAddress(),
-    ]);
-    await supplyMigration.waitForDeployment();
+      capitalId,
+      BENEFICIARY,
+      seedAmount,
+    );
 
     const oldBalanceBefore = await usdt.balanceOf(await oldVault.getAddress());
     const legacyBefore = await oldLedger.getUserInfo(OLD_USER);
-    await expect(supplyMigration.migrate(OLD_USER, BENEFICIARY))
-      .to.be.revertedWithCustomError(supplyMigration, "MaxSupplyExceeded")
+    expect(await avsLedger.processedCapitalInflow(capitalId)).to.equal(true);
+    await expect(migration.migrate(OLD_USER, BENEFICIARY))
+      .to.be.revertedWithCustomError(migration, "CapitalAlreadyProcessed")
+      .withArgs(capitalId);
+    expect(await usdt.balanceOf(await oldVault.getAddress())).to.equal(
+      oldBalanceBefore,
+    );
+    expect((await oldLedger.getUserInfo(OLD_USER)).totalBalance).to.equal(
+      legacyBefore.totalBalance,
+    );
+  });
+
+  it("checks remaining AVS supply before touching legacy state", async function () {
+    const system = await deployMigrationSystem();
+    const {
+      migration,
+      oldLedger,
+      oldVault,
+      avsToken,
+      avsVault,
+      marketplace,
+      usdt,
+    } = system;
+    const maxSupply = await avsToken.MAX_SUPPLY();
+    const existingCapital = maxSupply - 100n;
+    await usdt.mint(await marketplace.getAddress(), existingCapital);
+    await marketplace.approveToken(
+      await usdt.getAddress(),
+      await avsVault.getAddress(),
+      existingCapital,
+    );
+    await marketplace.receiveMarketplaceCapital(
+      await avsVault.getAddress(),
+      ethers.id("near-max-supply"),
+      BENEFICIARY,
+      existingCapital,
+    );
+
+    const oldBalanceBefore = await usdt.balanceOf(await oldVault.getAddress());
+    const legacyBefore = await oldLedger.getUserInfo(OLD_USER);
+    await expect(migration.migrate(OLD_USER, BENEFICIARY))
+      .to.be.revertedWithCustomError(migration, "MaxSupplyExceeded")
       .withArgs(MIGRATION_AMOUNT, 100n);
     expect(await usdt.balanceOf(await oldVault.getAddress())).to.equal(
       oldBalanceBefore,
@@ -410,6 +760,17 @@ describe("Migration", function () {
       marketplace.waitForDeployment(),
       trading.waitForDeployment(),
     ]);
+    await oldLedger.setVault(await reentrantVault.getAddress());
+    await reentrantVault.setWiring(await oldLedger.getAddress());
+    await avsLedger.bindAVSToken(await avsToken.getAddress());
+    await avsLedger.configureVault(await avsVault.getAddress());
+    await avsLedger.configureTradeSettlement(
+      await tradeSettlement.getAddress(),
+    );
+    await avsVault.setAVSToken(await avsToken.getAddress());
+    await avsVault.setAVSLedger(await avsLedger.getAddress());
+    await avsToken.setAccountPolicy(await policy.getAddress());
+    await avsToken.setVault(await avsVault.getAddress());
     const migration = await ethers.deployContract("Migration", [
       await reentrantVault.getAddress(),
       await oldLedger.getAddress(),
@@ -420,8 +781,6 @@ describe("Migration", function () {
       await avsToken.getAddress(),
     ]);
     await migration.waitForDeployment();
-    await avsLedger.bindAVSToken(await avsToken.getAddress());
-    await avsToken.setAccountPolicy(await policy.getAddress());
     await policy.authorize(await avsToken.getAddress(), BENEFICIARY);
     await oldLedger.seedUser(OLD_USER, MIGRATION_AMOUNT, 0, 0, 1);
     await reentrantVault.setReentry(await migration.getAddress(), BENEFICIARY);

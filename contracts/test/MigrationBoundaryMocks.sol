@@ -9,43 +9,22 @@ interface IMigrationReentryTarget {
 }
 
 /**
- * @notice Test-only reader used to prove capital-id collision checks happen
- * before the legacy withdrawal.
- */
-contract MigrationLedgerReaderMock {
-    uint256 public quote;
-    bool public processed;
-
-    constructor(uint256 quote_, bool processed_) {
-        quote = quote_;
-        processed = processed_;
-    }
-
-    function quoteCapitalInflow(
-        uint256
-    ) external view returns (uint256 sharesToMint) {
-        return quote;
-    }
-
-    function processedCapitalInflow(
-        bytes32
-    ) external view returns (bool) {
-        return processed;
-    }
-}
-
-/**
  * @notice Test-only legacy Vault that attempts a nested migration call.
  */
 contract ReentrantOldVaultMock {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable USDT;
+    address public oldLedger;
     address public target;
     address public reentryBeneficiary;
 
     constructor(address usdt) {
         USDT = IERC20(usdt);
+    }
+
+    function setWiring(address oldLedger_) external {
+        oldLedger = oldLedger_;
     }
 
     function setReentry(

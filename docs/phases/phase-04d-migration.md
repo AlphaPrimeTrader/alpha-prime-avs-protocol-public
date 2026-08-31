@@ -31,6 +31,34 @@ Any failure reverts the legacy Ledger debit, legacy Vault transfer, AVS Ledger
 record, AVS Token mint, allowance, and migration marker in the same
 transaction.
 
+## Constructor wiring validation
+
+Because every protocol dependency is immutable, construction validates both
+deployed bytecode and every relationship exposed by the current public getters:
+
+- `OldVault.USDT()` equals the configured USDT;
+- `OldVault.oldLedger()` equals the configured legacy Ledger;
+- `OldLedger.vault()` equals the configured legacy Vault;
+- `AVSVault.USDT()` equals the configured USDT;
+- `AVSVault.avsLedger()` equals the configured AVS Ledger;
+- `AVSVault.avsToken()` equals the configured AVS Token;
+- `AVSLedger.vault()` equals the configured AVS Vault;
+- `AVSLedger.avsToken()` equals the configured AVS Token; and
+- `AVSToken.vault()` equals the configured AVS Vault.
+
+A mismatch reverts with `WiringMismatch(relationship, expected, actual)`.
+Every target relationship is available through an existing getter; no
+production contract was changed to expose additional wiring.
+
+Two relationships are deliberately excluded from construction:
+
+- `AVSVault.migration() == Migration`, because the Migration address exists
+  only after deployment; and
+- legacy Vault executor authorization for Migration, because it is also
+  configured after deployment.
+
+Both are mandatory post-deployment preflight checks.
+
 ## Deterministic identifier
 
 Each old user has one capital identifier:
@@ -78,7 +106,48 @@ The resulting migration amount is exactly `12,000 TestUSDT`.
 Tests also cover owner authorization, whitelist checks, zero balances,
 remaining AVS supply, deterministic-ID collisions, duplicate users, beneficiary
 reuse, fee-on-transfer mismatch, downstream atomic rollback, reentrancy, live
-profit calculation, allowance cleanup, and permanent closure.
+profit calculation, allowance cleanup, permanent closure, and rejection of all
+nine constructor wiring mismatches.
+
+## Documented Testnet deployment order
+
+The following sequence is documentation only and has not been executed:
+
+1. Deploy the Testnet-only `OldLedgerMock`.
+2. Deploy the Testnet-only `OldVaultMock` using the existing TestUSDT and the
+   new legacy Ledger.
+3. Configure `OldLedgerMock.vault` to the new legacy Vault.
+4. Seed the old test user
+   `0x3FE6f0b8777a7BaAF945ea8FEE6a657f3bd632Ba` with a 10,000 TestUSDT deposit,
+   2,000 TestUSDT accumulated profit, zero daily APY, and an expected 12,000
+   TestUSDT live balance.
+5. Fund `OldVaultMock` with exactly 12,000 existing TestUSDT.
+6. Deploy a minimal Testnet-only Account Policy mock.
+7. Configure `AVSToken.accountPolicy` to that temporary policy without locking
+   the Account Policy configuration.
+8. Authorize beneficiary
+   `0x46785c0bcb28c29e0CfBeF23101C98CA8356FC27`.
+9. Deploy Migration against the validated legacy mocks and current AVS Testnet
+   contracts.
+10. Add Migration as an executor in `OldVaultMock`.
+11. Configure `AVSVault.migration` to Migration.
+12. Set `AVSVault.reserveTarget` to at least 12,000 TestUSDT before migration.
+13. Run the complete read-only preflight.
+14. Execute `migrate(oldUser, beneficiary)` only after separate approval of the
+    preflight result.
+
+The current `AVSVault._routeExcessToTrading()` retains funds when
+`tradingContract` is zero and emits `ExcessRetainedBecauseTradingNotConfigured`;
+it does not transfer to `address(0)`. Setting the reserve target to at least the
+first 12,000 TestUSDT nevertheless makes the intended first-migration custody
+path explicit and prevents excess routing if Trading becomes configured before
+execution.
+
+The read-only preflight must verify all constructor relationships again, the
+post-deployment Migration and executor bindings, owner and network identities,
+the exact seeded live balance and Vault funding, beneficiary authorization,
+current AVS supply and quote, unused capital ID, reserve target, zero Migration
+USDT balance, and zero Migration-to-Vault allowance.
 
 ## Deliberate stop point
 

@@ -25,6 +25,24 @@ contract Migration is ReentrancyGuard {
 
     bytes32 public constant MIGRATION_DOMAIN =
         keccak256("AVS_MIGRATION_V1");
+    bytes32 private constant OLD_VAULT_USDT =
+        keccak256("OLD_VAULT_USDT");
+    bytes32 private constant OLD_VAULT_LEDGER =
+        keccak256("OLD_VAULT_LEDGER");
+    bytes32 private constant OLD_LEDGER_VAULT =
+        keccak256("OLD_LEDGER_VAULT");
+    bytes32 private constant AVS_VAULT_USDT =
+        keccak256("AVS_VAULT_USDT");
+    bytes32 private constant AVS_VAULT_LEDGER =
+        keccak256("AVS_VAULT_LEDGER");
+    bytes32 private constant AVS_VAULT_TOKEN =
+        keccak256("AVS_VAULT_TOKEN");
+    bytes32 private constant AVS_LEDGER_VAULT =
+        keccak256("AVS_LEDGER_VAULT");
+    bytes32 private constant AVS_LEDGER_TOKEN =
+        keccak256("AVS_LEDGER_TOKEN");
+    bytes32 private constant AVS_TOKEN_VAULT =
+        keccak256("AVS_TOKEN_VAULT");
 
     IERC20 public immutable USDT;
     ILegacyLedger public immutable oldLedger;
@@ -49,6 +67,11 @@ contract Migration is ReentrancyGuard {
     error Unauthorized(address caller);
     error InvalidOwner();
     error InvalidContract(address candidate);
+    error WiringMismatch(
+        bytes32 relationship,
+        address expected,
+        address actual
+    );
     error InvalidOldUser();
     error InvalidBeneficiary();
     error MigrationClosedError();
@@ -85,6 +108,52 @@ contract Migration is ReentrancyGuard {
         _requireContract(avsVaultAddress);
         _requireContract(avsLedgerAddress);
         _requireContract(avsTokenAddress);
+
+        _requireWiring(
+            OLD_VAULT_USDT,
+            usdt,
+            ILegacyVault(oldVaultAddress).USDT()
+        );
+        _requireWiring(
+            OLD_VAULT_LEDGER,
+            oldLedgerAddress,
+            ILegacyVault(oldVaultAddress).oldLedger()
+        );
+        _requireWiring(
+            OLD_LEDGER_VAULT,
+            oldVaultAddress,
+            ILegacyLedger(oldLedgerAddress).vault()
+        );
+        _requireWiring(
+            AVS_VAULT_USDT,
+            usdt,
+            IAVSMigrationVault(avsVaultAddress).USDT()
+        );
+        _requireWiring(
+            AVS_VAULT_LEDGER,
+            avsLedgerAddress,
+            IAVSMigrationVault(avsVaultAddress).avsLedger()
+        );
+        _requireWiring(
+            AVS_VAULT_TOKEN,
+            avsTokenAddress,
+            IAVSMigrationVault(avsVaultAddress).avsToken()
+        );
+        _requireWiring(
+            AVS_LEDGER_VAULT,
+            avsVaultAddress,
+            IAVSMigrationLedger(avsLedgerAddress).vault()
+        );
+        _requireWiring(
+            AVS_LEDGER_TOKEN,
+            avsTokenAddress,
+            IAVSMigrationLedger(avsLedgerAddress).avsToken()
+        );
+        _requireWiring(
+            AVS_TOKEN_VAULT,
+            avsVaultAddress,
+            IAVSMigrationToken(avsTokenAddress).vault()
+        );
 
         owner = initialOwner;
         oldLedger = ILegacyLedger(oldLedgerAddress);
@@ -177,6 +246,16 @@ contract Migration is ReentrancyGuard {
     function _requireContract(address candidate) private view {
         if (candidate == address(0) || candidate.code.length == 0) {
             revert InvalidContract(candidate);
+        }
+    }
+
+    function _requireWiring(
+        bytes32 relationship,
+        address expected,
+        address actual
+    ) private pure {
+        if (expected != actual) {
+            revert WiringMismatch(relationship, expected, actual);
         }
     }
 }

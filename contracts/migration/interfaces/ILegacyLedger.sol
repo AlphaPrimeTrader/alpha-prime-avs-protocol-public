@@ -14,5 +14,7 @@ interface ILegacyLedger {
         address user
     ) external view returns (UserInfo memory);
 
+    function vault() external view returns (address);
+
     function debit(address user, uint256 amount) external;
 }
