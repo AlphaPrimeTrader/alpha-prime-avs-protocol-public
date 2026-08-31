@@ -98,16 +98,18 @@ Policy, remains unlocked, and is unminted.
 
 ## Phase 4D Migration
 
-`contracts/migration/Migration.sol` is a local-only, owner-executed bridge for a
-legacy user's full live balance. It checks beneficiary authorization, remaining
-AVS supply, deterministic capital-ID uniqueness, actual USDT receipt, and exact
-AVS shares before committing the one-time migrated marker. Its legacy Ledger and
-Vault mocks are testing-only and are not deployment candidates.
+`contracts/migration/Migration.sol` is an owner-executed bridge for a legacy
+user's full live balance. It checks beneficiary authorization, remaining AVS
+supply, deterministic capital-ID uniqueness, actual USDT receipt, and exact AVS
+shares before committing the one-time migrated marker. Its legacy Ledger and
+Vault mocks are Testnet-only rehearsal components and are not production
+deployment candidates.
 
-The flow and deliberate deployment stop point are documented in
-`docs/phases/phase-04d-migration.md`. Migration is not deployed, the live Vault
-Migration address remains zero, the live Token Account Policy remains zero, and
-no TestUSDT or AVS moved for Phase 4D.
+The flow and Testnet evidence are documented in
+`docs/phases/phase-04d-migration.md`. The BSC Testnet Migration and temporary
+Account Policy are configured for the completed rehearsal; the Migration
+address is not a Mainnet or production authorization, and no Mainnet funds
+moved.
 
 ## Excluded workspace material
 
@@ -154,7 +156,7 @@ public source files.
   unconfigured BSC Testnet deployment; it does not alter the deployed Phase 4A
   Ledger.
 - Phase 4C adds the BSC Testnet Vault candidate and reviewed core bindings.
-- Phase 4D adds a local-only migration implementation without any deployment,
-  live configuration, TestUSDT movement, or AVS minting.
+- Phase 4D adds the Testnet-only migration rehearsal, including one verified
+  12,000 TestUSDT migration into 12,000 AVS shares.
 - Issuer, Paymaster, Pools, Marketplace, Trading, Mainnet, and production
   custody remain outside this checkpoint.

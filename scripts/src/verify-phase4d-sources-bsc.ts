@@ -28,6 +28,7 @@ type RecordShape = {
   chainId: string;
   owner: string;
   deployments: Record<string, Deployment>;
+  migrationExecution?: unknown;
 };
 
 const record = JSON.parse(
@@ -70,4 +71,6 @@ for (const deployment of Object.values(record.deployments)) {
 
 console.log("PHASE_4D_SOURCE_VERIFICATION=SUCCESS");
 console.log("TEST_USDT_MOVEMENT=false");
-console.log("MIGRATION_EXECUTED=false");
+console.log(
+  `MIGRATION_EXECUTED=${record.migrationExecution !== null && record.migrationExecution !== undefined}`,
+);

@@ -2,12 +2,62 @@
 
 ## Status
 
-**LOCAL VALIDATION ONLY — NOT DEPLOYED**
+**BSC TESTNET DEPLOYED, VERIFIED, AND EXECUTED — EXPERIMENTAL**
 
 Phase 4D introduces an owner-executed bridge for moving a legacy user's complete
-live balance into the existing AVS capital path. The implementation and its
-legacy-system mocks exist only for local compilation and testing. No Migration
-address has been configured on BSC Testnet.
+live balance into the existing AVS capital path. The bridge and its Testnet-only
+legacy-system mocks were deployed to BSC Testnet and used for one approved
+12,000 TestUSDT migration. This is not a Mainnet deployment or a production
+funds authorization.
+
+## BSC Testnet deployment and execution evidence
+
+All four Phase 4D contracts were deployed once by the explicit Testnet owner
+`0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9`. Their creation transactions,
+runtime hashes, and verification records are stored in
+`deployments/bsc-testnet/phase4d-migration.json`.
+
+| Contract          | Address                                      | Deployment block | BscScan                                                                                       | Sourcify                                                                               |
+| ----------------- | -------------------------------------------- | ---------------: | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| OldLedgerMock     | `0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F` |        128363096 | [source](https://testnet.bscscan.com/address/0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F#code) | [exact match](https://repo.sourcify.dev/97/0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F) |
+| OldVaultMock      | `0xaC5392753c85925FD96331178a3657C3a0A43242` |        128363102 | [source](https://testnet.bscscan.com/address/0xaC5392753c85925FD96331178a3657C3a0A43242#code) | [exact match](https://repo.sourcify.dev/97/0xaC5392753c85925FD96331178a3657C3a0A43242) |
+| AccountPolicyMock | `0xDa45bF8eB3277A6ed919A6ffE7DE69486ebF1AfC` |        128363112 | [source](https://testnet.bscscan.com/address/0xDa45bF8eB3277A6ed919A6ffE7DE69486ebF1AfC#code) | [exact match](https://repo.sourcify.dev/97/0xDa45bF8eB3277A6ed919A6ffE7DE69486ebF1AfC) |
+| Migration         | `0xd78345844098B11d41F9608bAeA09abf17216A15` |        128363121 | [source](https://testnet.bscscan.com/address/0xd78345844098B11d41F9608bAeA09abf17216A15#code) | [exact match](https://repo.sourcify.dev/97/0xd78345844098B11d41F9608bAeA09abf17216A15) |
+
+Each contract has Sourcify creation/runtime `exact_match` and public BscScan
+source verification using Solidity Standard JSON Input. The four BscScan
+verification IDs and Sourcify match IDs are recorded in the deployment record.
+
+The approved Testnet execution used:
+
+- old user: `0x3FE6f0b8777a7BaAF945ea8FEE6a657f3bd632Ba`;
+- beneficiary: `0x46785c0bcb28c29e0CfBeF23101C98CA8356FC27`;
+- deposit: `10,000 TestUSDT`;
+- accumulated profit: `2,000 TestUSDT`;
+- historical profit excluded: `999,000 TestUSDT`; and
+- migrated amount and AVS shares: exactly `12,000`.
+
+The read-only preflight passed before any financial/configuration transaction.
+The migration transaction was
+[`0xd728a77c4048cf3bd9a0c20f3609dfd48cbce1450ffb371964a9fb75eda4048c`](https://testnet.bscscan.com/tx/0xd728a77c4048cf3bd9a0c20f3609dfd48cbce1450ffb371964a9fb75eda4048c)
+in block `128366014`. Its deterministic capital ID was
+`0x760b224b7af471668b7160ef3fbdff18aa1ee0c385c395b68bc2f5e78d1063b6`.
+
+| Final invariant              |            Result |
+| ---------------------------- | ----------------: |
+| Old user live balance        |               `0` |
+| Old Vault TestUSDT           |               `0` |
+| Migration TestUSDT           |               `0` |
+| AVS Vault TestUSDT           |          `12,000` |
+| AVS Ledger NAV               |          `12,000` |
+| AVS Token total supply       |          `12,000` |
+| Beneficiary AVS balance      |          `12,000` |
+| Migration-to-Vault allowance |               `0` |
+| Capital record processed     |            `true` |
+| Duplicate simulation         | `AlreadyMigrated` |
+
+Migration remains open and all configuration locks remain unset. No Mainnet
+contract or Mainnet funds were touched.
 
 ## Atomic flow
 
@@ -111,29 +161,33 @@ nine constructor wiring mismatches.
 
 ## Documented Testnet deployment order
 
-The following sequence is documentation only and has not been executed:
+The following sequence was executed on BSC Testnet after all four contracts had
+public BscScan source verification and Sourcify Exact Match:
 
 1. Deploy the Testnet-only `OldLedgerMock`.
 2. Deploy the Testnet-only `OldVaultMock` using the existing TestUSDT and the
    new legacy Ledger.
-3. Configure `OldLedgerMock.vault` to the new legacy Vault.
-4. Seed the old test user
+3. Deploy the minimal Testnet-only Account Policy mock against the canonical
+   AVS Token.
+4. Configure `OldLedgerMock.vault` to the new legacy Vault.
+5. Deploy Migration against the validated legacy mocks and current AVS Testnet
+   contracts.
+6. Verify all four deployed sources independently with Sourcify Exact Match and
+   publicly with BscScan Standard JSON Input.
+7. Set legacy daily APY to zero and seed the old test user
    `0x3FE6f0b8777a7BaAF945ea8FEE6a657f3bd632Ba` with a 10,000 TestUSDT deposit,
    2,000 TestUSDT accumulated profit, zero daily APY, and an expected 12,000
    TestUSDT live balance.
-5. Fund `OldVaultMock` with exactly 12,000 existing TestUSDT.
-6. Deploy a minimal Testnet-only Account Policy mock.
-7. Configure `AVSToken.accountPolicy` to that temporary policy without locking
+8. Fund `OldVaultMock` with exactly 12,000 existing TestUSDT.
+9. Configure `AVSToken.accountPolicy` to that temporary policy without locking
    the Account Policy configuration.
-8. Authorize beneficiary
-   `0x46785c0bcb28c29e0CfBeF23101C98CA8356FC27`.
-9. Deploy Migration against the validated legacy mocks and current AVS Testnet
-   contracts.
-10. Add Migration as an executor in `OldVaultMock`.
-11. Configure `AVSVault.migration` to Migration.
-12. Set `AVSVault.reserveTarget` to at least 12,000 TestUSDT before migration.
-13. Run the complete read-only preflight.
-14. Execute `migrate(oldUser, beneficiary)` only after separate approval of the
+10. Authorize beneficiary
+    `0x46785c0bcb28c29e0CfBeF23101C98CA8356FC27`.
+11. Add Migration as an executor in `OldVaultMock`.
+12. Configure `AVSVault.migration` to Migration.
+13. Set `AVSVault.reserveTarget` to at least 12,000 TestUSDT before migration.
+14. Run the complete read-only preflight.
+15. Execute `migrate(oldUser, beneficiary)` only after separate approval of the
     preflight result.
 
 The current `AVSVault._routeExcessToTrading()` retains funds when
@@ -149,14 +203,12 @@ the exact seeded live balance and Vault funding, beneficiary authorization,
 current AVS supply and quote, unused capital ID, reserve target, zero Migration
 USDT balance, and zero Migration-to-Vault allowance.
 
-## Deliberate stop point
+## Deliberate scope boundary
 
 Phase 4D does not:
 
-- deploy Migration or either legacy mock;
-- configure `AVSVault.migration`;
-- configure `AVSToken.accountPolicy`;
-- transfer TestUSDT on BSC Testnet;
-- mint AVS on BSC Testnet;
-- implement Marketplace or Trading; or
-- authorize any Mainnet or production use.
+- interact with BSC Mainnet or Mainnet USDT;
+- implement Marketplace, Trade Settlement, or Trading;
+- lock AVSToken, AVSVault, or Account Policy;
+- renounce ownership or close Migration; or
+- authorize production use or custody production funds.

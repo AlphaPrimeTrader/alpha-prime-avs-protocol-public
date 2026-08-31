@@ -22,9 +22,7 @@
       "name": "OldLedgerMock",
       "contractIdentifier": "contracts/test/OldLedgerMock.sol:OldLedgerMock",
       "address": "0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F",
-      "constructorArguments": [
-        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"
-      ],
+      "constructorArguments": ["0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"],
       "deploymentTransaction": "0x0259891300d7d8d33efe41ba09d5795a66bdf6f53e874cdd08c0ffdb773d1507",
       "deploymentBlock": 128363096,
       "deployedAt": "2026-08-31T20:58:15.000Z",
@@ -39,7 +37,14 @@
         "sourcifyMatchId": "46959247",
         "sourcifyCreationMatch": "exact_match",
         "sourcifyRuntimeMatch": "exact_match",
-        "bscScanExternalVerificationId": "vqeud5npvvs8amzuhcwrqnfjqfxyexfea6mfvursrnjzpkh4sq"
+        "bscScanExternalVerificationId": "vqeud5npvvs8amzuhcwrqnfjqfxyexfea6mfvursrnjzpkh4sq",
+        "bscScanPublicVerification": {
+          "checkedAt": "2026-08-31T21:24:32.031Z",
+          "apiStatus": "1",
+          "contractName": "OldLedgerMock",
+          "sourceCodePresent": true,
+          "publicCodePage": "https://testnet.bscscan.com/address/0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F#code"
+        }
       }
     },
     "oldVault": {
@@ -65,7 +70,14 @@
         "sourcifyMatchId": "46959252",
         "sourcifyCreationMatch": "exact_match",
         "sourcifyRuntimeMatch": "exact_match",
-        "bscScanExternalVerificationId": "ctnkxibw4y8pbxfeyuzuxnmc124fvvpt7plnsq9e41rsktmmjb"
+        "bscScanExternalVerificationId": "ctnkxibw4y8pbxfeyuzuxnmc124fvvpt7plnsq9e41rsktmmjb",
+        "bscScanPublicVerification": {
+          "checkedAt": "2026-08-31T21:24:32.857Z",
+          "apiStatus": "1",
+          "contractName": "OldVaultMock",
+          "sourceCodePresent": true,
+          "publicCodePage": "https://testnet.bscscan.com/address/0xaC5392753c85925FD96331178a3657C3a0A43242#code"
+        }
       }
     },
     "accountPolicy": {
@@ -82,7 +94,22 @@
       "runtimeBytecodeHash": "0x9ed533e2bc949caae18747ccca786e8612562e0a03ffacaec5eb499ba4174070",
       "gasUsed": "174997",
       "sourceVerification": {
-        "status": "pending"
+        "status": "exact_match",
+        "verifiedAt": "2026-08-31T21:00:39Z",
+        "bscScan": "https://testnet.bscscan.com/address/0xDa45bF8eB3277A6ed919A6ffE7DE69486ebF1AfC#code",
+        "sourcify": "https://repo.sourcify.dev/97/0xDa45bF8eB3277A6ed919A6ffE7DE69486ebF1AfC",
+        "sourcifyVerificationId": "c573d8d4-0b51-4b5f-9529-c1d5e8d66045",
+        "sourcifyMatchId": "46959257",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "abchxeuh8vsdjlgpqqr1q9gpkyd8n8yfampefemu681bw4wkxb",
+        "bscScanPublicVerification": {
+          "checkedAt": "2026-08-31T21:24:33.640Z",
+          "apiStatus": "1",
+          "contractName": "AccountPolicyMock",
+          "sourceCodePresent": true,
+          "publicCodePage": "https://testnet.bscscan.com/address/0xDa45bF8eB3277A6ed919A6ffE7DE69486ebF1AfC#code"
+        }
       }
     },
     "migration": {
@@ -104,13 +131,71 @@
       "runtimeBytecodeHash": "0xbb274f4131a5c363b8c02e1c39e64c931301de41812e2c8291f31601cfc63086",
       "gasUsed": "1041201",
       "sourceVerification": {
-        "status": "pending"
+        "status": "exact_match",
+        "verifiedAt": "2026-08-31T21:07:39Z",
+        "bscScan": "https://testnet.bscscan.com/address/0xd78345844098B11d41F9608bAeA09abf17216A15#code",
+        "sourcify": "https://repo.sourcify.dev/97/0xd78345844098B11d41F9608bAeA09abf17216A15",
+        "sourcifyVerificationId": "1595bb7d-d27b-4992-824a-3d307aef3fde",
+        "sourcifyMatchId": "46959421",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "tash71unxzcmk1pltxn2jc4xug96sh2sblfxmtfnkshmhjmzda",
+        "bscScanPublicVerification": {
+          "checkedAt": "2026-08-31T21:24:35.212Z",
+          "apiStatus": "1",
+          "contractName": "Migration",
+          "sourceCodePresent": true,
+          "publicCodePage": "https://testnet.bscscan.com/address/0xd78345844098B11d41F9608bAeA09abf17216A15#code"
+        }
       }
     }
   },
   "preMigrationTransactions": {
     "oldLedgerVault": "0xdf7a95bdaec7394963c965b544e464110fca8213ffaffd2ad4ec9dc2b381764c"
   },
-  "publicBscScanVerified": false,
-  "migrationExecution": null
+  "publicBscScanVerified": true,
+  "migrationExecution": {
+    "oldUser": "0x3FE6f0b8777a7BaAF945ea8FEE6a657f3bd632Ba",
+    "beneficiary": "0x46785c0bcb28c29e0CfBeF23101C98CA8356FC27",
+    "deposit": "10000000000000000000000",
+    "accumulatedProfit": "2000000000000000000000",
+    "historicalProfitExcluded": "999000000000000000000000",
+    "migratedAmount": "12000000000000000000000",
+    "sharesMinted": "12000000000000000000000",
+    "capitalId": "0x760b224b7af471668b7160ef3fbdff18aa1ee0c385c395b68bc2f5e78d1063b6",
+    "quote": "12000000000000000000000",
+    "transactionHash": "0xd728a77c4048cf3bd9a0c20f3609dfd48cbce1450ffb371964a9fb75eda4048c",
+    "block": 128366014,
+    "gasUsed": "400402",
+    "finalState": {
+      "oldUserBalance": "0",
+      "oldVaultUsdt": "0",
+      "migrationUsdt": "0",
+      "avsVaultUsdt": "12000000000000000000000",
+      "navBefore": "0",
+      "navAfter": "12000000000000000000000",
+      "supplyBefore": "0",
+      "supplyAfter": "12000000000000000000000",
+      "beneficiaryAvs": "12000000000000000000000",
+      "migrationAllowance": "0",
+      "capitalProcessed": true,
+      "currentAVSValue": "1000000000000000000"
+    },
+    "duplicateSimulation": "AlreadyMigrated",
+    "restrictions": {
+      "mainnetInteraction": false,
+      "migrationClosed": false,
+      "configurationLocked": false
+    }
+  },
+  "configurationTransactions": {
+    "dailyApy": "0xf029d48d0b9622caefaaf35413195da468ee81c91aad96b3c5f95557c4f8c0e2",
+    "seedUser": "0x61be0830dee7f694bf9e22ec3a845beaf45d5b98baa5325bf3a4320191bafc3e",
+    "oldVaultFunding": "0x4cd8cb6aaadc46f059d7cdb30684602a0ce60f834a3c4e5b63a84a2495791505",
+    "accountPolicy": "0x18d90da0ef0ddb6c436fbca390d5ebc5acce17fdff9ac391607281ccec3acbdb",
+    "beneficiaryAuthorization": "0xd5cce134c1db92c66bfea2c728ad529c0baa33380be174182c0141a59101318e",
+    "reserveTarget": "0x07204133ef9d6388bdeb5d875a89f452ae027c3c313147c1c189677062cf9662",
+    "migrationExecutor": "0x18921d3d6b5d8dec581d2135a3adb1d940bc9f10ef25952e4c0987c341a3ac07",
+    "avsVaultMigration": "0x5b06059a05a0bf4f86cbbaae635512dbcb0db1d01682292c3de46221d8f96128"
+  }
 }

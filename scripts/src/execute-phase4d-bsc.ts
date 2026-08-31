@@ -21,12 +21,18 @@ if (process.env.PHASE4D_EXECUTE_CONFIRM !== CONFIRMATION) {
 }
 
 type Deployment = {
+  name: string;
   address: string;
   sourceVerification: {
     status: string;
     sourcifyCreationMatch?: string;
     sourcifyRuntimeMatch?: string;
     bscScanExternalVerificationId?: string | null;
+    bscScanPublicVerification?: {
+      apiStatus?: string;
+      contractName?: string;
+      sourceCodePresent?: boolean;
+    };
   };
 };
 type RecordShape = {
@@ -66,7 +72,12 @@ for (const [name, deployment] of Object.entries(record.deployments)) {
     deployment.sourceVerification.status !== "exact_match" ||
     deployment.sourceVerification.sourcifyCreationMatch !== "exact_match" ||
     deployment.sourceVerification.sourcifyRuntimeMatch !== "exact_match" ||
-    !deployment.sourceVerification.bscScanExternalVerificationId
+    !deployment.sourceVerification.bscScanExternalVerificationId ||
+    deployment.sourceVerification.bscScanPublicVerification?.apiStatus !==
+      "1" ||
+    deployment.sourceVerification.bscScanPublicVerification?.contractName !==
+      deployment.name ||
+    !deployment.sourceVerification.bscScanPublicVerification?.sourceCodePresent
   ) {
     throw new Error(`${name} does not have complete exact-match verification.`);
   }

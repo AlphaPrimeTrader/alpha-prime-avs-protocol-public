@@ -26,6 +26,7 @@
     "phase4d:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4d-bsc.ts",
     "phase4d:bsc:execute": "hardhat --network bscTestnet run scripts/src/execute-phase4d-bsc.ts",
     "phase4d:bsc:verify-sources": "hardhat --network bscTestnet run scripts/src/verify-phase4d-sources-bsc.ts",
+    "phase4d:bsc:confirm-public": "hardhat --network bscTestnet run scripts/src/confirm-phase4d-bsc.ts",
     "hardhat": "hardhat",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm -r --filter \"./apps/**\" --filter \"./scripts\" --if-present run typecheck"
