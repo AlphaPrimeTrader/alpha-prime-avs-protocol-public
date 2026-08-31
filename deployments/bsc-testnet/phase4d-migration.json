@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "network": "bscTestnet",
+  "chainId": "97",
+  "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "canonicalContracts": {
+    "testUsdt": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+    "avsToken": "0x2861F3d12082710118391f06F818CA3412ffFE87",
+    "avsLedger": "0x643c16B56f528503FB0f4e3e95E48eBf1D73982e",
+    "avsVault": "0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85"
+  },
+  "deployments": {
+    "oldLedger": {
+      "name": "OldLedgerMock",
+      "contractIdentifier": "contracts/test/OldLedgerMock.sol:OldLedgerMock",
+      "address": "0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"
+      ],
+      "deploymentTransaction": "0x0259891300d7d8d33efe41ba09d5795a66bdf6f53e874cdd08c0ffdb773d1507",
+      "deploymentBlock": 128363096,
+      "deployedAt": "2026-08-31T20:58:15.000Z",
+      "runtimeBytecodeHash": "0x33e4086d55c1e707545a405481782ceac919f7e161c7c1c3a7d359470d53749a",
+      "gasUsed": "466961",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-08-31T21:00:22Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F",
+        "sourcify": "https://repo.sourcify.dev/97/0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F",
+        "sourcifyVerificationId": "3df89a48-9950-4b9e-aa5d-7671903e7725",
+        "sourcifyMatchId": "46959247",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "vqeud5npvvs8amzuhcwrqnfjqfxyexfea6mfvursrnjzpkh4sq"
+      }
+    },
+    "oldVault": {
+      "name": "OldVaultMock",
+      "contractIdentifier": "contracts/test/OldVaultMock.sol:OldVaultMock",
+      "address": "0xaC5392753c85925FD96331178a3657C3a0A43242",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+        "0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F"
+      ],
+      "deploymentTransaction": "0x75d99720d36078252381d697a3798cbdd3a61314b870b818bd7979be39e2cf8f",
+      "deploymentBlock": 128363102,
+      "deployedAt": "2026-08-31T20:58:17.000Z",
+      "runtimeBytecodeHash": "0x6549e13ad7361d826751b8e39b3dbd3901495752cdfac13f8dea0385ac8d00d5",
+      "gasUsed": "461658",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-08-31T21:00:31Z",
+        "bscScan": "https://testnet.bscscan.com//address/0xaC5392753c85925FD96331178a3657C3a0A43242",
+        "sourcify": "https://repo.sourcify.dev/97/0xaC5392753c85925FD96331178a3657C3a0A43242",
+        "sourcifyVerificationId": "0e4cc02a-e9b1-4e08-8f0f-af3a0fab55fd",
+        "sourcifyMatchId": "46959252",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "ctnkxibw4y8pbxfeyuzuxnmc124fvvpt7plnsq9e41rsktmmjb"
+      }
+    },
+    "accountPolicy": {
+      "name": "AccountPolicyMock",
+      "contractIdentifier": "contracts/testnet/AccountPolicyMock.sol:AccountPolicyMock",
+      "address": "0xDa45bF8eB3277A6ed919A6ffE7DE69486ebF1AfC",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x2861F3d12082710118391f06F818CA3412ffFE87"
+      ],
+      "deploymentTransaction": "0x33c4531da2692fb5d6013e8c26735bd5472a55365eb092b4a78eaf3305e2c4c4",
+      "deploymentBlock": 128363112,
+      "deployedAt": "2026-08-31T20:58:22.000Z",
+      "runtimeBytecodeHash": "0x9ed533e2bc949caae18747ccca786e8612562e0a03ffacaec5eb499ba4174070",
+      "gasUsed": "174997",
+      "sourceVerification": {
+        "status": "pending"
+      }
+    },
+    "migration": {
+      "name": "Migration",
+      "contractIdentifier": "contracts/migration/Migration.sol:Migration",
+      "address": "0xd78345844098B11d41F9608bAeA09abf17216A15",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x0b921A0FFDE451e4c589F2B247a3D9323C78bf0F",
+        "0xaC5392753c85925FD96331178a3657C3a0A43242",
+        "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+        "0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85",
+        "0x643c16B56f528503FB0f4e3e95E48eBf1D73982e",
+        "0x2861F3d12082710118391f06F818CA3412ffFE87"
+      ],
+      "deploymentTransaction": "0xa2ce497686d830fe5bd152fd5e60fa5c76ec5190402325c7ca004281dc8ed9ad",
+      "deploymentBlock": 128363121,
+      "deployedAt": "2026-08-31T20:58:26.000Z",
+      "runtimeBytecodeHash": "0xbb274f4131a5c363b8c02e1c39e64c931301de41812e2c8291f31601cfc63086",
+      "gasUsed": "1041201",
+      "sourceVerification": {
+        "status": "pending"
+      }
+    }
+  },
+  "preMigrationTransactions": {
+    "oldLedgerVault": "0xdf7a95bdaec7394963c965b544e464110fca8213ffaffd2ad4ec9dc2b381764c"
+  },
+  "publicBscScanVerified": false,
+  "migrationExecution": null
+}

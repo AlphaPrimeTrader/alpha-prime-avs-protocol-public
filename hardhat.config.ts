@@ -1,16 +1,10 @@
 import hardhatEthers from "@nomicfoundation/hardhat-ethers";
 import hardhatEthersChaiMatchers from "@nomicfoundation/hardhat-ethers-chai-matchers";
 import hardhatMocha from "@nomicfoundation/hardhat-mocha";
-import hardhatVerify from "@nomicfoundation/hardhat-verify";
-import { configVariable, defineConfig } from "hardhat/config";
+import { defineConfig } from "hardhat/config";
 
 export default defineConfig({
-  plugins: [
-    hardhatEthers,
-    hardhatMocha,
-    hardhatEthersChaiMatchers,
-    hardhatVerify,
-  ],
+  plugins: [hardhatEthers, hardhatMocha, hardhatEthersChaiMatchers],
   solidity: {
     version: "0.8.28",
     settings: {
@@ -34,14 +28,6 @@ export default defineConfig({
       accounts: process.env.BSC_TESTNET_DEPLOYER_PRIVATE_KEY
         ? [process.env.BSC_TESTNET_DEPLOYER_PRIVATE_KEY]
         : [],
-    },
-  },
-  verify: {
-    etherscan: {
-      apiKey: configVariable("BSC_SCAN_API_KEY"),
-    },
-    sourcify: {
-      enabled: true,
     },
   },
 });
