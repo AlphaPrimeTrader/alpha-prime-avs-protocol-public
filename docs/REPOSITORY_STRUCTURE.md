@@ -53,18 +53,35 @@ They preserve the Phase 3A separation of Transaction and Evolution authority
 while adding immediate atomic Transaction/Recovery root rotation. This is a
 frozen experimental Testnet checkpoint, not a final product account model.
 
-## Phase 4A Ledger
+## Phase 4A / Phase 4C Ledger
 
 `contracts/ledger/AVSLedger.sol` is the deployed BSC Testnet global accounting
-foundation. It tracks protocol-wide capital, realized profit/loss, and buyback
-reserve state. It does not implement user balances, AVS Token behavior,
-custody, minting, withdrawals, trade verification, or arbitrary economic
-setters.
+foundation. It tracks protocol-wide capital, protocol revenue, realized
+profit/loss, and buyback reserve state. Protocol revenue is a distinct
+Vault-only, replay-protected NAV increase that cannot mint AVS or use the
+trading buyback allocation. The Ledger does not implement user balances, AVS
+Token behavior, custody, minting, withdrawals, trade verification, or arbitrary
+economic setters.
 
 The architecture and fixed-point model are documented in
 `docs/architecture/avs-ledger.md`. The canonical address and exact-match source
 verification are recorded in `deployments/bsc-testnet/avs-ledger.json` and
-`docs/deployments/bsc-testnet-phase-4a.md`.
+`docs/deployments/bsc-testnet-phase-4c.md`. The original Phase 4A address is
+preserved as superseded historical evidence.
+
+## Phase 4C AVS Vault
+
+`contracts/vault/AVSVault.sol` is the validated treasury and deterministic USDT
+router. Its Marketplace revenue path records protocol revenue atomically in the
+Ledger, while Trading returns are physical receipt/routing only. The Vault has
+been deployed as a partially configured BSC Testnet candidate using the verified
+Testnet-only `TestUSDT` dependency. Its AVS Token and AVS Ledger bindings are
+active; Migration, Marketplace, and Trading remain zero, configuration is
+unlocked, its reserve target is zero, and it holds no funds.
+
+`contracts/testnet/TestUSDT.sol` is a plain 18-decimal ERC-20 test asset with
+explicit owner-only minting. It is deployed with zero supply solely for Testnet
+integration and is not production USDT.
 
 ## Phase 4B AVS Token
 
@@ -72,8 +89,8 @@ verification are recorded in `deployments/bsc-testnet/avs-ledger.json` and
 It uses mapping-based permanent authorization, separated Owner, Account Policy,
 and Vault authority, and a hard `20,000,000 AVS` cap. Its architecture is
 documented in `docs/architecture/avs-token.md`. The canonical BSC Testnet
-instance is source-verified but remains unconfigured, unminted, and unbound to
-the Phase 4A Ledger.
+instance is source-verified, bound to the current Vault, still has no Account
+Policy, remains unlocked, and is unminted.
 
 ## Excluded workspace material
 

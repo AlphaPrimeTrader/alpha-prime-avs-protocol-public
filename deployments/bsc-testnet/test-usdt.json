@@ -1,0 +1,59 @@
+{
+  "network": "bscTestnet",
+  "chainId": "97",
+  "contract": "TestUSDT",
+  "classification": "TESTNET TEST ASSET — NOT PRODUCTION USDT",
+  "address": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+  "deploymentTransaction": "0x0509493fbbf771282a3c4675dc34b85be02310b79f347584fe7232d9c2c723a3",
+  "deploymentBlock": 128323619,
+  "deployedAt": "2026-08-31T16:02:10.000Z",
+  "deployer": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "initialOwner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "constructorArguments": ["0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"],
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "runtimeBytecodeHash": "0xfc7ad35d21774bca95105ff1bb8df7aae2dc547ae91b69bd80be02d33d8ee4be",
+  "gasUsed": "562876",
+  "initialState": {
+    "name": "Test USDT",
+    "symbol": "USDT",
+    "decimals": "18",
+    "totalSupply": "0",
+    "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "deployerBalance": "0"
+  },
+  "mint": {
+    "recipient": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "amount": "1000000",
+    "amountRaw": "1000000000000000000000000",
+    "transaction": "0x29d8570aa3a9ba2b927d9587b24ed9f09f2d564f64993f8fc281e571b9e429e6",
+    "block": 128325554,
+    "timestamp": "2026-08-31T16:16:41.000Z",
+    "status": 1,
+    "gasUsed": "70602",
+    "feePath": "legacy-gas-price"
+  },
+  "currentState": {
+    "totalSupply": "1000000000000000000000000",
+    "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "ownerBalance": "1000000000000000000000000",
+    "vaultBalance": "0"
+  },
+  "sourceVerification": {
+    "status": "exact_match",
+    "verifiedAt": "2026-08-31T16:02:29Z",
+    "bscScan": "https://testnet.bscscan.com/address/0x398bc6c1201690ec7cDF632aDc82B805240c3F9a#code",
+    "sourcify": "https://repo.sourcify.dev/97/0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+    "sourcifyVerificationId": "9ab82a67-a0d3-4971-a6cb-c8f8f62d8d51",
+    "sourcifyMatchId": "46950816",
+    "sourcifyCreationMatch": "exact_match",
+    "sourcifyRuntimeMatch": "exact_match",
+    "bscScanExternalVerificationId": "p9hn5e4tmxzqtdlupsbh6y6hfyzv125dw2fh2pjxzaqvsnghjc"
+  }
+}

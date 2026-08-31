@@ -136,10 +136,11 @@ economic setter.
 
 ## BSC Testnet checkpoint
 
-The canonical Testnet `AVSLedger` is deployed at
-`0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` on chain ID `97`.
-Its source is verified as an exact match on BscScan. The complete deployment,
-compiler, transaction, block, initial-state, and validation record is in
+The original Phase 4A Testnet `AVSLedger` was deployed at
+`0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` on chain ID `97`. It is preserved
+as a source-verified historical deployment but is now **SUPERSEDED** by the
+Phase 4C integration revision, which adds the narrowly scoped protocol-revenue
+accounting path. The historical record remains in
 `docs/deployments/bsc-testnet-phase-4a.md`.
 
 The deployed AVS Token, Vault, and Trade Settlement bindings remain

@@ -52,25 +52,30 @@ hiding the algorithms.
 
 ## BSC Testnet checkpoint
 
-| Component                      | Value                                        |
-| ------------------------------ | -------------------------------------------- |
-| Network                        | BSC Testnet                                  |
-| Chain ID                       | `97`                                         |
-| Canonical EntryPoint v0.8      | `0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108` |
-| Phase 3B Factory               | `0xf3b30D7e6EB3639d056c66AABd10F904BA22487A` |
-| Phase 3B Authority             | `0x23026F82317b82283537466d4ba3A5A05F74bb11` |
-| EvolutionController            | `0x9d5d16C84D7E36a1436979fe164Af81D62B59A9e` |
-| Initial bounded implementation | `0x6aCA3dCA40A3d031163686547F42Fe6fb55E8797` |
-| TestReceiver                   | `0x99907924aBC19287E8f1e68b124bDFF31d06563e` |
-| Phase 4A AVSLedger             | `0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` |
-| Phase 4B AVSToken              | `0x2861F3d12082710118391f06F818CA3412ffFE87` |
+| Component                       | Value                                        |
+| ------------------------------- | -------------------------------------------- |
+| Network                         | BSC Testnet                                  |
+| Chain ID                        | `97`                                         |
+| Canonical EntryPoint v0.8       | `0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108` |
+| Phase 3B Factory                | `0xf3b30D7e6EB3639d056c66AABd10F904BA22487A` |
+| Phase 3B Authority              | `0x23026F82317b82283537466d4ba3A5A05F74bb11` |
+| EvolutionController             | `0x9d5d16C84D7E36a1436979fe164Af81D62B59A9e` |
+| Initial bounded implementation  | `0x6aCA3dCA40A3d031163686547F42Fe6fb55E8797` |
+| TestReceiver                    | `0x99907924aBC19287E8f1e68b124bDFF31d06563e` |
+| Phase 4A AVSLedger (superseded) | `0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` |
+| Phase 4C AVSLedger candidate    | `0x643c16B56f528503FB0f4e3e95E48eBf1D73982e` |
+| Phase 4B AVSToken               | `0x2861F3d12082710118391f06F818CA3412ffFE87` |
+| Phase 4C TestUSDT test asset    | `0x398bc6c1201690ec7cDF632aDc82B805240c3F9a` |
+| Phase 4C AVSVault candidate     | `0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85` |
 
 The sanitized deployment and validation records are in
 [`docs/deployments/bsc-testnet-phase-3b.md`](docs/deployments/bsc-testnet-phase-3b.md)
 and
 [`docs/deployments/bsc-testnet-phase-4a.md`](docs/deployments/bsc-testnet-phase-4a.md),
 and
-[`docs/deployments/bsc-testnet-phase-4b.md`](docs/deployments/bsc-testnet-phase-4b.md).
+[`docs/deployments/bsc-testnet-phase-4b.md`](docs/deployments/bsc-testnet-phase-4b.md),
+and
+[`docs/deployments/bsc-testnet-phase-4c.md`](docs/deployments/bsc-testnet-phase-4c.md).
 Historical Phase 1, Phase 2, and Phase 3A records remain unchanged.
 
 ## Security boundaries
@@ -91,8 +96,8 @@ See [`SECURITY.md`](SECURITY.md) and
 ## Repository layout
 
 - `contracts/` — historical account contracts plus the experimental Phase 3A
-  and Phase 3B account contracts, the Phase 4A Ledger, and the Phase 4B AVS
-  Token foundation.
+  and Phase 3B account contracts, the revised Ledger, the Phase 4B AVS Token,
+  the Testnet-only TestUSDT asset, and the Phase 4C Vault.
 - `test/` — Hardhat protocol and adversarial regression tests.
 - `apps/passkey-demo/` — the only canonical browser application.
 - `scripts/src/` — reproducible Testnet deployment and verification scripts.
@@ -123,8 +128,9 @@ explicit Testnet confirmation variable and are not part of ordinary validation.
 
 ## Publication status
 
-This repository records a frozen experimental Testnet account checkpoint plus
-the deployed and source-verified Phase 4A Ledger and Phase 4B AVS Token. The
-Token remains unconfigured, unminted, and unbound. No Mainnet release is
-authorized, and Vault, Account Policy, Trade Settlement, Marketplace, and later
-protocol work remain paused.
+This repository records a frozen experimental Testnet account checkpoint, the
+Phase 4B AVS Token, the revised Phase 4C Ledger, the Testnet-only TestUSDT asset,
+and the Phase 4C Vault candidate. The reviewed core bindings are active, while
+Trade Settlement, Account Policy, Migration, Marketplace, and Trading remain
+pending; no AVS was minted, no TestUSDT entered the Vault, and no protocol funds
+moved. No Mainnet release is authorized.

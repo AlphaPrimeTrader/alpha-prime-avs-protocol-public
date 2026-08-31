@@ -31,6 +31,15 @@ interface IAVSLedger {
         uint256 timestamp;
     }
 
+    struct ProtocolRevenueRecord {
+        bytes32 revenueId;
+        uint256 amount;
+        uint256 totalSupplyAtRecord;
+        uint256 avsValueBefore;
+        uint256 avsValueAfter;
+        uint256 timestamp;
+    }
+
     function ACCOUNTING_SCALE() external view returns (uint256);
 
     function owner() external view returns (address);
@@ -40,6 +49,8 @@ interface IAVSLedger {
     function vault() external view returns (address);
 
     function tradeSettlement() external view returns (address);
+
+    function processedProtocolRevenue(bytes32 revenueId) external view returns (bool);
 
     function totalNetAssets() external view returns (uint256);
 
@@ -71,6 +82,8 @@ interface IAVSLedger {
         uint256 capitalAmount
     ) external returns (uint256 sharesToMint);
 
+    function recordProtocolRevenue(bytes32 revenueId, uint256 amount) external;
+
     function recordTradingSettlement(
         bytes32 settlementId,
         int256 realizedPnL
@@ -83,4 +96,8 @@ interface IAVSLedger {
     function capitalRecord(
         bytes32 capitalId
     ) external view returns (CapitalRecord memory);
+
+    function protocolRevenueRecord(
+        bytes32 revenueId
+    ) external view returns (ProtocolRevenueRecord memory);
 }

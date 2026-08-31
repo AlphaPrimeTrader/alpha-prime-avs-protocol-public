@@ -1,0 +1,90 @@
+{
+  "network": "bscTestnet",
+  "chainId": "97",
+  "contract": "AVSVault",
+  "address": "0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85",
+  "deploymentTransaction": "0xa9fbc45c1264caceb3bf39b407109f1648ce720aea33d0c735d4020a5d8474c2",
+  "deploymentBlock": 128324068,
+  "deployedAt": "2026-08-31T16:05:32.000Z",
+  "deployer": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "initialOwner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "usdt": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+  "constructorArguments": [
+    "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a"
+  ],
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "runtimeBytecodeHash": "0xab870f7b413209ab639c88a106e855655abcb8a6b18a585d1a62b7163d900360",
+  "gasUsed": "1455807",
+  "dependencies": {
+    "avsLedgerCandidate": "0x643c16B56f528503FB0f4e3e95E48eBf1D73982e",
+    "avsToken": "0x2861F3d12082710118391f06F818CA3412ffFE87",
+    "testUsdt": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a"
+  },
+  "initialState": {
+    "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "usdt": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+    "avsToken": "0x0000000000000000000000000000000000000000",
+    "avsLedger": "0x0000000000000000000000000000000000000000",
+    "migration": "0x0000000000000000000000000000000000000000",
+    "marketplace": "0x0000000000000000000000000000000000000000",
+    "tradingContract": "0x0000000000000000000000000000000000000000",
+    "configurationLocked": false,
+    "reserveTarget": "0",
+    "availableMarketLiquidity": "0",
+    "usdtBalance": "0"
+  },
+  "coreBinding": {
+    "status": "partial_core_binding",
+    "transactions": [
+      {
+        "operation": "setAVSToken",
+        "argument": "0x2861F3d12082710118391f06F818CA3412ffFE87",
+        "transaction": "0x0f01005da668a7e425d420ecbc62d4bbe0eeeda83a83fedc2f5e766f0787a270",
+        "block": 128325823,
+        "timestamp": "2026-08-31T16:18:42.000Z",
+        "status": 1,
+        "gasUsed": "60208"
+      },
+      {
+        "operation": "setAVSLedger",
+        "argument": "0x643c16B56f528503FB0f4e3e95E48eBf1D73982e",
+        "transaction": "0x065133de9a2447bebcd926be9dd8c0dcd3d5c1689b909422c6bfc6dc22251ffe",
+        "block": 128325837,
+        "timestamp": "2026-08-31T16:18:48.000Z",
+        "status": 1,
+        "gasUsed": "60164"
+      }
+    ],
+    "currentState": {
+      "usdt": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+      "avsToken": "0x2861F3d12082710118391f06F818CA3412ffFE87",
+      "avsLedger": "0x643c16B56f528503FB0f4e3e95E48eBf1D73982e",
+      "migration": "0x0000000000000000000000000000000000000000",
+      "marketplace": "0x0000000000000000000000000000000000000000",
+      "tradingContract": "0x0000000000000000000000000000000000000000",
+      "configurationLocked": false,
+      "reserveTarget": "0",
+      "availableMarketLiquidity": "0",
+      "usdtBalance": "0"
+    }
+  },
+  "sourceVerification": {
+    "status": "exact_match",
+    "verifiedAt": "2026-08-31T16:06:08Z",
+    "bscScan": "https://testnet.bscscan.com/address/0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85#code",
+    "sourcify": "https://repo.sourcify.dev/97/0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85",
+    "sourcifyVerificationId": "80f37b1a-f7fa-4c69-9c12-1fd5bfba3527",
+    "sourcifyMatchId": "46950833",
+    "sourcifyCreationMatch": "exact_match",
+    "sourcifyRuntimeMatch": "exact_match",
+    "bscScanExternalVerificationId": "45akechszagxkttexqbrnzke6zns8gmdzpfrwuwec8mupgaax1"
+  }
+}

@@ -1,11 +1,11 @@
 {
   "network": "bscTestnet",
-  "chainId": 97,
+  "chainId": "97",
   "contract": "AVSLedger",
-  "address": "0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04",
-  "deploymentTransaction": "0x8e2323f3584a7f790ee3f41c730bd0e3fca04944caeb1eb1e3b2e5b11b2718b7",
-  "deploymentBlock": 128172839,
-  "deployedAt": "2026-08-30T21:11:18Z",
+  "address": "0x643c16B56f528503FB0f4e3e95E48eBf1D73982e",
+  "deploymentTransaction": "0x5ce7d9d3e9cf7a3342af97ef6b7d35fc1b22524091d1f894f826064b82d15931",
+  "deploymentBlock": 128319492,
+  "deployedAt": "2026-08-31T15:31:12.000Z",
   "deployer": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
   "initialOwner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
   "constructorArguments": ["0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"],
@@ -17,11 +17,65 @@
     },
     "evmVersion": "cancun"
   },
-  "runtimeBytecodeHash": "0xe4ea7c783c5a5558d6b89a2392473df58419a1bb170e1e4f7ff2880119be6329",
+  "runtimeBytecodeHash": "0x7710e4e11c916a5e7e9510f480e7aa292c02bfcbb99b16d8bdfe39af6ae3d7e6",
+  "gasUsed": "1484144",
+  "supersedes": {
+    "address": "0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04",
+    "reason": "Protocol revenue accounting path added before Vault integration."
+  },
+  "initialState": {
+    "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "avsToken": "0x0000000000000000000000000000000000000000",
+    "vault": "0x0000000000000000000000000000000000000000",
+    "tradeSettlement": "0x0000000000000000000000000000000000000000",
+    "totalNetAssets": "0",
+    "totalGrossProfit": "0",
+    "totalLoss": "0",
+    "totalBuybackAllocated": "0",
+    "buybackReserve": "0",
+    "settlementCount": "0",
+    "currentAVSValue": "1000000000000000000"
+  },
+  "coreBinding": {
+    "status": "partial_core_binding",
+    "transactions": [
+      {
+        "operation": "bindAVSToken",
+        "argument": "0x2861F3d12082710118391f06F818CA3412ffFE87",
+        "transaction": "0x05cbcacfe234df338c3a2ee63b7cae6f25b6a8a6e1abe3166c84dad90db0e419",
+        "block": 128325782,
+        "timestamp": "2026-08-31T16:18:23.000Z",
+        "status": 1,
+        "gasUsed": "58193"
+      },
+      {
+        "operation": "configureVault",
+        "argument": "0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85",
+        "transaction": "0xac88fd14ba6f15d8d9e47327caa978b3b8bdf55dfc2ab4b2f10aa6a12839b6f4",
+        "block": 128325796,
+        "timestamp": "2026-08-31T16:18:29.000Z",
+        "status": 1,
+        "gasUsed": "50074"
+      }
+    ],
+    "currentState": {
+      "avsToken": "0x2861F3d12082710118391f06F818CA3412ffFE87",
+      "vault": "0x02fc1Ca3d9647850982f60b1a61C62dC2E078B85",
+      "tradeSettlement": "0x0000000000000000000000000000000000000000",
+      "totalNetAssets": "0",
+      "totalSupply": "0",
+      "currentAVSValue": "1000000000000000000"
+    }
+  },
   "sourceVerification": {
     "status": "exact_match",
-    "verifiedAt": "2026-08-30T21:13:02Z",
-    "bscScan": "https://testnet.bscscan.com/address/0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04#code",
-    "sourcifyMatchId": "46918613"
+    "verifiedAt": "2026-08-31T15:32:12Z",
+    "bscScan": "https://testnet.bscscan.com/address/0x643c16B56f528503FB0f4e3e95E48eBf1D73982e#code",
+    "sourcify": "https://repo.sourcify.dev/97/0x643c16B56f528503FB0f4e3e95E48eBf1D73982e",
+    "sourcifyVerificationId": "80f2bfa4-b04b-4963-8a95-9737f0e75643",
+    "sourcifyMatchId": "46949927",
+    "sourcifyCreationMatch": "exact_match",
+    "sourcifyRuntimeMatch": "exact_match",
+    "bscScanExternalVerificationId": "brsjjxkip8garytvwpexna8ilbjslfrvde74wbbrtktwdzktjr"
   }
 }

@@ -35,9 +35,13 @@ contract AVSLedger is IAVSLedger {
 
     mapping(bytes32 capitalId => bool) public processedCapitalInflow;
     mapping(bytes32 settlementId => bool) public processedSettlement;
+    mapping(bytes32 revenueId => bool)
+        public override processedProtocolRevenue;
 
     mapping(bytes32 capitalId => CapitalRecord) private _capitalRecords;
     mapping(bytes32 settlementId => SettlementRecord) private _settlementRecords;
+    mapping(bytes32 revenueId => ProtocolRevenueRecord)
+        private _protocolRevenueRecords;
     uint256 public settlementCount;
 
     event AVSTokenBound(
@@ -61,6 +65,14 @@ contract AVSLedger is IAVSLedger {
         uint256 buybackAllocation,
         int256 netEconomicImpact,
         uint256 totalSupplyAtSettlement,
+        uint256 avsValueBefore,
+        uint256 avsValueAfter,
+        uint256 timestamp
+    );
+    event ProtocolRevenueRecorded(
+        bytes32 indexed revenueId,
+        uint256 amount,
+        uint256 totalSupplyAtRecord,
         uint256 avsValueBefore,
         uint256 avsValueAfter,
         uint256 timestamp
@@ -247,6 +259,43 @@ contract AVSLedger is IAVSLedger {
         );
     }
 
+    function recordProtocolRevenue(
+        bytes32 revenueId,
+        uint256 amount
+    ) external onlyVault {
+        if (avsToken == address(0)) revert AVSTokenNotBound();
+        if (revenueId == bytes32(0)) revert InvalidIdentifier();
+        if (amount == 0) revert InvalidAmount();
+        if (processedProtocolRevenue[revenueId]) {
+            revert AlreadyProcessed(revenueId);
+        }
+
+        uint256 supply = _avsTotalSupply();
+        if (supply == 0) revert NoActiveEconomicSupply();
+        uint256 valueBefore = _avsValueForSupply(supply);
+        processedProtocolRevenue[revenueId] = true;
+        totalNetAssets = _add(totalNetAssets, amount);
+        uint256 valueAfter = _avsValueForSupply(supply);
+
+        _protocolRevenueRecords[revenueId] = ProtocolRevenueRecord({
+            revenueId: revenueId,
+            amount: amount,
+            totalSupplyAtRecord: supply,
+            avsValueBefore: valueBefore,
+            avsValueAfter: valueAfter,
+            timestamp: block.timestamp
+        });
+
+        emit ProtocolRevenueRecorded(
+            revenueId,
+            amount,
+            supply,
+            valueBefore,
+            valueAfter,
+            block.timestamp
+        );
+    }
+
     function recordTradingSettlement(
         bytes32 settlementId,
         int256 realizedPnL
@@ -328,6 +377,12 @@ contract AVSLedger is IAVSLedger {
         bytes32 capitalId
     ) external view override returns (CapitalRecord memory) {
         return _capitalRecords[capitalId];
+    }
+
+    function protocolRevenueRecord(
+        bytes32 revenueId
+    ) external view override returns (ProtocolRevenueRecord memory) {
+        return _protocolRevenueRecords[revenueId];
     }
 
     function _avsTotalSupply() internal view returns (uint256) {

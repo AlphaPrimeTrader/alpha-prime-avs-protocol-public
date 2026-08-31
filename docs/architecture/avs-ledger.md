@@ -2,7 +2,8 @@
 
 ## Status
 
-Phase 4A is deployed and source-verified on BSC Testnet only. It remains
+The Phase 4C integration revision is deployed and source-verified on BSC
+Testnet only. The original Phase 4A deployment is superseded. Both remain
 unaudited and must not be used for production accounting or funds.
 
 `AVSLedger` is the global economic accounting book for the future AVS protocol.
@@ -27,13 +28,13 @@ must equal exactly 18.
 
 ## Global state
 
-| State | Meaning |
-| --- | --- |
-| `totalNetAssets` | Capital plus AVS-attributable trading performance, excluding the buyback reserve |
-| `totalGrossProfit` | Lifetime gross positive realized PnL before buyback allocation |
-| `totalLoss` | Cumulative absolute negative realized PnL |
-| `totalBuybackAllocated` | Lifetime amount allocated to the buyback reserve |
-| `buybackReserve` | Current accounting reserve available for future Marketplace use |
+| State                   | Meaning                                                                          |
+| ----------------------- | -------------------------------------------------------------------------------- |
+| `totalNetAssets`        | Capital plus AVS-attributable trading performance, excluding the buyback reserve |
+| `totalGrossProfit`      | Lifetime gross positive realized PnL before buyback allocation                   |
+| `totalLoss`             | Cumulative absolute negative realized PnL                                        |
+| `totalBuybackAllocated` | Lifetime amount allocated to the buyback reserve                                 |
+| `buybackReserve`        | Current accounting reserve available for future Marketplace use                  |
 
 All values begin at zero. If AVS supply is zero, the accounting value is
 the genesis value of `1e18`, representing 1 USDT per AVS.
@@ -51,11 +52,11 @@ not implicitly granted ownership or configuration authority. The configured
 owner is held in publicly readable storage and has configuration authority
 only; it cannot mutate economic values.
 
-| Binding | Policy |
-| --- | --- |
-| AVS Token | Owner-only, deployed-contract and readable metadata/supply validation, exactly 18 decimals, one-time, permanently locked |
-| Vault | Owner-only, deployed-contract validation, one-time, permanently locked |
-| Trade Settlement | Owner-only, deployed-contract validation, one-time, permanently locked |
+| Binding          | Policy                                                                                                                   |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| AVS Token        | Owner-only, deployed-contract and readable metadata/supply validation, exactly 18 decimals, one-time, permanently locked |
+| Vault            | Owner-only, deployed-contract validation, one-time, permanently locked                                                   |
+| Trade Settlement | Owner-only, deployed-contract validation, one-time, permanently locked                                                   |
 
 No migration setter, generic writer role, arbitrary accounting setter, or
 economic emergency override exists.
@@ -132,6 +133,32 @@ If supply is positive while `totalNetAssets` is zero, `currentAVSValue()`
 returns zero. Both capital quote and capital recording revert with
 `ZeroNAVWithExistingSupply`; recapitalization is not implemented in Phase 4A.
 
+## Protocol revenue
+
+Only the configured Vault may call:
+
+```text
+recordProtocolRevenue(revenueId, amount)
+```
+
+This path is for real Marketplace or future protocol revenue. It is distinct
+from capital inflow and trading settlement:
+
+- `totalNetAssets` increases by exactly `amount`;
+- no AVS shares are quoted or minted;
+- `totalGrossProfit`, `totalLoss`, `totalBuybackAllocated`, and
+  `buybackReserve` do not change;
+- the trading 10% buyback allocation is not applied.
+
+The AVS Token must be bound and its supply must be positive before protocol
+revenue can be recorded. This prevents pre-supply revenue from being inherited
+by the first later capital depositor. Revenue IDs are non-zero and one-use, and
+amounts must be positive.
+
+Each record stores the revenue ID, amount, AVS supply at the record, AVS value
+before and after, and timestamp. The replay marker, accounting update, record,
+and event are one atomic Ledger operation.
+
 ## Trading settlement
 
 Only the configured Trade Settlement source may call:
@@ -200,21 +227,29 @@ Every accepted trading settlement stores:
 The record cannot be replaced because duplicate settlement IDs revert.
 Explorer-ready events mirror these accounting fields.
 
+Every accepted protocol-revenue record stores:
+
+- revenue ID;
+- revenue amount;
+- AVS supply at the record;
+- AVS value before and after;
+- block timestamp.
+
 ## Authorization matrix
 
-| Caller | Allowed writes |
-| --- | --- |
-| Current non-zero owner | Bind AVS Token, Vault, and Trade Settlement once; renounce only after all three bindings |
-| Configured Vault | Record capital inflow only |
-| Configured Trade Settlement | Record realized trading PnL only |
-| Everyone | Public reads only |
+| Caller                      | Allowed writes                                                                           |
+| --------------------------- | ---------------------------------------------------------------------------------------- |
+| Current non-zero owner      | Bind AVS Token, Vault, and Trade Settlement once; renounce only after all three bindings |
+| Configured Vault            | Record capital inflow and protocol revenue only                                          |
+| Configured Trade Settlement | Record realized trading PnL only                                                         |
+| Everyone                    | Public reads only                                                                        |
 
 No caller can set AVS value, net assets, profit, loss, or buyback reserve
 directly.
 
 ## Phase boundary
 
-Phase 4A does not implement the AVS Token, Vault, Issuer, Marketplace, trade
-execution, exchange verification, oracle, paymaster, withdrawals, redemption,
-Smart Account changes, or Mainnet behavior. The canonical Testnet Ledger is
-recorded in `deployments/bsc-testnet/avs-ledger.json`.
+The Ledger does not implement the AVS Token, Vault custody, Issuer, Marketplace,
+trade execution, exchange verification, oracle, paymaster, withdrawals,
+redemption, Smart Account changes, or Mainnet behavior. The current Testnet
+Ledger candidate is recorded in `deployments/bsc-testnet/avs-ledger.json`.

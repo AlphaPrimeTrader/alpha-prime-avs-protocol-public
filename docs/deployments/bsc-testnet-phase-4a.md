@@ -2,25 +2,30 @@
 
 ## Status
 
-**DEPLOYED AND SOURCE-VERIFIED — EXPERIMENTAL BSC TESTNET ONLY**
+**SUPERSEDED — HISTORICAL EXPERIMENTAL BSC TESTNET DEPLOYMENT**
 
-This record identifies the canonical Phase 4A `AVSLedger` deployment for later
-Testnet AVS Token, Vault, and Trade Settlement integration. It is unaudited,
-not Mainnet-ready, and must not be used for production funds.
+This record preserves the original Phase 4A `AVSLedger` deployment. It was
+superseded by the Phase 4C integration revision because the protocol-revenue
+accounting path was added before Vault integration. The deployment is not
+deleted or modified on-chain and remains historical evidence.
+
+The current unconfigured Testnet Ledger candidate is
+`0x643c16B56f528503FB0f4e3e95E48eBf1D73982e`. Its deployment record is in
+[`bsc-testnet-phase-4c.md`](bsc-testnet-phase-4c.md).
 
 ## Network and deployment
 
-| Item | Verified value |
-| --- | --- |
-| Network | BNB Smart Chain Testnet |
-| Chain ID | `97` |
-| AVSLedger | `0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` |
-| Deployment transaction | `0x8e2323f3584a7f790ee3f41c730bd0e3fca04944caeb1eb1e3b2e5b11b2718b7` |
-| Deployment block | `128172839` |
-| Deployment time | `2026-08-30T21:11:18Z` |
-| Deployer | `0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9` |
-| Explicit `initialOwner` | `0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9` |
-| Runtime bytecode hash | `0xe4ea7c783c5a5558d6b89a2392473df58419a1bb170e1e4f7ff2880119be6329` |
+| Item                    | Verified value                                                       |
+| ----------------------- | -------------------------------------------------------------------- |
+| Network                 | BNB Smart Chain Testnet                                              |
+| Chain ID                | `97`                                                                 |
+| AVSLedger               | `0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04`                         |
+| Deployment transaction  | `0x8e2323f3584a7f790ee3f41c730bd0e3fca04944caeb1eb1e3b2e5b11b2718b7` |
+| Deployment block        | `128172839`                                                          |
+| Deployment time         | `2026-08-30T21:11:18Z`                                               |
+| Deployer                | `0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9`                         |
+| Explicit `initialOwner` | `0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9`                         |
+| Runtime bytecode hash   | `0xe4ea7c783c5a5558d6b89a2392473df58419a1bb170e1e4f7ff2880119be6329` |
 
 The Testnet deployer and `initialOwner` intentionally use the same approved
 project test wallet. Ownership was still passed explicitly to
@@ -29,15 +34,15 @@ from `msg.sender`.
 
 ## Compiler and source verification
 
-| Item | Verified value |
-| --- | --- |
-| Solidity | `0.8.28+commit.7893614a` |
-| Optimizer | enabled, `200` runs |
-| EVM version | `cancun` |
-| Sourcify creation match | exact match |
-| Sourcify runtime match | exact match |
-| BscScan | Source Code Verified — Exact Match |
-| Verification time | `2026-08-30T21:13:02Z` |
+| Item                    | Verified value                     |
+| ----------------------- | ---------------------------------- |
+| Solidity                | `0.8.28+commit.7893614a`           |
+| Optimizer               | enabled, `200` runs                |
+| EVM version             | `cancun`                           |
+| Sourcify creation match | exact match                        |
+| Sourcify runtime match  | exact match                        |
+| BscScan                 | Source Code Verified — Exact Match |
+| Verification time       | `2026-08-30T21:13:02Z`             |
 
 Verified explorer:
 
@@ -50,19 +55,19 @@ compiler settings, ABI, bytecode, and ABI-encoded constructor argument.
 
 Direct reads after deployment returned:
 
-| State | Value |
-| --- | --- |
-| `owner` | `0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9` |
-| `avsToken` | `address(0)` |
-| `vault` | `address(0)` |
-| `tradeSettlement` | `address(0)` |
-| `totalNetAssets` | `0` |
-| `totalGrossProfit` | `0` |
-| `totalLoss` | `0` |
-| `totalBuybackAllocated` | `0` |
-| `buybackReserve` | `0` |
-| `settlementCount` | `0` |
-| `currentAVSValue()` | `1e18` |
+| State                   | Value                                        |
+| ----------------------- | -------------------------------------------- |
+| `owner`                 | `0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9` |
+| `avsToken`              | `address(0)`                                 |
+| `vault`                 | `address(0)`                                 |
+| `tradeSettlement`       | `address(0)`                                 |
+| `totalNetAssets`        | `0`                                          |
+| `totalGrossProfit`      | `0`                                          |
+| `totalLoss`             | `0`                                          |
+| `totalBuybackAllocated` | `0`                                          |
+| `buybackReserve`        | `0`                                          |
+| `settlementCount`       | `0`                                          |
+| `currentAVSValue()`     | `1e18`                                       |
 
 Direct economic-write calls from the deployer EOA reverted because it is
 neither the configured Vault nor the configured Trade Settlement source.

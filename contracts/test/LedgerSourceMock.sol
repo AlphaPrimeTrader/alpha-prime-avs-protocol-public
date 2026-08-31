@@ -21,6 +21,14 @@ contract LedgerSourceMock {
             );
     }
 
+    function recordProtocolRevenue(
+        address ledger,
+        bytes32 revenueId,
+        uint256 amount
+    ) external {
+        IAVSLedger(ledger).recordProtocolRevenue(revenueId, amount);
+    }
+
     function recordTradingSettlement(
         address ledger,
         bytes32 settlementId,

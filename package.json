@@ -20,6 +20,9 @@
     "phase4b:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4b-bsc.ts",
     "phase4b:bsc:verify": "hardhat --network bscTestnet run scripts/src/verify-phase4b-bsc.ts",
     "phase4b:local:validate": "hardhat run scripts/src/validate-phase4b-local.ts",
+    "phase4c:ledger:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4c-ledger-bsc.ts",
+    "phase4c:test-usdt:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4c-test-usdt-bsc.ts",
+    "phase4c:vault:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4c-vault-bsc.ts",
     "hardhat": "hardhat",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm -r --filter \"./apps/**\" --filter \"./scripts\" --if-present run typecheck"
