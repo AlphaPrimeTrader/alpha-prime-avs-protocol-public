@@ -1,0 +1,1 @@
+- [Migration deployment gate](migration-deployment-gate.md) — never deploy Phase 4D until the real legacy ABI and withdrawal authorization are independently verified.

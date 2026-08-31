@@ -17,12 +17,14 @@ on-chain Smart Accounts and Passkey authorization.
 - Phase 3B atomic Recovery root rotation: **PASS — EXPERIMENTAL**
 - Phase 4A AVS Ledger foundation: **PASS — BSC TESTNET VERIFIED**
 - Phase 4B AVS Token foundation: **PASS — BSC TESTNET VERIFIED**
+- Phase 4C AVS Vault foundation: **PASS — BSC TESTNET CORE BINDINGS**
+- Phase 4D atomic legacy migration: **PASS — LOCAL ONLY**
 - Same-account-address Recovery: **PASS ON BSC TESTNET**
 - Evolution authority separation: **PASS**
 - BSC Testnet deployment and verification: **PASS**
 - Mainnet deployment: **NOT STARTED**
 - Production security audit: **NOT COMPLETED**
-- Vault, Paymaster, Pools, Shares, and Marketplace: **NOT IMPLEMENTED**
+- Paymaster, Pools, Marketplace, and Trading: **NOT IMPLEMENTED**
 
 This checkpoint includes the frozen Phase 3B account deployment, the canonical
 Phase 4A BSC Testnet Ledger, and the unconfigured canonical Phase 4B BSC
@@ -78,6 +80,10 @@ and
 [`docs/deployments/bsc-testnet-phase-4c.md`](docs/deployments/bsc-testnet-phase-4c.md).
 Historical Phase 1, Phase 2, and Phase 3A records remain unchanged.
 
+The local-only Phase 4D migration design and validation boundary are documented
+in
+[`docs/phases/phase-04d-migration.md`](docs/phases/phase-04d-migration.md).
+
 ## Security boundaries
 
 1. User financial authorization is enforced on-chain.
@@ -97,7 +103,8 @@ See [`SECURITY.md`](SECURITY.md) and
 
 - `contracts/` — historical account contracts plus the experimental Phase 3A
   and Phase 3B account contracts, the revised Ledger, the Phase 4B AVS Token,
-  the Testnet-only TestUSDT asset, and the Phase 4C Vault.
+  the Testnet-only TestUSDT asset, the Phase 4C Vault, and the local-only Phase
+  4D Migration bridge.
 - `test/` — Hardhat protocol and adversarial regression tests.
 - `apps/passkey-demo/` — the only canonical browser application.
 - `scripts/src/` — reproducible Testnet deployment and verification scripts.
@@ -130,7 +137,9 @@ explicit Testnet confirmation variable and are not part of ordinary validation.
 
 This repository records a frozen experimental Testnet account checkpoint, the
 Phase 4B AVS Token, the revised Phase 4C Ledger, the Testnet-only TestUSDT asset,
-and the Phase 4C Vault candidate. The reviewed core bindings are active, while
-Trade Settlement, Account Policy, Migration, Marketplace, and Trading remain
-pending; no AVS was minted, no TestUSDT entered the Vault, and no protocol funds
-moved. No Mainnet release is authorized.
+and the Phase 4C Vault candidate. Phase 4D Migration is implemented and tested
+locally but is not deployed or configured. The reviewed core bindings are
+active, while Trade Settlement, Account Policy, Migration, Marketplace, and
+Trading remain unconfigured on BSC Testnet; no AVS was minted, no TestUSDT
+entered the Vault, and no protocol funds moved. No Mainnet release is
+authorized.

@@ -6,22 +6,26 @@ application code, tests, documentation, and reproducible tooling.
 
 ## Included
 
-| Path                             | Purpose                                                                                                                                                                                       |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `contracts/`                     | AVS Smart Account, Phase 3A security-kernel, Factory, test receiver, and test-token contracts.                                                                                                |
-| `contracts/accounts/interfaces/` | Public Phase 3A and experimental Phase 3B Authority, Kernel, and EvolutionController interfaces.                                                                                              |
-| `contracts/ledger/`              | Phase 4A global economic Ledger and its narrow public interface.                                                                                                                              |
-| `contracts/token/`               | Phase 4B restricted AVS share token, deployed unconfigured on BSC Testnet.                                                                                                                    |
-| `test/`                          | Phase 1 foundation tests, Phase 2 Passkey/UserOperation tests, Phase 3A security-kernel tests, Phase 3B Recovery tests, Phase 4A Ledger tests, Phase 4B Token tests, and EntryPoint fixtures. |
-| `test/phase3a/`                  | Phase 3A authorization, evolution, boundary, and hostile-implementation tests.                                                                                                                |
-| `test/phase3b/`                  | Atomic Transaction/Recovery root rotation and authority-boundary tests.                                                                                                                       |
-| `test/ledger/`                   | Phase 4A economic accounting, authorization, precision, and boundary tests.                                                                                                                   |
-| `test/token/`                    | Phase 4B restricted-token authority, supply, and ERC-20 boundary tests.                                                                                                                       |
-| `apps/passkey-demo/`             | The only canonical browser application for the Phase 3A Passkey and Phase 3B atomic recovery flows.                                                                                           |
-| `scripts/src/`                   | Reproducible Phase 2, Phase 3B, Phase 4A, and Phase 4B deployment and verification scripts, plus local Phase 4B validation.                                                                   |
-| `docs/architecture/`             | Phase 3A/3B account-security, Phase 4A Ledger, and Phase 4B Token architecture.                                                                                                               |
-| `docs/`                          | Phase history, deployment record, repository structure, and release notes.                                                                                                                    |
-| Root configuration               | Hardhat, TypeScript, pnpm workspace, and package-locking configuration required to build and test the public source.                                                                          |
+| Path                             | Purpose                                                                                                                     |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `contracts/`                     | AVS Smart Account, Phase 3A security-kernel, Factory, test receiver, and test-token contracts.                              |
+| `contracts/accounts/interfaces/` | Public Phase 3A and experimental Phase 3B Authority, Kernel, and EvolutionController interfaces.                            |
+| `contracts/ledger/`              | Phase 4A global economic Ledger and its narrow public interface.                                                            |
+| `contracts/token/`               | Phase 4B restricted AVS share token, deployed unconfigured on BSC Testnet.                                                  |
+| `contracts/vault/`               | Phase 4C treasury and deterministic USDT router.                                                                            |
+| `contracts/migration/`           | Local-only Phase 4D atomic legacy migration bridge and dependency interfaces.                                               |
+| `test/`                          | Historical protocol regressions plus Phase 4A Ledger, Phase 4B Token, Phase 4C Vault, and Phase 4D Migration tests.         |
+| `test/phase3a/`                  | Phase 3A authorization, evolution, boundary, and hostile-implementation tests.                                              |
+| `test/phase3b/`                  | Atomic Transaction/Recovery root rotation and authority-boundary tests.                                                     |
+| `test/ledger/`                   | Phase 4A economic accounting, authorization, precision, and boundary tests.                                                 |
+| `test/token/`                    | Phase 4B restricted-token authority, supply, and ERC-20 boundary tests.                                                     |
+| `test/vault/`                    | Phase 4C custody, routing, accounting, minting, and rollback tests.                                                         |
+| `test/migration/`                | Phase 4D full-balance migration, authorization, supply, receipt, replay, reentrancy, and atomic rollback tests.             |
+| `apps/passkey-demo/`             | The only canonical browser application for the Phase 3A Passkey and Phase 3B atomic recovery flows.                         |
+| `scripts/src/`                   | Reproducible Phase 2, Phase 3B, Phase 4A, and Phase 4B deployment and verification scripts, plus local Phase 4B validation. |
+| `docs/architecture/`             | Phase 3A/3B account-security, Phase 4A Ledger, and Phase 4B Token architecture.                                             |
+| `docs/`                          | Phase history, deployment record, repository structure, and release notes.                                                  |
+| Root configuration               | Hardhat, TypeScript, pnpm workspace, and package-locking configuration required to build and test the public source.        |
 
 ## Canonical reference application
 
@@ -92,6 +96,19 @@ documented in `docs/architecture/avs-token.md`. The canonical BSC Testnet
 instance is source-verified, bound to the current Vault, still has no Account
 Policy, remains unlocked, and is unminted.
 
+## Phase 4D Migration
+
+`contracts/migration/Migration.sol` is a local-only, owner-executed bridge for a
+legacy user's full live balance. It checks beneficiary authorization, remaining
+AVS supply, deterministic capital-ID uniqueness, actual USDT receipt, and exact
+AVS shares before committing the one-time migrated marker. Its legacy Ledger and
+Vault mocks are testing-only and are not deployment candidates.
+
+The flow and deliberate deployment stop point are documented in
+`docs/phases/phase-04d-migration.md`. Migration is not deployed, the live Vault
+Migration address remains zero, the live Token Account Policy remains zero, and
+no TestUSDT or AVS moved for Phase 4D.
+
 ## Excluded workspace material
 
 The following paths are intentionally not part of the public repository:
@@ -114,7 +131,7 @@ An independent developer should be able to use the included root
 configuration to:
 
 1. Compile the contracts.
-2. Run the complete historical suite plus Phase 4A and local Phase 4B tests.
+2. Run the complete historical suite through local Phase 4D tests.
 3. Typecheck the standalone demo and deployment scripts.
 4. Build the standalone Passkey demo.
 5. Inspect the documented BSC Testnet deployment and verification scripts.
@@ -136,5 +153,8 @@ public source files.
 - Phase 4B adds an unaudited restricted AVS Token foundation and its
   unconfigured BSC Testnet deployment; it does not alter the deployed Phase 4A
   Ledger.
-- Vault, Issuer, Paymaster, Pools, Marketplace, Mainnet, and production custody
-  remain outside this checkpoint.
+- Phase 4C adds the BSC Testnet Vault candidate and reviewed core bindings.
+- Phase 4D adds a local-only migration implementation without any deployment,
+  live configuration, TestUSDT movement, or AVS minting.
+- Issuer, Paymaster, Pools, Marketplace, Trading, Mainnet, and production
+  custody remain outside this checkpoint.
