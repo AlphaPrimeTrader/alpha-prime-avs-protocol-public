@@ -14,7 +14,7 @@ contract OldVaultMock is ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable USDT;
-    ILegacyLedger public immutable oldLedger;
+    ILegacyLedger public immutable ledger;
     address public owner;
     mapping(address executor => bool) public isExecutor;
 
@@ -48,14 +48,14 @@ contract OldVaultMock is ReentrancyGuard {
     constructor(
         address initialOwner,
         address usdt,
-        address ledger
+        address ledgerAddress
     ) {
         if (initialOwner == address(0)) revert InvalidOwner();
         _requireContract(usdt);
-        _requireContract(ledger);
+        _requireContract(ledgerAddress);
         owner = initialOwner;
         USDT = IERC20(usdt);
-        oldLedger = ILegacyLedger(ledger);
+        ledger = ILegacyLedger(ledgerAddress);
     }
 
     function setExecutor(
@@ -82,7 +82,7 @@ contract OldVaultMock is ReentrancyGuard {
             revert InsufficientBalance(available, amount);
         }
 
-        oldLedger.debit(oldUser, amount);
+        ledger.debit(oldUser, amount);
         USDT.safeTransfer(recipient, amount);
         emit Withdrawn(oldUser, recipient, amount);
     }

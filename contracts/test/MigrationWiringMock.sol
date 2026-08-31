@@ -7,20 +7,20 @@ pragma solidity ^0.8.28;
  */
 contract MigrationWiringMock {
     address public USDT;
-    address public oldLedger;
+    address public ledger;
     address public vault;
     address public avsLedger;
     address public avsToken;
 
     function configure(
         address usdt_,
-        address oldLedger_,
+        address ledger_,
         address vault_,
         address avsLedger_,
         address avsToken_
     ) external {
         USDT = usdt_;
-        oldLedger = oldLedger_;
+        ledger = ledger_;
         vault = vault_;
         avsLedger = avsLedger_;
         avsToken = avsToken_;

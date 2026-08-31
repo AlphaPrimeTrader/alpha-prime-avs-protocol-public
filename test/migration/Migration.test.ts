@@ -490,6 +490,15 @@ describe("Migration", function () {
       "address",
       "address",
     ]);
+    const oldVaultFunctionNames = system.oldVault.interface.fragments
+      .filter((fragment) => fragment.type === "function")
+      .map((fragment) => fragment.name);
+    expect(oldVaultFunctionNames).to.include.members([
+      "USDT",
+      "ledger",
+      "withdraw",
+    ]);
+    expect(oldVaultFunctionNames).to.not.include("oldLedger");
     expect(await system.migration.owner()).to.equal(await owner.getAddress());
   });
 

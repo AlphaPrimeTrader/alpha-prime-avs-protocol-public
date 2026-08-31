@@ -37,7 +37,7 @@ Because every protocol dependency is immutable, construction validates both
 deployed bytecode and every relationship exposed by the current public getters:
 
 - `OldVault.USDT()` equals the configured USDT;
-- `OldVault.oldLedger()` equals the configured legacy Ledger;
+- `OldVault.ledger()` equals the configured legacy Ledger;
 - `OldLedger.vault()` equals the configured legacy Vault;
 - `AVSVault.USDT()` equals the configured USDT;
 - `AVSVault.avsLedger()` equals the configured AVS Ledger;

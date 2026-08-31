@@ -117,7 +117,7 @@ contract Migration is ReentrancyGuard {
         _requireWiring(
             OLD_VAULT_LEDGER,
             oldLedgerAddress,
-            ILegacyVault(oldVaultAddress).oldLedger()
+            ILegacyVault(oldVaultAddress).ledger()
         );
         _requireWiring(
             OLD_LEDGER_VAULT,

@@ -15,7 +15,7 @@ contract ReentrantOldVaultMock {
     using SafeERC20 for IERC20;
 
     IERC20 public immutable USDT;
-    address public oldLedger;
+    address public ledger;
     address public target;
     address public reentryBeneficiary;
 
@@ -23,8 +23,8 @@ contract ReentrantOldVaultMock {
         USDT = IERC20(usdt);
     }
 
-    function setWiring(address oldLedger_) external {
-        oldLedger = oldLedger_;
+    function setWiring(address ledger_) external {
+        ledger = ledger_;
     }
 
     function setReentry(
