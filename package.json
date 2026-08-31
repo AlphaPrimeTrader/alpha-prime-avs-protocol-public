@@ -23,6 +23,7 @@
     "phase4c:ledger:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4c-ledger-bsc.ts",
     "phase4c:test-usdt:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4c-test-usdt-bsc.ts",
     "phase4c:vault:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4c-vault-bsc.ts",
+    "phase4d:bsc:deploy": "hardhat --network bscTestnet run scripts/src/deploy-phase4d-bsc.ts",
     "hardhat": "hardhat",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm -r --filter \"./apps/**\" --filter \"./scripts\" --if-present run typecheck"
@@ -44,6 +45,7 @@
     "@nomicfoundation/hardhat-ethers": "4.0.15",
     "@nomicfoundation/hardhat-ethers-chai-matchers": "3.0.11",
     "@nomicfoundation/hardhat-mocha": "3.1.0",
+    "@nomicfoundation/hardhat-verify": "^3.1.0",
     "@types/node": "25.3.3",
     "chai": "6.2.2",
     "ethers": "6.16.0",
