@@ -1,0 +1,43 @@
+{
+  "network": "bscTestnet",
+  "chainId": "97",
+  "contract": "AVSToken",
+  "address": "0x2861F3d12082710118391f06F818CA3412ffFE87",
+  "deploymentTransaction": "0xc19783e25908227b72b03e41b17fcece2904c2e6e05209d8640a3de66720ef81",
+  "deploymentBlock": 128305083,
+  "deployedAt": "2026-08-31T13:43:08.000Z",
+  "deployer": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "initialOwner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "constructorArguments": ["0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"],
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "runtimeBytecodeHash": "0x771489fbe6e26bfc5408070a97d11b9f01d8f20b6d64dc83b37f7715adc3b012",
+  "gasUsed": "1101310",
+  "initialState": {
+    "name": "AVS",
+    "symbol": "AVS",
+    "decimals": "18",
+    "maxSupply": "20000000000000000000000000",
+    "totalSupply": "0",
+    "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "vault": "0x0000000000000000000000000000000000000000",
+    "accountPolicy": "0x0000000000000000000000000000000000000000",
+    "vaultLocked": false,
+    "accountPolicyLocked": false
+  },
+  "sourceVerification": {
+    "status": "exact_match",
+    "verifiedAt": "2026-08-31T13:44:41Z",
+    "bscScan": "https://testnet.bscscan.com/address/0x2861F3d12082710118391f06F818CA3412ffFE87#code",
+    "sourcify": "https://repo.sourcify.dev/97/0x2861F3d12082710118391f06F818CA3412ffFE87",
+    "sourcifyMatchId": "46947812",
+    "sourcifyCreationMatch": "exact_match",
+    "sourcifyRuntimeMatch": "exact_match"
+  }
+}

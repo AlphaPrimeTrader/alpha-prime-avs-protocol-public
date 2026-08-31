@@ -13,10 +13,11 @@ must not be treated as production-ready.
 
 The current checkpoint includes the validated Smart Account and Passkey /
 ERC-4337 foundation plus experimental Phase 3B atomic Recovery root rotation
-and a source-verified BSC Testnet Phase 4A Ledger. The account, Recovery, and
-economic model may change before Mainnet and must not be treated as a final
-product architecture. AVS Token, Vault, Paymaster, Pools, Shares, Marketplace,
-and other future protocol features are not implemented or bound.
+and a source-verified BSC Testnet Phase 4A Ledger plus a Phase 4B AVS Token
+foundation. The account, Recovery, and economic model may change
+before Mainnet and must not be treated as a final product architecture. The
+Phase 4B Token is source-verified on BSC Testnet but remains unconfigured,
+unminted, and unbound.
 
 ## Security boundaries
 
@@ -32,6 +33,10 @@ and other future protocol features are not implemented or bound.
 - Economic writes require a bound AVS Token. Trading settlement additionally
   requires positive AVS supply and positive net assets, preventing synthetic
   PnL before economic activation.
+- The Phase 4B AVS Token has permanent Token-level authorization, restricted
+  transfers, and no administrative whitelist removal or freezing capability.
+- The Phase 4B Testnet Token has zero supply, zero Vault and Account Policy
+  addresses, unlocked configuration, retained ownership, and no Ledger binding.
 - Ledger source and token bindings are one-time. Phase 4A contains no migration
   or emergency override mechanism.
 - Ledger ownership is supplied explicitly as a non-zero constructor argument;

@@ -16,16 +16,18 @@ on-chain Smart Accounts and Passkey authorization.
 - Phase 3A security-kernel foundation: **PASS — EXPERIMENTAL**
 - Phase 3B atomic Recovery root rotation: **PASS — EXPERIMENTAL**
 - Phase 4A AVS Ledger foundation: **PASS — BSC TESTNET VERIFIED**
+- Phase 4B AVS Token foundation: **PASS — BSC TESTNET VERIFIED**
 - Same-account-address Recovery: **PASS ON BSC TESTNET**
 - Evolution authority separation: **PASS**
 - BSC Testnet deployment and verification: **PASS**
 - Mainnet deployment: **NOT STARTED**
 - Production security audit: **NOT COMPLETED**
-- AVS Token, Vault, Paymaster, Pools, Shares, and Marketplace: **NOT IMPLEMENTED**
+- Vault, Paymaster, Pools, Shares, and Marketplace: **NOT IMPLEMENTED**
 
-This checkpoint includes the frozen Phase 3B account deployment and the
-canonical Phase 4A BSC Testnet Ledger. It does not claim that the current Smart
-Account or economic model is the final product architecture.
+This checkpoint includes the frozen Phase 3B account deployment, the canonical
+Phase 4A BSC Testnet Ledger, and the unconfigured canonical Phase 4B BSC
+Testnet Token. It does not claim that the current Smart Account or economic
+model is the final product architecture.
 
 ## Current experimental account model
 
@@ -50,22 +52,25 @@ hiding the algorithms.
 
 ## BSC Testnet checkpoint
 
-| Component | Value |
-| --- | --- |
-| Network | BSC Testnet |
-| Chain ID | `97` |
-| Canonical EntryPoint v0.8 | `0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108` |
-| Phase 3B Factory | `0xf3b30D7e6EB3639d056c66AABd10F904BA22487A` |
-| Phase 3B Authority | `0x23026F82317b82283537466d4ba3A5A05F74bb11` |
-| EvolutionController | `0x9d5d16C84D7E36a1436979fe164Af81D62B59A9e` |
+| Component                      | Value                                        |
+| ------------------------------ | -------------------------------------------- |
+| Network                        | BSC Testnet                                  |
+| Chain ID                       | `97`                                         |
+| Canonical EntryPoint v0.8      | `0x4337084D9E255Ff0702461CF8895CE9E3b5Ff108` |
+| Phase 3B Factory               | `0xf3b30D7e6EB3639d056c66AABd10F904BA22487A` |
+| Phase 3B Authority             | `0x23026F82317b82283537466d4ba3A5A05F74bb11` |
+| EvolutionController            | `0x9d5d16C84D7E36a1436979fe164Af81D62B59A9e` |
 | Initial bounded implementation | `0x6aCA3dCA40A3d031163686547F42Fe6fb55E8797` |
-| TestReceiver | `0x99907924aBC19287E8f1e68b124bDFF31d06563e` |
-| Phase 4A AVSLedger | `0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` |
+| TestReceiver                   | `0x99907924aBC19287E8f1e68b124bDFF31d06563e` |
+| Phase 4A AVSLedger             | `0x9eAACE24c68C29D7Bd6cef6A660270bB3566Fa04` |
+| Phase 4B AVSToken              | `0x2861F3d12082710118391f06F818CA3412ffFE87` |
 
 The sanitized deployment and validation records are in
 [`docs/deployments/bsc-testnet-phase-3b.md`](docs/deployments/bsc-testnet-phase-3b.md)
 and
-[`docs/deployments/bsc-testnet-phase-4a.md`](docs/deployments/bsc-testnet-phase-4a.md).
+[`docs/deployments/bsc-testnet-phase-4a.md`](docs/deployments/bsc-testnet-phase-4a.md),
+and
+[`docs/deployments/bsc-testnet-phase-4b.md`](docs/deployments/bsc-testnet-phase-4b.md).
 Historical Phase 1, Phase 2, and Phase 3A records remain unchanged.
 
 ## Security boundaries
@@ -86,7 +91,8 @@ See [`SECURITY.md`](SECURITY.md) and
 ## Repository layout
 
 - `contracts/` — historical account contracts plus the experimental Phase 3A
-  and Phase 3B account contracts, and the Phase 4A Ledger.
+  and Phase 3B account contracts, the Phase 4A Ledger, and the Phase 4B AVS
+  Token foundation.
 - `test/` — Hardhat protocol and adversarial regression tests.
 - `apps/passkey-demo/` — the only canonical browser application.
 - `scripts/src/` — reproducible Testnet deployment and verification scripts.
@@ -108,6 +114,8 @@ pnpm --filter @workspace/passkey-demo test:recovery-kit
 pnpm --filter @workspace/passkey-demo run build
 pnpm run phase3b:bsc:verify
 pnpm run phase4a:bsc:preflight
+pnpm run phase4b:local:validate
+pnpm run phase4b:bsc:verify
 ```
 
 The BSC verification command is read-only. Deployment commands require an
@@ -116,6 +124,7 @@ explicit Testnet confirmation variable and are not part of ordinary validation.
 ## Publication status
 
 This repository records a frozen experimental Testnet account checkpoint plus
-the deployed and source-verified Phase 4A Ledger. No Mainnet release is
-authorized, and AVS Token, Vault, Issuer, Trade Settlement, Marketplace, and
-later protocol work remain paused.
+the deployed and source-verified Phase 4A Ledger and Phase 4B AVS Token. The
+Token remains unconfigured, unminted, and unbound. No Mainnet release is
+authorized, and Vault, Account Policy, Trade Settlement, Marketplace, and later
+protocol work remain paused.
