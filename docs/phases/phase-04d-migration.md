@@ -185,22 +185,22 @@ public BscScan source verification and Sourcify Exact Match:
     `0x46785c0bcb28c29e0CfBeF23101C98CA8356FC27`.
 11. Add Migration as an executor in `OldVaultMock`.
 12. Configure `AVSVault.migration` to Migration.
-13. Set `AVSVault.reserveTarget` to at least 12,000 TestUSDT before migration.
+13. Verify the integrated Vault's fixed capital allocator is active. Migration
+    must pass the full amount to the Vault and must not split it itself.
 14. Run the complete read-only preflight.
 15. Execute `migrate(oldUser, beneficiary)` only after separate approval of the
     preflight result.
 
-The current `AVSVault._routeExcessToTrading()` retains funds when
-`tradingContract` is zero and emits `ExcessRetainedBecauseTradingNotConfigured`;
-it does not transfer to `address(0)`. Setting the reserve target to at least the
-first 12,000 TestUSDT nevertheless makes the intended first-migration custody
-path explicit and prevents excess routing if Trading becomes configured before
-execution.
+The integrated Vault allocates every capital inflow canonically: 5% becomes
+pending Marketplace liquidity and 95% becomes productive Trading capital. For
+the 12,000 TestUSDT migration this is exactly 600 / 11,400 TestUSDT. If Trading
+is not configured, the 11,400 remains explicitly tracked in the Vault and is
+never transferred to `address(0)`.
 
 The read-only preflight must verify all constructor relationships again, the
 post-deployment Migration and executor bindings, owner and network identities,
 the exact seeded live balance and Vault funding, beneficiary authorization,
-current AVS supply and quote, unused capital ID, reserve target, zero Migration
+current AVS supply and quote, unused capital ID, fixed allocator state, zero Migration
 USDT balance, and zero Migration-to-Vault allowance.
 
 ## Deliberate scope boundary

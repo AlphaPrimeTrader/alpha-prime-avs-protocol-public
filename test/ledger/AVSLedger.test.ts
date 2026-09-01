@@ -82,6 +82,36 @@ async function recordProtocolRevenue(
   );
 }
 
+async function recordTreasuryAcquisition(
+  vault: Awaited<ReturnType<typeof ethers.deployContract>>,
+  ledger: Awaited<ReturnType<typeof ethers.deployContract>>,
+  acquisitionId: string,
+  avsAmount: bigint,
+  grossAmount: bigint,
+) {
+  return vault.recordTreasuryAcquisition(
+    await ledger.getAddress(),
+    acquisitionId,
+    avsAmount,
+    grossAmount,
+  );
+}
+
+async function recordTreasuryRelease(
+  vault: Awaited<ReturnType<typeof ethers.deployContract>>,
+  ledger: Awaited<ReturnType<typeof ethers.deployContract>>,
+  releaseId: string,
+  avsAmount: bigint,
+  grossAmount: bigint,
+) {
+  return vault.recordTreasuryRelease(
+    await ledger.getAddress(),
+    releaseId,
+    avsAmount,
+    grossAmount,
+  );
+}
+
 describe("AVSLedger", function () {
   describe("genesis and bindings", function () {
     it("starts at zero with a 1 USDT genesis value and public reads", async function () {
@@ -812,7 +842,45 @@ describe("AVSLedger", function () {
       expect(record.netEconomicImpact).to.equal(10n);
     });
 
-    it("rejects unauthorized, duplicate, zero, and loss-boundary violations", async function () {
+    it("records zero PnL as finalized history without changing economic counters", async function () {
+      const { ledger, token, vault, tradeSettlement } =
+        await deployConfiguredLedger();
+      await recordCapital(vault, ledger, id("zero-pnl-assets"), 100n * SCALE);
+      await token.mint(await ledger.getAddress(), 100n * SCALE);
+      const settlementId = id("zero-pnl");
+      const assetsBefore = await ledger.totalNetAssets();
+      const navBefore = await ledger.currentAVSValue();
+
+      await expect(
+        recordSettlement(tradeSettlement, ledger, settlementId, 0n),
+      )
+        .to.emit(ledger, "TradingSettlementRecorded")
+        .withArgs(
+          settlementId,
+          0n,
+          0n,
+          0n,
+          100n * SCALE,
+          navBefore,
+          navBefore,
+          anyValue,
+        );
+
+      expect(await ledger.processedSettlement(settlementId)).to.equal(true);
+      expect(await ledger.settlementCount()).to.equal(1n);
+      expect(await ledger.totalNetAssets()).to.equal(assetsBefore);
+      expect(await ledger.totalGrossProfit()).to.equal(0n);
+      expect(await ledger.totalLoss()).to.equal(0n);
+      expect(await ledger.totalBuybackAllocated()).to.equal(0n);
+      expect(await ledger.buybackReserve()).to.equal(0n);
+      const record = await ledger.settlementRecord(settlementId);
+      expect(record.realizedPnL).to.equal(0n);
+      expect(record.buybackAllocation).to.equal(0n);
+      expect(record.netEconomicImpact).to.equal(0n);
+      expect(record.avsValueBefore).to.equal(record.avsValueAfter);
+    });
+
+    it("rejects unauthorized, duplicate, and loss-boundary violations", async function () {
       const { ledger, token, vault, tradeSettlement, outsider } =
         await deployConfiguredLedger();
       await recordCapital(vault, ledger, id("assets"), 100n * SCALE);
@@ -827,9 +895,6 @@ describe("AVSLedger", function () {
       await expect(
         recordSettlement(tradeSettlement, ledger, ZERO_ID, SCALE),
       ).to.be.revertedWithCustomError(ledger, "InvalidIdentifier");
-      await expect(
-        recordSettlement(tradeSettlement, ledger, id("zero-pnl"), 0n),
-      ).to.be.revertedWithCustomError(ledger, "InvalidAmount");
       await expect(
         recordSettlement(
           tradeSettlement,
@@ -960,6 +1025,218 @@ describe("AVSLedger", function () {
       expect((await ledger.capitalRecord(zeroNavCapitalId)).capitalId).to.equal(
         ZERO_ID,
       );
+    });
+  });
+
+  describe("treasury inventory accounting", function () {
+    async function fundEconomicSupply() {
+      const configured = await deployConfiguredLedger();
+      await recordCapital(
+        configured.vault,
+        configured.ledger,
+        id("treasury-assets"),
+        1_000n * SCALE,
+      );
+      await configured.token.mint(
+        await configured.ledger.getAddress(),
+        1_000n * SCALE,
+      );
+      return configured;
+    }
+
+    it("keeps NAV neutral when inventory is acquired and released at pre-operation NAV", async function () {
+      const { ledger, vault } = await fundEconomicSupply();
+      const inventory = 100n * SCALE;
+      const acquisitionId = id("treasury-acquisition");
+
+      await expect(
+        recordTreasuryAcquisition(
+          vault,
+          ledger,
+          acquisitionId,
+          inventory,
+          100n * SCALE,
+        ),
+      )
+        .to.emit(ledger, "TreasuryAcquisitionRecorded")
+        .withArgs(
+          acquisitionId,
+          inventory,
+          100n * SCALE,
+          1_000n * SCALE,
+          1_000n * SCALE,
+          SCALE,
+          SCALE,
+          anyValue,
+        );
+      expect(await ledger.treasuryAVS()).to.equal(inventory);
+      expect(await ledger.economicSupply()).to.equal(900n * SCALE);
+      expect(await ledger.totalNetAssets()).to.equal(900n * SCALE);
+      expect(await ledger.currentAVSValue()).to.equal(SCALE);
+
+      const releaseGross = (inventory * 900n * SCALE) / (900n * SCALE);
+      await expect(
+        recordTreasuryRelease(
+          vault,
+          ledger,
+          id("treasury-release"),
+          inventory,
+          releaseGross,
+        ),
+      )
+        .to.emit(ledger, "TreasuryReleaseRecorded")
+        .withArgs(
+          id("treasury-release"),
+          inventory,
+          releaseGross,
+          1_000n * SCALE,
+          900n * SCALE,
+          SCALE,
+          SCALE,
+          anyValue,
+        );
+      expect(await ledger.treasuryAVS()).to.equal(0n);
+      expect(await ledger.economicSupply()).to.equal(1_000n * SCALE);
+      expect(await ledger.totalNetAssets()).to.equal(1_000n * SCALE);
+      expect(await ledger.currentAVSValue()).to.equal(SCALE);
+    });
+
+    it("makes real revenue increase NAV while inventory conversion remains neutral", async function () {
+      const { ledger, vault } = await fundEconomicSupply();
+      const inventory = 100n * SCALE;
+      await recordTreasuryAcquisition(
+        vault,
+        ledger,
+        id("revenue-acquisition"),
+        inventory,
+        100n * SCALE,
+      );
+      await recordProtocolRevenue(
+        vault,
+        ledger,
+        id("inventory-sale-fee"),
+        90n * SCALE,
+      );
+
+      const navAfterRevenue = (990n * SCALE) / 900n;
+      expect(await ledger.currentAVSValue()).to.equal(navAfterRevenue);
+      const gross = (inventory * 990n * SCALE) / (900n * SCALE);
+      await recordTreasuryRelease(
+        vault,
+        ledger,
+        id("revenue-release"),
+        inventory,
+        gross,
+      );
+      expect(await ledger.totalNetAssets()).to.equal(990n * SCALE + gross);
+      expect(await ledger.currentAVSValue()).to.equal(navAfterRevenue);
+    });
+
+    it("uses economic supply for capital quotes without changing minted supply", async function () {
+      const { ledger, token, vault } = await fundEconomicSupply();
+      await recordTreasuryAcquisition(
+        vault,
+        ledger,
+        id("quote-acquisition"),
+        100n * SCALE,
+        100n * SCALE,
+      );
+
+      expect(await token.totalSupply()).to.equal(1_000n * SCALE);
+      expect(await ledger.economicSupply()).to.equal(900n * SCALE);
+      expect(await ledger.quoteCapitalInflow(100n * SCALE)).to.equal(
+        100n * SCALE,
+      );
+    });
+
+    it("enforces vault authorization, replay protection, gross equality, and inventory bounds", async function () {
+      const { ledger, outsider, vault } = await fundEconomicSupply();
+      const acquisitionId = id("protected-acquisition");
+
+      await expect(
+        ledger
+          .connect(outsider)
+          .recordTreasuryAcquisition(acquisitionId, SCALE, SCALE),
+      )
+        .to.be.revertedWithCustomError(ledger, "Unauthorized")
+        .withArgs(await outsider.getAddress());
+      await expect(
+        recordTreasuryAcquisition(
+          vault,
+          ledger,
+          acquisitionId,
+          SCALE,
+          SCALE - 1n,
+        ),
+      )
+        .to.be.revertedWithCustomError(ledger, "InvalidTreasuryGrossAmount")
+        .withArgs(SCALE, SCALE - 1n);
+      expect(await ledger.processedTreasuryAcquisition(acquisitionId)).to.equal(
+        false,
+      );
+      await expect(
+        recordTreasuryAcquisition(
+          vault,
+          ledger,
+          id("final-economic-share"),
+          1_000n * SCALE,
+          1_000n * SCALE,
+        ),
+      )
+        .to.be.revertedWithCustomError(
+          ledger,
+          "TreasuryAcquisitionExceedsEconomicSupply",
+        )
+        .withArgs(1_000n * SCALE, 1_000n * SCALE);
+
+      await recordTreasuryAcquisition(
+        vault,
+        ledger,
+        acquisitionId,
+        SCALE,
+        SCALE,
+      );
+      await expect(
+        recordTreasuryAcquisition(vault, ledger, acquisitionId, SCALE, SCALE),
+      )
+        .to.be.revertedWithCustomError(ledger, "AlreadyProcessed")
+        .withArgs(acquisitionId);
+      await expect(
+        recordTreasuryRelease(
+          vault,
+          ledger,
+          id("release-too-large"),
+          SCALE + 1n,
+          SCALE,
+        ),
+      )
+        .to.be.revertedWithCustomError(ledger, "TreasuryReleaseExceedsBalance")
+        .withArgs(SCALE, SCALE + 1n);
+
+      const releaseId = id("protected-release");
+      await recordTreasuryRelease(vault, ledger, releaseId, SCALE, SCALE);
+      await expect(
+        recordTreasuryRelease(vault, ledger, releaseId, SCALE, SCALE),
+      )
+        .to.be.revertedWithCustomError(ledger, "AlreadyProcessed")
+        .withArgs(releaseId);
+    });
+
+    it("uses deterministic floor rounding for treasury gross amounts", async function () {
+      const { ledger, token, vault } = await deployConfiguredLedger();
+      await recordCapital(vault, ledger, id("rounding-treasury-assets"), 10n);
+      await token.mint(await ledger.getAddress(), 3n);
+
+      await recordTreasuryAcquisition(
+        vault,
+        ledger,
+        id("rounding-treasury-acquisition"),
+        1n,
+        3n,
+      );
+      expect(await ledger.totalNetAssets()).to.equal(7n);
+      expect(await ledger.economicSupply()).to.equal(2n);
+      expect(await ledger.currentAVSValue()).to.equal((7n * SCALE) / 2n);
     });
   });
 

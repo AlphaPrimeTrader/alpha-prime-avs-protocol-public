@@ -10,11 +10,12 @@ application code, tests, documentation, and reproducible tooling.
 | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `contracts/`                     | AVS Smart Account, Phase 3A security-kernel, Factory, test receiver, and test-token contracts.                              |
 | `contracts/accounts/interfaces/` | Public Phase 3A and experimental Phase 3B Authority, Kernel, and EvolutionController interfaces.                            |
-| `contracts/ledger/`              | Phase 4A global economic Ledger and its narrow public interface.                                                            |
+| `contracts/ledger/`              | Global economic Ledger, including economic-supply and treasury-inventory accounting.                                        |
 | `contracts/token/`               | Phase 4B restricted AVS share token, deployed unconfigured on BSC Testnet.                                                  |
-| `contracts/vault/`               | Phase 4C treasury and deterministic USDT router.                                                                            |
+| `contracts/vault/`               | Canonical 5/95 capital allocator, Marketplace-liquidity reserve, and deterministic USDT router.                             |
+| `contracts/marketplace/`         | Local NAV-priced Marketplace with escrow, FIFO matching, primary issuance, and revolving protocol inventory.                |
 | `contracts/migration/`           | Local-only Phase 4D atomic legacy migration bridge and dependency interfaces.                                               |
-| `test/`                          | Historical protocol regressions plus Phase 4A Ledger, Phase 4B Token, Phase 4C Vault, and Phase 4D Migration tests.         |
+| `test/`                          | Historical regressions plus Ledger, Token, Vault, Migration, Marketplace, and full protocol integration tests.              |
 | `test/phase3a/`                  | Phase 3A authorization, evolution, boundary, and hostile-implementation tests.                                              |
 | `test/phase3b/`                  | Atomic Transaction/Recovery root rotation and authority-boundary tests.                                                     |
 | `test/ledger/`                   | Phase 4A economic accounting, authorization, precision, and boundary tests.                                                 |
@@ -61,7 +62,7 @@ frozen experimental Testnet checkpoint, not a final product account model.
 
 `contracts/ledger/AVSLedger.sol` is the deployed BSC Testnet global accounting
 foundation. It tracks protocol-wide capital, protocol revenue, realized
-profit/loss, and buyback reserve state. Protocol revenue is a distinct
+profit/loss, buyback reserve state, and local-revision treasury AVS. Protocol revenue is a distinct
 Vault-only, replay-protected NAV increase that cannot mint AVS or use the
 trading buyback allocation. The Ledger does not implement user balances, AVS
 Token behavior, custody, minting, withdrawals, trade verification, or arbitrary
@@ -75,9 +76,11 @@ preserved as superseded historical evidence.
 
 ## Phase 4C AVS Vault
 
-`contracts/vault/AVSVault.sol` is the validated treasury and deterministic USDT
-router. Its Marketplace revenue path records protocol revenue atomically in the
-Ledger, while Trading returns are physical receipt/routing only. The Vault has
+`contracts/vault/AVSVault.sol` is the treasury and deterministic USDT router.
+The local integration revision allocates every capital receipt as 5% Marketplace
+liquidity and 95% productive capital. Its Marketplace revenue path records
+protocol revenue atomically and retains 100% of that revenue as additional
+Marketplace liquidity. Trading returns remain productive capital. The Vault has
 been deployed as a partially configured BSC Testnet candidate using the verified
 Testnet-only `TestUSDT` dependency. Its AVS Token and AVS Ledger bindings are
 active; Migration, Marketplace, and Trading remain zero, configuration is
@@ -134,9 +137,10 @@ configuration to:
 
 1. Compile the contracts.
 2. Run the complete historical suite through local Phase 4D tests.
-3. Typecheck the standalone demo and deployment scripts.
-4. Build the standalone Passkey demo.
-5. Inspect the documented BSC Testnet deployment and verification scripts.
+3. Run the Marketplace and full cross-contract integration suites.
+4. Typecheck the standalone demo and deployment scripts.
+5. Build the standalone Passkey demo.
+6. Inspect the documented BSC Testnet deployment and verification scripts.
 
 Generated output, dependency directories, local environment files, credentials,
 private keys, uploads, screenshots, and other local development state are not
@@ -158,5 +162,7 @@ public source files.
 - Phase 4C adds the BSC Testnet Vault candidate and reviewed core bindings.
 - Phase 4D adds the Testnet-only migration rehearsal, including one verified
   12,000 TestUSDT migration into 12,000 AVS shares.
-- Issuer, Paymaster, Pools, Marketplace, Trading, Mainnet, and production
+- Phase 4E adds a local-only integrated Marketplace, canonical Vault allocation,
+  and treasury/economic-supply accounting; it is not deployed.
+- Issuer, Paymaster, Pools, Mainnet, and production
   custody remain outside this checkpoint.

@@ -7,14 +7,17 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 
 import {IAVSLedger} from "../ledger/interfaces/IAVSLedger.sol";
 import {IAVSTokenMintable} from "./interfaces/IAVSTokenMintable.sol";
+import {
+    IAVSTradingSettlementCapitalReceiver
+} from "./interfaces/IAVSTradingSettlementCapitalReceiver.sol";
 
 /**
  * @title AVSVault
  * @notice Treasury and deterministic USDT router for the AVS protocol.
  *
  * The Vault never exposes an owner-controlled funds-out operation. Protocol
- * money only leaves through the fixed Marketplace liquidity and Trading excess
- * routes, while capital accounting and AVS minting are atomic.
+ * money only leaves through pending Marketplace liquidity and the deterministic
+ * productive-capital route, while capital accounting and AVS minting are atomic.
  */
 contract AVSVault is ReentrancyGuard {
     using SafeERC20 for IERC20;
@@ -27,6 +30,8 @@ contract AVSVault is ReentrancyGuard {
     bytes32 private constant MARKETPLACE_CONFIGURATION =
         keccak256("MARKETPLACE");
     bytes32 private constant TRADING_CONFIGURATION = keccak256("TRADING");
+    uint256 public constant CAPITAL_ALLOCATION_BPS = 500;
+    uint256 private constant BPS_DENOMINATOR = 10_000;
 
     IERC20 public immutable USDT;
     address public owner;
@@ -36,7 +41,14 @@ contract AVSVault is ReentrancyGuard {
     address public marketplace;
     address public tradingContract;
     bool public configurationLocked;
+    // Retained solely for ABI compatibility. It has no economic effect.
     uint256 public reserveTarget;
+    uint256 public pendingMarketplaceLiquidity;
+    // Fresh productive capital waiting for its first route to Trading.
+    uint256 public pendingTradingCapital;
+    // Productive capital returned by Trading and awaiting the future
+    // Trading/Settlement lifecycle policy.
+    uint256 public returnedTradingCapital;
 
     event ConfigurationAddressUpdated(
         bytes32 indexed configuration,
@@ -66,6 +78,23 @@ contract AVSVault is ReentrancyGuard {
     event MarketLiquidityProvided(uint256 amount);
     event ExcessRoutedToTrading(uint256 amount);
     event ExcessRetainedBecauseTradingNotConfigured(uint256 amount);
+    event CapitalAllocated(
+        uint256 capitalAmount,
+        uint256 marketplaceLiquidity,
+        uint256 tradingCapital
+    );
+    event MarketplaceLiquidityReleased(uint256 amount);
+    event PendingTradingCapitalRouted(uint256 amount);
+    event TreasuryAcquisitionRecorded(
+        bytes32 indexed treasuryId,
+        uint256 amount,
+        uint256 value
+    );
+    event TreasuryReleaseRecorded(
+        bytes32 indexed treasuryId,
+        uint256 amount,
+        uint256 value
+    );
 
     error Unauthorized(address caller);
     error InvalidOwner();
@@ -83,6 +112,8 @@ contract AVSVault is ReentrancyGuard {
     error SharesToMintIsZero();
     error MaxSupplyExceeded(uint256 requested, uint256 available);
     error InsufficientMarketLiquidity(uint256 requested, uint256 available);
+    error ReserveTargetDisabled();
+    error ExactAmountNotSent(uint256 expected, uint256 actual);
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert Unauthorized(msg.sender);
@@ -153,12 +184,13 @@ contract AVSVault is ReentrancyGuard {
         );
     }
 
-    function setTradingContract(address newAddress) external onlyOwner {
+    function setTradingContract(address newAddress) external onlyOwner nonReentrant {
         tradingContract = _setConfiguration(
             TRADING_CONFIGURATION,
             tradingContract,
             newAddress
         );
+        _routePendingTradingCapital();
     }
 
     function lockConfiguration() external onlyOwner {
@@ -188,15 +220,12 @@ contract AVSVault is ReentrancyGuard {
         emit ConfigurationLocked();
     }
 
-    function setReserveTarget(uint256 newTarget) external onlyOwner {
-        uint256 previousTarget = reserveTarget;
-        reserveTarget = newTarget;
-        emit ReserveTargetUpdated(previousTarget, newTarget);
+    function setReserveTarget(uint256) external onlyOwner {
+        revert ReserveTargetDisabled();
     }
 
     function availableMarketLiquidity() public view returns (uint256) {
-        uint256 balance = USDT.balanceOf(address(this));
-        return balance < reserveTarget ? balance : reserveTarget;
+        return pendingMarketplaceLiquidity;
     }
 
     function provideMarketLiquidity(
@@ -209,8 +238,10 @@ contract AVSVault is ReentrancyGuard {
             revert InsufficientMarketLiquidity(amount, available);
         }
 
-        USDT.safeTransfer(marketplace, amount);
+        pendingMarketplaceLiquidity = available - amount;
+        _transferExact(marketplace, amount);
         emit MarketLiquidityProvided(amount);
+        emit MarketplaceLiquidityReleased(amount);
     }
 
     function receiveMarketplaceCapital(
@@ -256,6 +287,36 @@ contract AVSVault is ReentrancyGuard {
         _receiveMarketplaceRevenue(revenueId, amount);
     }
 
+    function recordTreasuryAcquisition(
+        bytes32 treasuryId,
+        uint256 amount,
+        uint256 value
+    ) external onlyMarketplace nonReentrant {
+        if (treasuryId == bytes32(0)) revert InvalidIdentifier();
+        if (avsLedger == address(0)) revert LedgerNotConfigured();
+        IAVSLedger(avsLedger).recordTreasuryAcquisition(
+            treasuryId,
+            amount,
+            value
+        );
+        emit TreasuryAcquisitionRecorded(treasuryId, amount, value);
+    }
+
+    function recordTreasuryRelease(
+        bytes32 treasuryId,
+        uint256 amount,
+        uint256 value
+    ) external onlyMarketplace nonReentrant {
+        if (treasuryId == bytes32(0)) revert InvalidIdentifier();
+        if (avsLedger == address(0)) revert LedgerNotConfigured();
+        IAVSLedger(avsLedger).recordTreasuryRelease(
+            treasuryId,
+            amount,
+            value
+        );
+        emit TreasuryReleaseRecorded(treasuryId, amount, value);
+    }
+
     function receiveTradingReturn(
         uint256 amount
     ) external onlyTradingContract nonReentrant {
@@ -288,7 +349,7 @@ contract AVSVault is ReentrancyGuard {
         }
 
         token.mint(beneficiary, sharesToMint);
-        _routeExcessToTrading();
+        _allocateCapital(actualReceived);
     }
 
     function _receiveMarketplaceRevenue(
@@ -308,13 +369,13 @@ contract AVSVault is ReentrancyGuard {
             msg.sender,
             actualReceived
         );
-        _routeExcessToTrading();
+        pendingMarketplaceLiquidity += actualReceived;
     }
 
     function _receiveTradingReturn(uint256 amount) private {
         uint256 actualReceived = _pullExactAmount(msg.sender, amount);
+        returnedTradingCapital += actualReceived;
         emit TradingFundsReturned(msg.sender, actualReceived);
-        _routeExcessToTrading();
     }
 
     function _pullExactAmount(
@@ -336,18 +397,74 @@ contract AVSVault is ReentrancyGuard {
         }
     }
 
-    function _routeExcessToTrading() internal {
-        uint256 balance = USDT.balanceOf(address(this));
-        if (balance <= reserveTarget) return;
+    function _allocateCapital(uint256 amount) private {
+        uint256 marketplaceAllocation = (amount * CAPITAL_ALLOCATION_BPS) /
+            BPS_DENOMINATOR;
+        uint256 tradingAllocation = amount - marketplaceAllocation;
+        pendingMarketplaceLiquidity += marketplaceAllocation;
+        pendingTradingCapital += tradingAllocation;
+        emit CapitalAllocated(
+            amount,
+            marketplaceAllocation,
+            tradingAllocation
+        );
+        _routePendingTradingCapital();
+    }
 
-        uint256 excess = balance - reserveTarget;
+    function _routePendingTradingCapital() internal {
+        uint256 amount = pendingTradingCapital;
+        if (amount == 0) return;
         if (tradingContract == address(0)) {
-            emit ExcessRetainedBecauseTradingNotConfigured(excess);
+            emit ExcessRetainedBecauseTradingNotConfigured(amount);
             return;
         }
+        pendingTradingCapital = 0;
+        uint256 vaultBefore = USDT.balanceOf(address(this));
+        USDT.forceApprove(tradingContract, amount);
+        IAVSTradingSettlementCapitalReceiver(tradingContract)
+            .receiveProductiveCapital(amount);
+        USDT.forceApprove(tradingContract, 0);
+        uint256 vaultAfter = USDT.balanceOf(address(this));
+        if (
+            vaultAfter > vaultBefore ||
+            vaultBefore - vaultAfter != amount
+        ) {
+            revert ExactAmountNotSent(
+                amount,
+                vaultAfter > vaultBefore ? 0 : vaultBefore - vaultAfter
+            );
+        }
+        emit ExcessRoutedToTrading(amount);
+        emit PendingTradingCapitalRouted(amount);
+    }
 
-        USDT.safeTransfer(tradingContract, excess);
-        emit ExcessRoutedToTrading(excess);
+    function accountingSolvent() external view returns (bool) {
+        return
+            USDT.balanceOf(address(this)) >=
+            pendingMarketplaceLiquidity +
+                pendingTradingCapital +
+                returnedTradingCapital;
+    }
+
+    function _transferExact(address recipient, uint256 amount) private {
+        uint256 recipientBefore = USDT.balanceOf(recipient);
+        uint256 vaultBefore = USDT.balanceOf(address(this));
+        USDT.safeTransfer(recipient, amount);
+        uint256 recipientAfter = USDT.balanceOf(recipient);
+        uint256 vaultAfter = USDT.balanceOf(address(this));
+        if (
+            recipientAfter < recipientBefore ||
+            recipientAfter - recipientBefore != amount ||
+            vaultBefore < vaultAfter ||
+            vaultBefore - vaultAfter != amount
+        ) {
+            revert ExactAmountNotSent(
+                amount,
+                recipientAfter < recipientBefore
+                    ? 0
+                    : recipientAfter - recipientBefore
+            );
+        }
     }
 
     function _setConfiguration(

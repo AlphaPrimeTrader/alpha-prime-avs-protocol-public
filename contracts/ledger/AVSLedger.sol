@@ -32,16 +32,24 @@ contract AVSLedger is IAVSLedger {
     uint256 public override totalLoss;
     uint256 public override totalBuybackAllocated;
     uint256 public override buybackReserve;
+    uint256 public override treasuryAVS;
 
     mapping(bytes32 capitalId => bool) public processedCapitalInflow;
     mapping(bytes32 settlementId => bool) public processedSettlement;
     mapping(bytes32 revenueId => bool)
         public override processedProtocolRevenue;
+    mapping(bytes32 acquisitionId => bool)
+        public override processedTreasuryAcquisition;
+    mapping(bytes32 releaseId => bool) public override processedTreasuryRelease;
 
     mapping(bytes32 capitalId => CapitalRecord) private _capitalRecords;
     mapping(bytes32 settlementId => SettlementRecord) private _settlementRecords;
     mapping(bytes32 revenueId => ProtocolRevenueRecord)
         private _protocolRevenueRecords;
+    mapping(bytes32 acquisitionId => TreasuryAcquisitionRecord)
+        private _treasuryAcquisitionRecords;
+    mapping(bytes32 releaseId => TreasuryReleaseRecord)
+        private _treasuryReleaseRecords;
     uint256 public settlementCount;
 
     event AVSTokenBound(
@@ -77,6 +85,26 @@ contract AVSLedger is IAVSLedger {
         uint256 avsValueAfter,
         uint256 timestamp
     );
+    event TreasuryAcquisitionRecorded(
+        bytes32 indexed acquisitionId,
+        uint256 avsAmount,
+        uint256 grossAmount,
+        uint256 totalSupplyBefore,
+        uint256 economicSupplyBefore,
+        uint256 avsValueBefore,
+        uint256 avsValueAfter,
+        uint256 timestamp
+    );
+    event TreasuryReleaseRecorded(
+        bytes32 indexed releaseId,
+        uint256 avsAmount,
+        uint256 grossAmount,
+        uint256 totalSupplyBefore,
+        uint256 economicSupplyBefore,
+        uint256 avsValueBefore,
+        uint256 avsValueAfter,
+        uint256 timestamp
+    );
 
     error Unauthorized(address caller);
     error InvalidOwner();
@@ -91,6 +119,15 @@ contract AVSLedger is IAVSLedger {
     error ZeroNAVWithExistingSupply();
     error AVSTokenNotBound();
     error NoActiveEconomicSupply();
+    error TreasuryAcquisitionExceedsEconomicSupply(
+        uint256 availableEconomicSupply,
+        uint256 requestedAVS
+    );
+    error TreasuryReleaseExceedsBalance(
+        uint256 availableTreasuryAVS,
+        uint256 requestedAVS
+    );
+    error InvalidTreasuryGrossAmount(uint256 expectedGross, uint256 actualGross);
     error LossExceedsEconomicAssets(
         uint256 availableAssets,
         uint256 requestedLoss
@@ -174,7 +211,11 @@ contract AVSLedger is IAVSLedger {
     }
 
     function currentAVSValue() public view override returns (uint256) {
-        return _avsValueForSupply(_avsTotalSupply());
+        return _avsValueForSupply(economicSupply());
+    }
+
+    function economicSupply() public view override returns (uint256) {
+        return _sub(_avsTotalSupply(), treasuryAVS);
     }
 
     function _avsValueForSupply(
@@ -198,8 +239,7 @@ contract AVSLedger is IAVSLedger {
     ) public view override returns (uint256 sharesToMint) {
         if (capitalAmount == 0) revert InvalidAmount();
 
-        uint256 supply = _avsTotalSupply();
-        return _quoteCapitalInflow(capitalAmount, supply);
+        return _quoteCapitalInflow(capitalAmount, economicSupply());
     }
 
     function _quoteCapitalInflow(
@@ -235,8 +275,12 @@ contract AVSLedger is IAVSLedger {
         }
 
         uint256 supplyBefore = _avsTotalSupply();
-        uint256 valueBefore = _avsValueForSupply(supplyBefore);
-        sharesToMint = _quoteCapitalInflow(capitalAmount, supplyBefore);
+        uint256 economicSupplyBefore = _sub(supplyBefore, treasuryAVS);
+        uint256 valueBefore = _avsValueForSupply(economicSupplyBefore);
+        sharesToMint = _quoteCapitalInflow(
+            capitalAmount,
+            economicSupplyBefore
+        );
         processedCapitalInflow[capitalId] = true;
         _capitalRecords[capitalId] = CapitalRecord({
             capitalId: capitalId,
@@ -271,11 +315,12 @@ contract AVSLedger is IAVSLedger {
         }
 
         uint256 supply = _avsTotalSupply();
-        if (supply == 0) revert NoActiveEconomicSupply();
-        uint256 valueBefore = _avsValueForSupply(supply);
+        uint256 economicSupplyBefore = _sub(supply, treasuryAVS);
+        if (economicSupplyBefore == 0) revert NoActiveEconomicSupply();
+        uint256 valueBefore = _avsValueForSupply(economicSupplyBefore);
         processedProtocolRevenue[revenueId] = true;
         totalNetAssets = _add(totalNetAssets, amount);
-        uint256 valueAfter = _avsValueForSupply(supply);
+        uint256 valueAfter = _avsValueForSupply(economicSupplyBefore);
 
         _protocolRevenueRecords[revenueId] = ProtocolRevenueRecord({
             revenueId: revenueId,
@@ -296,22 +341,131 @@ contract AVSLedger is IAVSLedger {
         );
     }
 
+    function recordTreasuryAcquisition(
+        bytes32 acquisitionId,
+        uint256 avsAmount,
+        uint256 grossAmount
+    ) external onlyVault {
+        if (avsToken == address(0)) revert AVSTokenNotBound();
+        if (acquisitionId == bytes32(0)) revert InvalidIdentifier();
+        if (avsAmount == 0) revert InvalidAmount();
+        if (processedTreasuryAcquisition[acquisitionId]) {
+            revert AlreadyProcessed(acquisitionId);
+        }
+
+        uint256 supplyBefore = _avsTotalSupply();
+        uint256 economicSupplyBefore = _sub(supplyBefore, treasuryAVS);
+        if (economicSupplyBefore == 0) revert NoActiveEconomicSupply();
+        if (avsAmount >= economicSupplyBefore) {
+            revert TreasuryAcquisitionExceedsEconomicSupply(
+                economicSupplyBefore,
+                avsAmount
+            );
+        }
+        uint256 valueBefore = _avsValueForSupply(economicSupplyBefore);
+        uint256 expectedGross = _grossAtAVSValue(avsAmount, valueBefore);
+        if (grossAmount != expectedGross) {
+            revert InvalidTreasuryGrossAmount(expectedGross, grossAmount);
+        }
+
+        processedTreasuryAcquisition[acquisitionId] = true;
+        treasuryAVS = _add(treasuryAVS, avsAmount);
+        totalNetAssets = _sub(totalNetAssets, grossAmount);
+        uint256 valueAfter = _avsValueForSupply(
+            economicSupplyBefore - avsAmount
+        );
+        _treasuryAcquisitionRecords[acquisitionId] = TreasuryAcquisitionRecord({
+            acquisitionId: acquisitionId,
+            avsAmount: avsAmount,
+            grossAmount: grossAmount,
+            totalSupplyBefore: supplyBefore,
+            economicSupplyBefore: economicSupplyBefore,
+            avsValueBefore: valueBefore,
+            avsValueAfter: valueAfter,
+            timestamp: block.timestamp
+        });
+
+        emit TreasuryAcquisitionRecorded(
+            acquisitionId,
+            avsAmount,
+            grossAmount,
+            supplyBefore,
+            economicSupplyBefore,
+            valueBefore,
+            valueAfter,
+            block.timestamp
+        );
+    }
+
+    function recordTreasuryRelease(
+        bytes32 releaseId,
+        uint256 avsAmount,
+        uint256 grossAmount
+    ) external onlyVault {
+        if (avsToken == address(0)) revert AVSTokenNotBound();
+        if (releaseId == bytes32(0)) revert InvalidIdentifier();
+        if (avsAmount == 0) revert InvalidAmount();
+        if (processedTreasuryRelease[releaseId]) {
+            revert AlreadyProcessed(releaseId);
+        }
+        if (avsAmount > treasuryAVS) {
+            revert TreasuryReleaseExceedsBalance(treasuryAVS, avsAmount);
+        }
+
+        uint256 supplyBefore = _avsTotalSupply();
+        uint256 economicSupplyBefore = _sub(supplyBefore, treasuryAVS);
+        if (economicSupplyBefore == 0) revert NoActiveEconomicSupply();
+        uint256 valueBefore = _avsValueForSupply(economicSupplyBefore);
+        uint256 expectedGross = _grossAtAVSValue(avsAmount, valueBefore);
+        if (grossAmount != expectedGross) {
+            revert InvalidTreasuryGrossAmount(expectedGross, grossAmount);
+        }
+
+        processedTreasuryRelease[releaseId] = true;
+        treasuryAVS = _sub(treasuryAVS, avsAmount);
+        totalNetAssets = _add(totalNetAssets, grossAmount);
+        uint256 valueAfter = _avsValueForSupply(
+            economicSupplyBefore + avsAmount
+        );
+        _treasuryReleaseRecords[releaseId] = TreasuryReleaseRecord({
+            releaseId: releaseId,
+            avsAmount: avsAmount,
+            grossAmount: grossAmount,
+            totalSupplyBefore: supplyBefore,
+            economicSupplyBefore: economicSupplyBefore,
+            avsValueBefore: valueBefore,
+            avsValueAfter: valueAfter,
+            timestamp: block.timestamp
+        });
+
+        emit TreasuryReleaseRecorded(
+            releaseId,
+            avsAmount,
+            grossAmount,
+            supplyBefore,
+            economicSupplyBefore,
+            valueBefore,
+            valueAfter,
+            block.timestamp
+        );
+    }
+
     function recordTradingSettlement(
         bytes32 settlementId,
         int256 realizedPnL
     ) external onlyTradeSettlement {
         if (avsToken == address(0)) revert AVSTokenNotBound();
         uint256 supply = _avsTotalSupply();
-        if (supply == 0 || totalNetAssets == 0) {
+        uint256 economicSupplyBefore = _sub(supply, treasuryAVS);
+        if (economicSupplyBefore == 0 || totalNetAssets == 0) {
             revert NoActiveEconomicSupply();
         }
         if (settlementId == bytes32(0)) revert InvalidIdentifier();
-        if (realizedPnL == 0) revert InvalidAmount();
         if (processedSettlement[settlementId]) {
             revert AlreadyProcessed(settlementId);
         }
 
-        uint256 valueBefore = _avsValueForSupply(supply);
+        uint256 valueBefore = _avsValueForSupply(economicSupplyBefore);
         uint256 buybackAllocation;
         int256 netEconomicImpact;
 
@@ -331,7 +485,7 @@ contract AVSLedger is IAVSLedger {
             totalNetAssets = _add(totalNetAssets, economicProfit);
             netEconomicImpact = int256(economicProfit);
             buybackReserve = _add(buybackReserve, buybackAllocation);
-        } else {
+        } else if (realizedPnL < 0) {
             uint256 loss = _negativeMagnitude(realizedPnL);
             if (loss > totalNetAssets) {
                 revert LossExceedsEconomicAssets(totalNetAssets, loss);
@@ -341,7 +495,7 @@ contract AVSLedger is IAVSLedger {
             netEconomicImpact = realizedPnL;
         }
 
-        uint256 valueAfter = _avsValueForSupply(supply);
+        uint256 valueAfter = _avsValueForSupply(economicSupplyBefore);
         processedSettlement[settlementId] = true;
         settlementCount = _add(settlementCount, 1);
         _settlementRecords[settlementId] = SettlementRecord({
@@ -385,6 +539,18 @@ contract AVSLedger is IAVSLedger {
         return _protocolRevenueRecords[revenueId];
     }
 
+    function treasuryAcquisitionRecord(
+        bytes32 acquisitionId
+    ) external view override returns (TreasuryAcquisitionRecord memory) {
+        return _treasuryAcquisitionRecords[acquisitionId];
+    }
+
+    function treasuryReleaseRecord(
+        bytes32 releaseId
+    ) external view override returns (TreasuryReleaseRecord memory) {
+        return _treasuryReleaseRecords[releaseId];
+    }
+
     function _avsTotalSupply() internal view returns (uint256) {
         if (avsToken == address(0)) return 0;
         return IAVSMinimalToken(avsToken).totalSupply();
@@ -410,6 +576,13 @@ contract AVSLedger is IAVSLedger {
     ) private pure returns (uint256 result) {
         if (right > left) revert ArithmeticUnderflow();
         return left - right;
+    }
+
+    function _grossAtAVSValue(
+        uint256 avsAmount,
+        uint256 avsValue
+    ) private pure returns (uint256) {
+        return Math.mulDiv(avsAmount, avsValue, ACCOUNTING_SCALE);
     }
 
     function _negativeMagnitude(

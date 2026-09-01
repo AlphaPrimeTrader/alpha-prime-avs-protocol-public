@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "stage": "deploy_verify_configure_only",
+  "network": "bscTestnet",
+  "chainId": "97",
+  "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "reusedContracts": {
+    "testUsdt": {
+      "address": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+      "runtimeBytecodeHash": "0xfc7ad35d21774bca95105ff1bb8df7aae2dc547ae91b69bd80be02d33d8ee4be",
+      "sourceVerificationStatus": "exact_match"
+    }
+  },
+  "deployedContracts": {
+    "AVSToken": {
+      "name": "AVSToken",
+      "contractIdentifier": "contracts/token/AVSToken.sol:AVSToken",
+      "address": "0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"
+      ],
+      "deploymentTransaction": "0xc03532d7ff8b036078c60a2e4bd625a9fbb9310d92bbf6a0ee77d21f13399968",
+      "deploymentBlock": 128555803,
+      "deployedAt": "2026-09-01T21:03:35.000Z",
+      "runtimeBytecodeHash": "0x771489fbe6e26bfc5408070a97d11b9f01d8f20b6d64dc83b37f7715adc3b012",
+      "gasUsed": "1101310",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-01T21:04:30Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4",
+        "sourcify": "https://repo.sourcify.dev/97/0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4",
+        "sourcifyVerificationId": "e797c876-d32c-4431-a1a5-a15ca16f8a25",
+        "sourcifyMatchId": "47006178",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "4j228qdafvrsaz2hwxzckw1wwci5castwbygmiikbdyk73vnwb"
+      }
+    },
+    "AVSLedger": {
+      "name": "AVSLedger",
+      "contractIdentifier": "contracts/ledger/AVSLedger.sol:AVSLedger",
+      "address": "0x662614A6f96D9989b7802dc85FCb76EE70D2cE0A",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"
+      ],
+      "deploymentTransaction": "0x4c57af0f5d51a40185fd1fc2732a9f0747d4ecc7157b20bb29c0df150a8d1df1",
+      "deploymentBlock": 128555810,
+      "deployedAt": "2026-09-01T21:03:38.000Z",
+      "runtimeBytecodeHash": "0xded97e7507c4452e3f7e4e08e83569efd7bee0901c441772111771de923ec5d6",
+      "gasUsed": "1972787",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-01T21:04:38Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x662614A6f96D9989b7802dc85FCb76EE70D2cE0A",
+        "sourcify": "https://repo.sourcify.dev/97/0x662614A6f96D9989b7802dc85FCb76EE70D2cE0A",
+        "sourcifyVerificationId": "12f9e527-133b-4a18-8b9d-defd441f95e9",
+        "sourcifyMatchId": "47006180",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "i6ysi7i55v6zygexwy1kvlfp27pgquhv82slmdtsyidmf3fsga"
+      }
+    },
+    "AVSVault": {
+      "name": "AVSVault",
+      "contractIdentifier": "contracts/vault/AVSVault.sol:AVSVault",
+      "address": "0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a"
+      ],
+      "deploymentTransaction": "0x86d7823ca4fdc7489568ba91576986e7ce8a4c9f2938837128970e41fc2305e6",
+      "deploymentBlock": 128555816,
+      "deployedAt": "2026-09-01T21:03:41.000Z",
+      "runtimeBytecodeHash": "0xf4880fa750315867ed569030e802ba4c0279aedba32bc21e228ce360faa4378e",
+      "gasUsed": "1985413",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-01T21:04:48Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+        "sourcify": "https://repo.sourcify.dev/97/0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+        "sourcifyVerificationId": "65282d0f-8f5a-498b-950d-64a8ffb5779a",
+        "sourcifyMatchId": "47006185",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "6xnbgwsjrci3fbparwntbj6add8sazsv1fnjzwlvjcmgivttxw"
+      }
+    },
+    "AVSTradingSettlement": {
+      "name": "AVSTradingSettlement",
+      "contractIdentifier": "contracts/trading/AVSTradingSettlement.sol:AVSTradingSettlement",
+      "address": "0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a"
+      ],
+      "deploymentTransaction": "0xe7da9cf37f40ee27edf9c0215a694e81478664788fc9fffdc753f65f9df935a4",
+      "deploymentBlock": 128555823,
+      "deployedAt": "2026-09-01T21:03:44.000Z",
+      "runtimeBytecodeHash": "0x65c3c6972ba97a89d7216d937f6b07222338ec3b3d89e4a7c85a7fadcc8ad7a0",
+      "gasUsed": "5197648",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-01T21:04:58Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf",
+        "sourcify": "https://repo.sourcify.dev/97/0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf",
+        "sourcifyVerificationId": "cc2ef887-b069-4a6c-aea2-069988a2e331",
+        "sourcifyMatchId": "47006187",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "ci5mpmsny4nzasjc2zn5cubtzaxqrikgufnasds1slyi7k3vnx"
+      }
+    },
+    "AccountPolicyMock": {
+      "name": "AccountPolicyMock",
+      "contractIdentifier": "contracts/testnet/AccountPolicyMock.sol:AccountPolicyMock",
+      "address": "0x5c36E0CE829c241526dd68284B3b4221B31de63C",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4"
+      ],
+      "deploymentTransaction": "0xf704841a9a90a9bae07562f4df3077c41260c65bba96c122bbe758d476cdd66b",
+      "deploymentBlock": 128555828,
+      "deployedAt": "2026-09-01T21:03:46.000Z",
+      "runtimeBytecodeHash": "0x297f2066628cfe01940390563fef5cd42adfee0acbf046bdae8f11704b5d6ce5",
+      "gasUsed": "174997",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-01T21:05:04Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x5c36E0CE829c241526dd68284B3b4221B31de63C",
+        "sourcify": "https://repo.sourcify.dev/97/0x5c36E0CE829c241526dd68284B3b4221B31de63C",
+        "sourcifyVerificationId": "e27e36de-19b0-4199-9b34-488695d12e28",
+        "sourcifyMatchId": "47006188",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "uu5st97bepftwgi8fuwkkn8ncqwulnyc2jehb2metfz3krpiqy"
+      }
+    },
+    "AVSMarketplace": {
+      "name": "AVSMarketplace",
+      "contractIdentifier": "contracts/marketplace/AVSMarketplace.sol:AVSMarketplace",
+      "address": "0x4AF7CD83c902345162fBA51DB7D9DAF99C824C5d",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+        "0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4",
+        "0x662614A6f96D9989b7802dc85FCb76EE70D2cE0A",
+        "0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+        "0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf"
+      ],
+      "deploymentTransaction": "0xd860fa98fb528dce7c637fbd1703f932d00d8bddebe92485de703dd6aad7b5f0",
+      "deploymentBlock": 128555835,
+      "deployedAt": "2026-09-01T21:03:49.000Z",
+      "runtimeBytecodeHash": "0xd5c4801a234ba4115881fd37bdeaf77c9b87f2a0534689f425ab4767473e33ca",
+      "gasUsed": "3880957",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-01T21:05:13Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x4AF7CD83c902345162fBA51DB7D9DAF99C824C5d",
+        "sourcify": "https://repo.sourcify.dev/97/0x4AF7CD83c902345162fBA51DB7D9DAF99C824C5d",
+        "sourcifyVerificationId": "0290eef1-4952-454c-8b62-9f64d5cafbd1",
+        "sourcifyMatchId": "47006190",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "68rdlgkif3eerrhdrd32yd7ghvn5cm2m4nhqcqzywsnkapqal7"
+      }
+    }
+  },
+  "configurationTransactions": {
+    "ledger.bindAVSToken": {
+      "hash": "0x7503528723e672fa408aac3b353af556486b2650c4fbe8f4d928b7428fb855b2",
+      "block": 128555840,
+      "gasUsed": "58171"
+    },
+    "ledger.configureVault": {
+      "hash": "0xc0b426e976df6405dad5367ed0d95d355cef027446837c9421b8ef904b552029",
+      "block": 128555844,
+      "gasUsed": "50141"
+    },
+    "ledger.configureTradeSettlement": {
+      "hash": "0x346216b8f84b9980c0e1f54e3c9d03eff75b74331345bf9ca6b0373699d345fa",
+      "block": 128555856,
+      "gasUsed": "50063"
+    },
+    "token.setAccountPolicy": {
+      "hash": "0x1dc715bdf8b6281d591b54a5b8fdb3cbbdb80b48cb3e9a93e3e3380007046cd0",
+      "block": 128555860,
+      "gasUsed": "52834"
+    },
+    "token.setVault": {
+      "hash": "0x48650a0de59290907d9cce18983453b8451da8151ee95dd5aaacba7055c8ab1b",
+      "block": 128555864,
+      "gasUsed": "52768"
+    },
+    "vault.setAVSToken": {
+      "hash": "0xd44182ed1fa197f94cc1a73cf95fa5b730d2b01deefe583717ece3c58639bc43",
+      "block": 128555868,
+      "gasUsed": "60164"
+    },
+    "vault.setAVSLedger": {
+      "hash": "0x88074a6b071df4ab407725bedf46783707bbd82f4f6ac85efdaee023e0baa161",
+      "block": 128555872,
+      "gasUsed": "60187"
+    },
+    "vault.setMarketplace": {
+      "hash": "0x7e15278279dadeeb1fb57b5c8d0abe153828fafaa5f7a32632f18150828ef49b",
+      "block": 128555877,
+      "gasUsed": "60230"
+    },
+    "settlement.setLedger": {
+      "hash": "0xcbbabe3d785f1aa36fccccfb6f2cd20e56cb510ac5f7ad0b638695c8ab35322c",
+      "block": 128555880,
+      "gasUsed": "57896"
+    },
+    "settlement.setVault": {
+      "hash": "0xc01e256253306e81908663485b7accd772d127679146c02f2a25b2e4715b518c",
+      "block": 128555885,
+      "gasUsed": "57873"
+    },
+    "settlement.setMarketplace": {
+      "hash": "0xaf93ffa017910e80469b8dcc542120d11affe033a710beb55e02b990d0438c40",
+      "block": 128555889,
+      "gasUsed": "57976"
+    },
+    "settlement.setTradingDestination": {
+      "hash": "0x4597f44f1e7d23f00a3b4e3a340f6a007ea3924ea657d26e088470fa91bc6f12",
+      "block": 128555893,
+      "gasUsed": "55320"
+    },
+    "vault.setTradingContract": {
+      "hash": "0xb1feb3f7153ce482e29edf3626daf12aafbcd4f4a41d98361c58f61fa3f7a7fd",
+      "block": 128555897,
+      "gasUsed": "64844"
+    },
+    "policy.authorizeMarketplace": {
+      "hash": "0x3f2a96fdb08a457bc790fcf4428116e3a5582389cabaa613a008fd0cdfff4f61",
+      "block": 128555902,
+      "gasUsed": "50905"
+    },
+    "settlement.revokeOldRelayer": {
+      "hash": "0x6cb7d608cf32f322a1ebbf8b067fa390bbb1361dd826264fb08e1199f9212473",
+      "block": 128560680,
+      "gasUsed": "25998"
+    },
+    "settlement.revokeOldTradeSigner": {
+      "hash": "0x5341b7e3b6f85813e48194b433018c208b9babbbc0c9d553a072038fa8afcf3a",
+      "block": 128560684,
+      "gasUsed": "26088"
+    },
+    "settlement.revokeOldServerSigner": {
+      "hash": "0x9c516eddd61a0a1b4d8e69d8977daa3979d8859cae73795466011652d4ad0a25",
+      "block": 128560688,
+      "gasUsed": "26078"
+    }
+  },
+  "configurationState": {
+    "token.owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "token.vault": "0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+    "token.accountPolicy": "0x5c36E0CE829c241526dd68284B3b4221B31de63C",
+    "ledger.owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "ledger.avsToken": "0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4",
+    "ledger.vault": "0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+    "ledger.tradeSettlement": "0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf",
+    "vault.owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "vault.USDT": "0x398bc6c1201690ec7cDF632aDc82B805240c3F9a",
+    "vault.avsToken": "0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4",
+    "vault.avsLedger": "0x662614A6f96D9989b7802dc85FCb76EE70D2cE0A",
+    "vault.marketplace": "0x4AF7CD83c902345162fBA51DB7D9DAF99C824C5d",
+    "vault.tradingContract": "0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf",
+    "settlement.owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "settlement.avsLedger": "0x662614A6f96D9989b7802dc85FCb76EE70D2cE0A",
+    "settlement.vault": "0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+    "settlement.marketplace": "0x4AF7CD83c902345162fBA51DB7D9DAF99C824C5d",
+    "settlement.tradingDestination": "0x7A2F82CCf55d140A25C8994Cf8B84d61cC686303",
+    "marketplace.owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "marketplace.settlementHook": "0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf",
+    "marketplace": "0x4AF7CD83c902345162fBA51DB7D9DAF99C824C5d",
+    "token.vaultLocked": false,
+    "token.accountPolicyLocked": false,
+    "vault.configurationLocked": false,
+    "token.totalSupply": "0",
+    "ledger.totalNetAssets": "10092000000000000000000",
+    "ledger.settlementCount": "1",
+    "vault.migration": "0x0000000000000000000000000000000000000000",
+    "settlement.authorizedRelayer.old": false,
+    "settlement.authorizedTradeSigner.old": false,
+    "settlement.authorizedServerSigner.old": false,
+    "ledger.totalGrossProfit": "100000000000000000000",
+    "ledger.totalLoss": "0",
+    "ledger.totalBuybackAllocated": "10000000000000000000",
+    "ledger.buybackReserve": "10000000000000000000",
+    "ledger.currentAVSValue": "1009200000000000000",
+    "settlement.settlementCount": "1"
+  },
+  "roleMatrix": {
+    "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "token": "0x8B3aAFDF3316D510bB9d4d212acC8787B785E8E4",
+    "accountPolicy": "0x5c36E0CE829c241526dd68284B3b4221B31de63C",
+    "ledger": "0x662614A6f96D9989b7802dc85FCb76EE70D2cE0A",
+    "vault": "0x2B7EFf4Ba24fff099423DdaDb2Dc53653aD7b38b",
+    "marketplace": "0x4AF7CD83c902345162fBA51DB7D9DAF99C824C5d",
+    "tradingSettlement": "0x7BdD1549D9d9D072537fFaf5bDDf35FAfc4B80bf",
+    "tradingDestination": "0x7A2F82CCf55d140A25C8994Cf8B84d61cC686303",
+    "migration": "0x0000000000000000000000000000000000000000"
+  },
+  "tradingDestination": {
+    "address": "0x7A2F82CCf55d140A25C8994Cf8B84d61cC686303",
+    "kind": "EOA",
+    "codeHash": "0x"
+  },
+  "zeroMoneySanityChecks": {
+    "UNAUTHORIZED_TOKEN_MINT": "REVERTED",
+    "UNAUTHORIZED_LEDGER_SETTLEMENT": "REVERTED",
+    "UNAUTHORIZED_PRODUCTIVE_CAPITAL": "REVERTED",
+    "UNAUTHORIZED_TRADING_SETTLEMENT": "REVERTED",
+    "ZERO_TRADING_DESTINATION": "REVERTED",
+    "SELF_TRADING_DESTINATION": "REVERTED"
+  },
+  "financialCycle": {
+    "testUsdt10kExecuted": true,
+    "experimentalServerSettlementSubmitted": true,
+    "evidencePath": "deployments/bsc-testnet/phase4e-financial-cycle.json",
+    "buyer": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "beneficiary": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+    "capitalId": "0xe46314743a02599cc8201383107edea43832589c1facfdeee8f53816292ba669",
+    "protocolRevenueId": "0xa79bcb696b979fb001265b2d6f8930f6fa9c31250f79a0bdd9bebd4c4b3db872",
+    "primaryMarketPurchase": {
+      "hash": "0x571f5c700ce495dbdb9d2d687f2bbe060ffff79323c255e39386151070d923aa",
+      "block": 128558610,
+      "gasUsed": "951667"
+    },
+    "settlementTransaction": "0x69ba7ac400038088161d551144398c173f8507f17ce0be0ff0648359a717aaef",
+    "settlementId": "0x1b8514b33f5e180fcd0e5a7a75681a3cfdf981d4a473fbeb4d5ce4698aec160c",
+    "settlementCount": "1",
+    "currentAVSValue": "1009200000000000000",
+    "oldRolesRevoked": true,
+    "newRolesConfigured": false
+  }
+}

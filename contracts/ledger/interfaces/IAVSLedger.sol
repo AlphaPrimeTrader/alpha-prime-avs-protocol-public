@@ -40,6 +40,28 @@ interface IAVSLedger {
         uint256 timestamp;
     }
 
+    struct TreasuryAcquisitionRecord {
+        bytes32 acquisitionId;
+        uint256 avsAmount;
+        uint256 grossAmount;
+        uint256 totalSupplyBefore;
+        uint256 economicSupplyBefore;
+        uint256 avsValueBefore;
+        uint256 avsValueAfter;
+        uint256 timestamp;
+    }
+
+    struct TreasuryReleaseRecord {
+        bytes32 releaseId;
+        uint256 avsAmount;
+        uint256 grossAmount;
+        uint256 totalSupplyBefore;
+        uint256 economicSupplyBefore;
+        uint256 avsValueBefore;
+        uint256 avsValueAfter;
+        uint256 timestamp;
+    }
+
     function ACCOUNTING_SCALE() external view returns (uint256);
 
     function owner() external view returns (address);
@@ -61,6 +83,18 @@ interface IAVSLedger {
     function totalBuybackAllocated() external view returns (uint256);
 
     function buybackReserve() external view returns (uint256);
+
+    function treasuryAVS() external view returns (uint256);
+
+    function economicSupply() external view returns (uint256);
+
+    function processedTreasuryAcquisition(
+        bytes32 acquisitionId
+    ) external view returns (bool);
+
+    function processedTreasuryRelease(
+        bytes32 releaseId
+    ) external view returns (bool);
 
     function currentAVSValue() external view returns (uint256);
 
@@ -84,6 +118,18 @@ interface IAVSLedger {
 
     function recordProtocolRevenue(bytes32 revenueId, uint256 amount) external;
 
+    function recordTreasuryAcquisition(
+        bytes32 acquisitionId,
+        uint256 avsAmount,
+        uint256 grossAmount
+    ) external;
+
+    function recordTreasuryRelease(
+        bytes32 releaseId,
+        uint256 avsAmount,
+        uint256 grossAmount
+    ) external;
+
     function recordTradingSettlement(
         bytes32 settlementId,
         int256 realizedPnL
@@ -100,4 +146,12 @@ interface IAVSLedger {
     function protocolRevenueRecord(
         bytes32 revenueId
     ) external view returns (ProtocolRevenueRecord memory);
+
+    function treasuryAcquisitionRecord(
+        bytes32 acquisitionId
+    ) external view returns (TreasuryAcquisitionRecord memory);
+
+    function treasuryReleaseRecord(
+        bytes32 releaseId
+    ) external view returns (TreasuryReleaseRecord memory);
 }

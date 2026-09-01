@@ -78,7 +78,6 @@ async function deployMigrationSystem(useFeeToken = false) {
 
   await oldVault.setExecutor(await migration.getAddress(), true);
   await avsVault.setMigration(await migration.getAddress());
-  await avsVault.setReserveTarget(MIGRATION_AMOUNT);
 
   await policy.authorize(await avsToken.getAddress(), BENEFICIARY);
 
@@ -529,6 +528,7 @@ describe("Migration", function () {
       avsLedger,
       avsToken,
       avsVault,
+      trading,
       migration,
     } = await deployMigrationSystem();
     const capitalId = migrationCapitalId(OLD_USER);
@@ -557,7 +557,12 @@ describe("Migration", function () {
     expect(await usdt.balanceOf(await oldVault.getAddress())).to.equal(0n);
     expect(await usdt.balanceOf(await migration.getAddress())).to.equal(0n);
     expect(await usdt.balanceOf(await avsVault.getAddress())).to.equal(
-      MIGRATION_AMOUNT,
+      600n * SCALE,
+    );
+    expect(await avsVault.pendingMarketplaceLiquidity()).to.equal(600n * SCALE);
+    expect(await avsVault.pendingTradingCapital()).to.equal(0n);
+    expect(await usdt.balanceOf(await trading.getAddress())).to.equal(
+      11_400n * SCALE,
     );
     expect(
       await usdt.allowance(

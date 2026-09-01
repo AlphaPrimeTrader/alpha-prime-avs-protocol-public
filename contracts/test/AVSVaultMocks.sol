@@ -33,6 +33,11 @@ contract VaultLedgerMock {
     bytes32 public lastRevenueId;
     uint256 public lastProtocolRevenueAmount;
     bool public shouldRevertProtocolRevenue;
+    uint256 public treasuryAcquisitionRecordCount;
+    uint256 public treasuryReleaseRecordCount;
+    bytes32 public lastTreasuryId;
+    uint256 public lastTreasuryAmount;
+    uint256 public lastTreasuryValue;
 
     error LedgerMockReverted();
 
@@ -66,9 +71,36 @@ contract VaultLedgerMock {
         lastRevenueId = revenueId;
         lastProtocolRevenueAmount = amount;
     }
+
+    function recordTreasuryAcquisition(
+        bytes32 treasuryId,
+        uint256 amount,
+        uint256 value
+    ) external {
+        treasuryAcquisitionRecordCount += 1;
+        lastTreasuryId = treasuryId;
+        lastTreasuryAmount = amount;
+        lastTreasuryValue = value;
+    }
+
+    function recordTreasuryRelease(
+        bytes32 treasuryId,
+        uint256 amount,
+        uint256 value
+    ) external {
+        treasuryReleaseRecordCount += 1;
+        lastTreasuryId = treasuryId;
+        lastTreasuryAmount = amount;
+        lastTreasuryValue = value;
+    }
 }
 
 contract VaultActorMock {
+    function receiveProductiveCapital(uint256 amount) external {
+        IERC20 token = AVSVault(msg.sender).USDT();
+        token.transferFrom(msg.sender, address(this), amount);
+    }
+
     function approveToken(
         address token,
         address spender,
@@ -122,6 +154,24 @@ contract VaultActorMock {
         uint256 amount
     ) external {
         AVSVault(vault).provideMarketLiquidity(amount);
+    }
+
+    function recordTreasuryAcquisition(
+        address vault,
+        bytes32 treasuryId,
+        uint256 amount,
+        uint256 value
+    ) external {
+        AVSVault(vault).recordTreasuryAcquisition(treasuryId, amount, value);
+    }
+
+    function recordTreasuryRelease(
+        address vault,
+        bytes32 treasuryId,
+        uint256 amount,
+        uint256 value
+    ) external {
+        AVSVault(vault).recordTreasuryRelease(treasuryId, amount, value);
     }
 }
 
