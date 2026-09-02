@@ -1,0 +1,660 @@
+{
+  "schemaVersion": 1,
+  "stage": "pass",
+  "network": "bscTestnet",
+  "chainId": "97",
+  "deploymentGeneration": "1",
+  "generationLabel": "ACCESS_LAYER_PHASE2_BSC_TESTNET_GENERATION_1",
+  "classification": "TESTNET ACCESS LAYER INTEGRATED GENERATION — NOT MAINNET — NOT FINAL PRODUCTION CERTIFICATION",
+  "owner": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "deployedContracts": {
+    "TestUSDT": {
+      "name": "TestUSDT",
+      "contractIdentifier": "contracts/testnet/TestUSDT.sol:TestUSDT",
+      "address": "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"
+      ],
+      "deploymentTransaction": "0x8b7ccc29d94a187bd0b2023657955e622f920edb29345a9f50e26ee80d88e0b6",
+      "deploymentBlock": 128698255,
+      "deployedAt": "2026-09-02T14:52:00.000Z",
+      "runtimeBytecodeHash": "0xfc7ad35d21774bca95105ff1bb8df7aae2dc547ae91b69bd80be02d33d8ee4be",
+      "runtimeBytecodeSize": 2000,
+      "gasUsed": "562876",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:53:04Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+        "sourcify": "https://repo.sourcify.dev/97/0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+        "sourcifyVerificationId": "995b662a-fb0c-4dc9-b7e5-a6d274adb8f2",
+        "sourcifyMatchId": "47040652",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "cr7jt18cw7ig9gbewumaxiqadfpnfrfadjfikdfk3xujvxvyk7"
+      }
+    },
+    "AVSToken": {
+      "name": "AVSToken",
+      "contractIdentifier": "contracts/token/AVSToken.sol:AVSToken",
+      "address": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"
+      ],
+      "deploymentTransaction": "0x2c5b0501c43d79d5fe5606765c25376c919c2415180b896a6ebe841524a62822",
+      "deploymentBlock": 128698261,
+      "deployedAt": "2026-09-02T14:52:03.000Z",
+      "runtimeBytecodeHash": "0x771489fbe6e26bfc5408070a97d11b9f01d8f20b6d64dc83b37f7715adc3b012",
+      "runtimeBytecodeSize": 4491,
+      "gasUsed": "1101310",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:53:12Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+        "sourcify": "https://repo.sourcify.dev/97/0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+        "sourcifyVerificationId": "ada0e9bb-1155-44d6-bda7-38268fd21f0b",
+        "sourcifyMatchId": "47040653",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "1pep5u2wgdbjm4sitqchuhn3y1pvffjr38rrmqelhpxtaibrtc"
+      }
+    },
+    "AVSLedger": {
+      "name": "AVSLedger",
+      "contractIdentifier": "contracts/ledger/AVSLedger.sol:AVSLedger",
+      "address": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9"
+      ],
+      "deploymentTransaction": "0xf4448bbebcb7dba8a9365458174c07b4309ccbf2b96104b7f87f85a42516cb6b",
+      "deploymentBlock": 128698272,
+      "deployedAt": "2026-09-02T14:52:08.000Z",
+      "runtimeBytecodeHash": "0xded97e7507c4452e3f7e4e08e83569efd7bee0901c441772111771de923ec5d6",
+      "runtimeBytecodeSize": 8761,
+      "gasUsed": "1972787",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:53:19Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+        "sourcify": "https://repo.sourcify.dev/97/0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+        "sourcifyVerificationId": "9973c45b-41fc-4e55-8ab4-48103421d519",
+        "sourcifyMatchId": "47040654",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "v6nueiacq5xvh2ukhde1ndcr1flmtqqy43aduzwhhaz9el7wyf"
+      }
+    },
+    "AVSVault": {
+      "name": "AVSVault",
+      "contractIdentifier": "contracts/vault/AVSVault.sol:AVSVault",
+      "address": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db"
+      ],
+      "deploymentTransaction": "0x26487a652476430a2dd32c21d2f78d63ad639b9877f71be3e1ee718b6b8d94ac",
+      "deploymentBlock": 128698278,
+      "deployedAt": "2026-09-02T14:52:11.000Z",
+      "runtimeBytecodeHash": "0xfe4089d76774c5f48630c0c6c44aec92ce674c3a88bff680255e45d1762541cc",
+      "runtimeBytecodeSize": 8706,
+      "gasUsed": "1985413",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:53:28Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+        "sourcify": "https://repo.sourcify.dev/97/0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+        "sourcifyVerificationId": "91baf977-c88f-401c-99a8-d222dc2bc096",
+        "sourcifyMatchId": "47040655",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "sxcsqtwxuzxej1fztfsgrijxjddtcezgndqskddgjx6wj3ryuf"
+      }
+    },
+    "AVSTradingSettlement": {
+      "name": "AVSTradingSettlement",
+      "contractIdentifier": "contracts/trading/AVSTradingSettlement.sol:AVSTradingSettlement",
+      "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db"
+      ],
+      "deploymentTransaction": "0x397ba873e41dc21a793113391e67b29c61e83eee381ebce50e49c12e5c7768ab",
+      "deploymentBlock": 128698285,
+      "deployedAt": "2026-09-02T14:52:14.000Z",
+      "runtimeBytecodeHash": "0x41e6e9ed1bb10ec1b0588b500570ef3be21776aff254b5b273db206c94c0fbc2",
+      "runtimeBytecodeSize": 23187,
+      "gasUsed": "5197648",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:53:38Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x51F98c51E1E669d2a25df136a150401352586690",
+        "sourcify": "https://repo.sourcify.dev/97/0x51F98c51E1E669d2a25df136a150401352586690",
+        "sourcifyVerificationId": "42b144f3-7724-45bf-a75f-481c26daa3de",
+        "sourcifyMatchId": "47040660",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "jsdrpidfhdf3veshrvcnepsbxucedgmeymv7dxpge6vb2h3r42"
+      }
+    },
+    "AccountPolicyMock": {
+      "name": "AccountPolicyMock",
+      "contractIdentifier": "contracts/testnet/AccountPolicyMock.sol:AccountPolicyMock",
+      "address": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac"
+      ],
+      "deploymentTransaction": "0xb2a69ced2309bff32eba577959e547193c8140b2a35105a045aa9c9d26bd8f73",
+      "deploymentBlock": 128698291,
+      "deployedAt": "2026-09-02T14:52:16.000Z",
+      "runtimeBytecodeHash": "0xb3369e8304e143d1fc54be74b05ed969a58fab80cf2ca062b457190042eb6f2c",
+      "runtimeBytecodeSize": 532,
+      "gasUsed": "174997",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:53:44Z",
+        "bscScan": "https://testnet.bscscan.com//address/0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+        "sourcify": "https://repo.sourcify.dev/97/0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+        "sourcifyVerificationId": "a51f795c-8278-4cb0-8336-88a1024bc196",
+        "sourcifyMatchId": "47040662",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "dvnxcw13uw6z22qbwzij5uhwjzurzgrlbc4sh2ks7a4jaf5uks"
+      }
+    },
+    "AVSMarketplace": {
+      "name": "AVSMarketplace",
+      "contractIdentifier": "contracts/marketplace/AVSMarketplace.sol:AVSMarketplace",
+      "address": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+      "constructorArguments": [
+        "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+        "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+        "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+        "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+        "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+        "0x51F98c51E1E669d2a25df136a150401352586690"
+      ],
+      "deploymentTransaction": "0xc6e7c0360a189dc9863ed2a7be0be9b5bdf22532ccd1d7baee14983c4a5c9515",
+      "deploymentBlock": 128698297,
+      "deployedAt": "2026-09-02T14:52:19.000Z",
+      "runtimeBytecodeHash": "0xb333c39dd1d109870a8fdd4e7dfac16e6a3d7dd9405f960475cdc77c36c8c048",
+      "runtimeBytecodeSize": 22649,
+      "gasUsed": "5110263",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:53:52Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x9AE0729C414995470b44Db8caB8fc08086520b33",
+        "sourcify": "https://repo.sourcify.dev/97/0x9AE0729C414995470b44Db8caB8fc08086520b33",
+        "sourcifyVerificationId": "70267193-b7a4-47f7-86d4-a890bd2c852b",
+        "sourcifyMatchId": "47040669",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "cuyjxadrm4b9uddkpqxyitpsdwrpm5uz684pdseueregrx7rge"
+      }
+    },
+    "AVSProtocolLens": {
+      "name": "AVSProtocolLens",
+      "contractIdentifier": "contracts/access/AVSProtocolLens.sol:AVSProtocolLens",
+      "address": "0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15",
+      "constructorArguments": [
+        "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+        "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+        "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+        "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+        "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+        "0x51F98c51E1E669d2a25df136a150401352586690",
+        "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+        "0x0000000000000000000000000000000000000000",
+        "1"
+      ],
+      "deploymentTransaction": "0x7e080e7ab6093fdf70a216772c3048bee118ed2a4ef477d88369ba87b8124a1d",
+      "deploymentBlock": 128698361,
+      "deployedAt": "2026-09-02T14:52:48.000Z",
+      "runtimeBytecodeHash": "0x4f48c518a64522a1a4e6da22918c966d211088ea27328b2f156a8cf0031ac82f",
+      "runtimeBytecodeSize": 18914,
+      "gasUsed": "4254372",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:54:01Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15",
+        "sourcify": "https://repo.sourcify.dev/97/0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15",
+        "sourcifyVerificationId": "f6737153-a16a-4f3c-83cb-9aed4afd4cdb",
+        "sourcifyMatchId": "47040749",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "rfwl8jegvujq5iab3mzf8nb4kte82gpzh7ee4k1kkyvkapmv7f"
+      }
+    },
+    "AVSGateway": {
+      "name": "AVSGateway",
+      "contractIdentifier": "contracts/access/AVSGateway.sol:AVSGateway",
+      "address": "0x18097B9Af3AfFf28B07Bf4C762e50DF4802bB778",
+      "constructorArguments": [
+        "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+        "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+        "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+        "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+        "0x51F98c51E1E669d2a25df136a150401352586690",
+        "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+        "0x0000000000000000000000000000000000000000",
+        "0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15",
+        "1"
+      ],
+      "deploymentTransaction": "0xa22dd68039708da5fcb65fc5e600690fa53d1d0ab09b575f2fb5979389c9a350",
+      "deploymentBlock": 128698367,
+      "deployedAt": "2026-09-02T14:52:51.000Z",
+      "runtimeBytecodeHash": "0x1e3e0df8cc7947f1b837cdee95cd3acec489b47524a100e989e43715adf2b626",
+      "runtimeBytecodeSize": 13304,
+      "gasUsed": "3071940",
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T14:54:10Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x18097B9Af3AfFf28B07Bf4C762e50DF4802bB778",
+        "sourcify": "https://repo.sourcify.dev/97/0x18097B9Af3AfFf28B07Bf4C762e50DF4802bB778",
+        "sourcifyVerificationId": "724bf5ae-7230-4fa0-a20f-7eb1222d1d77",
+        "sourcifyMatchId": "47040761",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "vkss7uessgvvef6k9xwkyimevbtruvfi2lkd8f1lbbtjqetffr"
+      }
+    }
+  },
+  "configurationTransactions": {
+    "ledger.bindAVSToken": {
+      "hash": "0x36749ac8b17550ab1948050d7c12b42d7f933181fe007f0561bc4217c6965c61",
+      "block": 128698301,
+      "gasUsed": "58171"
+    },
+    "ledger.configureVault": {
+      "hash": "0x5e50eb52cc359b03ccabcde564dfa114f315de6abe811d591b72a00435c749e7",
+      "block": 128698304,
+      "gasUsed": "50129"
+    },
+    "ledger.configureTradeSettlement": {
+      "hash": "0x281390b23085e71f29faa43d80acc9c17c948ef143b99e7e6d4a9478b87d6923",
+      "block": 128698308,
+      "gasUsed": "50063"
+    },
+    "token.setAccountPolicy": {
+      "hash": "0x983ab71b7094b7b3a32999eaa7a791cf9e30c25713d95989350f7ff8e577c9f2",
+      "block": 128698313,
+      "gasUsed": "52834"
+    },
+    "token.setVault": {
+      "hash": "0x9aee2c0252b216e8bf8631b756bb2a4aca3d5d4b190823dd6c0de1cd5d08af83",
+      "block": 128698317,
+      "gasUsed": "52756"
+    },
+    "vault.setAVSToken": {
+      "hash": "0xeafe60b3403930887e626a8a175e2dfcb4a8b52518c26b8891531a0039112704",
+      "block": 128698321,
+      "gasUsed": "60164"
+    },
+    "vault.setAVSLedger": {
+      "hash": "0x8e52702c62743a8721250c4c6d5f08c2e2c974cecdb1202312a421ddeaf4f61c",
+      "block": 128698325,
+      "gasUsed": "60187"
+    },
+    "vault.setMarketplace": {
+      "hash": "0x901a6f3699f84695f67f76c2b3e2c6e86d1ba3c40afc2eb6be742a53eede8948",
+      "block": 128698329,
+      "gasUsed": "60230"
+    },
+    "vault.setTradingContract": {
+      "hash": "0x862eea6b5cb54fb7988db8423b265357599a4015556dc5381d1c737b92277941",
+      "block": 128698334,
+      "gasUsed": "64844"
+    },
+    "settlement.setLedger": {
+      "hash": "0x2b7058ce3fd68d4dd96176bf2daae819192f7a55c85855af88c676d4c769a44c",
+      "block": 128698344,
+      "gasUsed": "57896"
+    },
+    "settlement.setVault": {
+      "hash": "0x576b4ce5679affbe673e8c86c497225c56b47f525ca34ce9056b0fb2d12f4ee4",
+      "block": 128698348,
+      "gasUsed": "57861"
+    },
+    "settlement.setMarketplace": {
+      "hash": "0x923c305da939d6ee7182e99a820d45035fda9aa25ded617eee78fbda87478092",
+      "block": 128698352,
+      "gasUsed": "57976"
+    },
+    "settlement.setTradingDestination": {
+      "hash": "0x1961e811ee2309b8de0530449fa195cc0becd1b6dcc3aec5c1e43fd32485c14f",
+      "block": 128698356,
+      "gasUsed": "55320"
+    }
+  },
+  "tradingDestination": {
+    "address": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+    "kind": "EOA",
+    "codeHash": "0x",
+    "generatedForThisDeployment": true
+  },
+  "migration": {
+    "address": "0x0000000000000000000000000000000000000000",
+    "active": false,
+    "deployed": false
+  },
+  "sourceVerification": {
+    "status": "exact_match"
+  },
+  "readback": {
+    "initialEconomicState": {
+      "totalSupply": "0",
+      "totalNetAssets": "0",
+      "currentAVSValue": "1000000000000000000",
+      "settlementCount": "0",
+      "orderCount": "0"
+    },
+    "wiringHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "gatewayWiringHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "protocolSnapshot": [
+      "128698368",
+      "1788360771",
+      "97",
+      "1",
+      "1000000000000000000",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "marketplaceSnapshot": [
+      "128698369",
+      "1788360772",
+      "97",
+      "1",
+      "0",
+      "1",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "16",
+      "64",
+      true
+    ],
+    "userSnapshot": [
+      "128698369",
+      "1788360772",
+      "97",
+      "1",
+      false,
+      true,
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "gatewayProtocolSnapshot": [
+      "128698369",
+      "1788360772",
+      "97",
+      "1",
+      "1000000000000000000",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "gatewayMarketplaceSnapshot": [
+      "128698370",
+      "1788360772",
+      "97",
+      "1",
+      "0",
+      "1",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "16",
+      "64",
+      true
+    ],
+    "gatewayUserSnapshot": [
+      "128698370",
+      "1788360772",
+      "97",
+      "1",
+      false,
+      true,
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "emptyGlobalOrders": [],
+    "emptyUserOrders": [],
+    "emptySettlementSummaries": [],
+    "eip712Domain": [
+      "0x0f",
+      "AVS Marketplace",
+      "1",
+      "97",
+      "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+      "0x0000000000000000000000000000000000000000000000000000000000000000",
+      []
+    ],
+    "locks": {
+      "tokenVaultLocked": false,
+      "tokenAccountPolicyLocked": false,
+      "vaultConfigurationLocked": false
+    },
+    "settlementRoles": {
+      "ownerRelayer": false,
+      "ownerTradeSigner": false,
+      "ownerServerSigner": false
+    }
+  },
+  "gatewayBootstrap": {
+    "protocolVersion": [
+      "1",
+      "0",
+      "0"
+    ],
+    "chainId": "97",
+    "deploymentGeneration": "1",
+    "discoveredModules": {
+      "AVS_TOKEN": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+      "LEDGER": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+      "VAULT": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+      "MARKETPLACE": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+      "TRADING_SETTLEMENT": "0x51F98c51E1E669d2a25df136a150401352586690",
+      "ACCOUNT_POLICY": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+      "MIGRATION": "0x0000000000000000000000000000000000000000",
+      "PROTOCOL_LENS": "0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15"
+    },
+    "discoveredCodehashes": {
+      "AVS_TOKEN": "0x771489fbe6e26bfc5408070a97d11b9f01d8f20b6d64dc83b37f7715adc3b012",
+      "LEDGER": "0xded97e7507c4452e3f7e4e08e83569efd7bee0901c441772111771de923ec5d6",
+      "VAULT": "0xfe4089d76774c5f48630c0c6c44aec92ce674c3a88bff680255e45d1762541cc",
+      "MARKETPLACE": "0xb333c39dd1d109870a8fdd4e7dfac16e6a3d7dd9405f960475cdc77c36c8c048",
+      "TRADING_SETTLEMENT": "0x41e6e9ed1bb10ec1b0588b500570ef3be21776aff254b5b273db206c94c0fbc2",
+      "ACCOUNT_POLICY": "0xb3369e8304e143d1fc54be74b05ed969a58fab80cf2ca062b457190042eb6f2c",
+      "MIGRATION": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+      "PROTOCOL_LENS": "0x4f48c518a64522a1a4e6da22918c966d211088ea27328b2f156a8cf0031ac82f"
+    },
+    "protocolSnapshot": [
+      "128698692",
+      "1788360917",
+      "97",
+      "1",
+      "1000000000000000000",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "marketplaceSnapshot": [
+      "128698692",
+      "1788360917",
+      "97",
+      "1",
+      "0",
+      "1",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "16",
+      "64",
+      true
+    ],
+    "userSnapshot": [
+      "128698692",
+      "1788360917",
+      "97",
+      "1",
+      false,
+      true,
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "emptyOrderPagination": [],
+    "emptySettlementPagination": [],
+    "wiringHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "balances": {
+      "native": "0",
+      "testUSDT": "0",
+      "avs": "0"
+    }
+  }
+}

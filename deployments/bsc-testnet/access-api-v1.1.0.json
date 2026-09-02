@@ -1,0 +1,473 @@
+{
+  "schemaVersion": 1,
+  "stage": "pass",
+  "network": "bscTestnet",
+  "chainId": "97",
+  "economicGeneration": "1",
+  "accessApiVersion": "1.1.0",
+  "classification": "CURRENT TESTNET ACCESS API v1.1.0 OVER ECONOMIC GENERATION 1",
+  "deployer": "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9",
+  "compiler": {
+    "version": "0.8.28+commit.7893614a",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "cancun"
+  },
+  "existingEconomicModules": {
+    "testUSDT": "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+    "avsToken": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+    "ledger": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+    "vault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+    "tradingSettlement": "0x51F98c51E1E669d2a25df136a150401352586690",
+    "accountPolicy": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+    "marketplace": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+    "oldLens": "0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15",
+    "oldGateway": "0x18097B9Af3AfFf28B07Bf4C762e50DF4802bB778"
+  },
+  "historicalAccessApi": {
+    "version": "1.0.0",
+    "lens": "0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15",
+    "gateway": "0x18097B9Af3AfFf28B07Bf4C762e50DF4802bB778",
+    "runtimeBefore": {
+      "lens": {
+        "codehash": "0x4f48c518a64522a1a4e6da22918c966d211088ea27328b2f156a8cf0031ac82f",
+        "size": 18914
+      },
+      "gateway": {
+        "codehash": "0x1e3e0df8cc7947f1b837cdee95cd3acec489b47524a100e989e43715adf2b626",
+        "size": 13304
+      }
+    }
+  },
+  "preDeployment": {
+    "totalSupply": "10100999999999999995343",
+    "totalNetAssets": "10103040806101794293590",
+    "currentAVSValue": "1000202040006117641",
+    "protocolRevenue": "2020604121200238842",
+    "marketplace": {
+      "testUSDT": "507071614220229941579",
+      "avs": "0",
+      "protocolLiquidityUSDT": "507071614220229941579",
+      "protocolInventoryAVS": "0"
+    },
+    "vault": {
+      "testUSDT": "0",
+      "avs": "0"
+    },
+    "tradingSettlement": {
+      "testUSDT": "0",
+      "avs": "0"
+    },
+    "tradingDestination": {
+      "address": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+      "testUSDT": "9595969191881564352011",
+      "avs": "0",
+      "native": "0"
+    },
+    "orderCount": "8",
+    "settlementCount": "0",
+    "marketplaceAuthorized": true,
+    "users": {
+      "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9": {
+        "avs": "0",
+        "testUSDT": "0"
+      },
+      "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A": {
+        "avs": "10000000000000000000000",
+        "testUSDT": "0"
+      },
+      "0x9b694C3D3658c84DB03198e806e150c9A89b5010": {
+        "avs": "0",
+        "testUSDT": "101000000000000000000"
+      },
+      "0x4012d83Cb22A1a8de3Ef3a3aBF4D2f33FC4832d9": {
+        "avs": "0",
+        "testUSDT": "0"
+      },
+      "0xc88B32Dc493A8243dc8DA4fF07B37828252770D5": {
+        "avs": "100000000000000000000",
+        "testUSDT": "959996000000000000"
+      },
+      "0x6ce220164daf373DE671b2337CB3A022D4a71BF4": {
+        "avs": "0",
+        "testUSDT": "0"
+      },
+      "0x39c2Aef1d7b096150C613eFdACE0aF1EF45AC290": {
+        "avs": "0",
+        "testUSDT": "2500503990888194686"
+      },
+      "0xAdB01bD7Ddf8D7d0e5c91612985909AaFE9e3ad0": {
+        "avs": "999999999999995343",
+        "testUSDT": "10003990497936511"
+      }
+    }
+  },
+  "coreWiring": {
+    "tokenVault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+    "tokenAccountPolicy": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+    "ledgerToken": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+    "ledgerVault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+    "ledgerSettlement": "0x51F98c51E1E669d2a25df136a150401352586690",
+    "vaultUSDT": "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+    "vaultToken": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+    "vaultLedger": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+    "vaultMarketplace": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+    "vaultSettlement": "0x51F98c51E1E669d2a25df136a150401352586690",
+    "vaultMigration": "0x0000000000000000000000000000000000000000",
+    "marketplaceUSDT": "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+    "marketplaceToken": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+    "marketplaceLedger": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+    "marketplaceVault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+    "marketplaceSettlement": "0x51F98c51E1E669d2a25df136a150401352586690",
+    "settlementUSDT": "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+    "settlementLedger": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+    "settlementVault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+    "settlementMarketplace": "0x9AE0729C414995470b44Db8caB8fc08086520b33"
+  },
+  "coreRuntimeBefore": {
+    "testUSDT": {
+      "codehash": "0xfc7ad35d21774bca95105ff1bb8df7aae2dc547ae91b69bd80be02d33d8ee4be",
+      "size": 2000
+    },
+    "avsToken": {
+      "codehash": "0x771489fbe6e26bfc5408070a97d11b9f01d8f20b6d64dc83b37f7715adc3b012",
+      "size": 4491
+    },
+    "ledger": {
+      "codehash": "0xded97e7507c4452e3f7e4e08e83569efd7bee0901c441772111771de923ec5d6",
+      "size": 8761
+    },
+    "vault": {
+      "codehash": "0xfe4089d76774c5f48630c0c6c44aec92ce674c3a88bff680255e45d1762541cc",
+      "size": 8706
+    },
+    "tradingSettlement": {
+      "codehash": "0x41e6e9ed1bb10ec1b0588b500570ef3be21776aff254b5b273db206c94c0fbc2",
+      "size": 23187
+    },
+    "accountPolicy": {
+      "codehash": "0xb3369e8304e143d1fc54be74b05ed969a58fab80cf2ca062b457190042eb6f2c",
+      "size": 532
+    },
+    "marketplace": {
+      "codehash": "0xb333c39dd1d109870a8fdd4e7dfac16e6a3d7dd9405f960475cdc77c36c8c048",
+      "size": 22649
+    },
+    "oldLens": {
+      "codehash": "0x4f48c518a64522a1a4e6da22918c966d211088ea27328b2f156a8cf0031ac82f",
+      "size": 18914
+    },
+    "oldGateway": {
+      "codehash": "0x1e3e0df8cc7947f1b837cdee95cd3acec489b47524a100e989e43715adf2b626",
+      "size": 13304
+    }
+  },
+  "deployments": {
+    "AVSProtocolLens": {
+      "name": "AVSProtocolLens",
+      "contractIdentifier": "contracts/access/AVSProtocolLens.sol:AVSProtocolLens",
+      "address": "0x7ca0b7dD14A0991eBe029508e0F4Fa03cB0b007b",
+      "constructorArguments": [
+        "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+        "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+        "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+        "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+        "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+        "0x51F98c51E1E669d2a25df136a150401352586690",
+        "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+        "0x0000000000000000000000000000000000000000",
+        "1"
+      ],
+      "deploymentTransaction": "0x71a82627d86ccebb17a6650510f267b353831651029dd9278f42a3b2104c0054",
+      "deploymentBlock": 128711898,
+      "deployedAt": "2026-09-02T16:34:20.000Z",
+      "gasUsed": "4197882",
+      "runtimeBytecodeHash": "0xc305a9af21b24b0ec4684d4220982962328b03040315bf25cdd07a60aa28754e",
+      "runtimeBytecodeSize": 19099,
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T16:34:39Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x7ca0b7dD14A0991eBe029508e0F4Fa03cB0b007b",
+        "sourcify": "https://repo.sourcify.dev/97/0x7ca0b7dD14A0991eBe029508e0F4Fa03cB0b007b",
+        "sourcifyVerificationId": "bba09e5b-6240-44dc-9b2f-4af72077ab80",
+        "sourcifyMatchId": "47043200",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "xrtgsfbspajeke9wv7kmpgr8pid9sxbhezg1wxbbxmzqtlnkph"
+      }
+    },
+    "AVSGateway": {
+      "name": "AVSGateway",
+      "contractIdentifier": "contracts/access/AVSGateway.sol:AVSGateway",
+      "address": "0x53818cc4105b918042a3799e757771A4555C60F0",
+      "constructorArguments": [
+        "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+        "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+        "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+        "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+        "0x51F98c51E1E669d2a25df136a150401352586690",
+        "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+        "0x0000000000000000000000000000000000000000",
+        "0x7ca0b7dD14A0991eBe029508e0F4Fa03cB0b007b",
+        "1"
+      ],
+      "deploymentTransaction": "0x177d138cb7ba069b3d10fb54ffabab0231278f8e97e79fd9fa6878171064d94c",
+      "deploymentBlock": 128711905,
+      "deployedAt": "2026-09-02T16:34:23.000Z",
+      "gasUsed": "3082313",
+      "runtimeBytecodeHash": "0x96f244baefd8faa0a419d6e0fa439bc807db39e970aa3a3c5d100561dc6907ff",
+      "runtimeBytecodeSize": 13352,
+      "sourceVerification": {
+        "status": "exact_match",
+        "verifiedAt": "2026-09-02T16:34:49Z",
+        "bscScan": "https://testnet.bscscan.com//address/0x53818cc4105b918042a3799e757771A4555C60F0",
+        "sourcify": "https://repo.sourcify.dev/97/0x53818cc4105b918042a3799e757771A4555C60F0",
+        "sourcifyVerificationId": "3cf6727f-5758-4c3b-9875-d1424f4cb2e3",
+        "sourcifyMatchId": "47043201",
+        "sourcifyCreationMatch": "exact_match",
+        "sourcifyRuntimeMatch": "exact_match",
+        "bscScanExternalVerificationId": "fsqbnfrlsa231rytqcy91yvap2hagdmukjsjs4crai62zvmisz"
+      }
+    }
+  },
+  "sourceVerification": {
+    "status": "2/2_exact_match"
+  },
+  "postDeployment": {
+    "totalSupply": "10100999999999999995343",
+    "totalNetAssets": "10103040806101794293590",
+    "currentAVSValue": "1000202040006117641",
+    "protocolRevenue": "2020604121200238842",
+    "marketplace": {
+      "testUSDT": "507071614220229941579",
+      "avs": "0",
+      "protocolLiquidityUSDT": "507071614220229941579",
+      "protocolInventoryAVS": "0"
+    },
+    "vault": {
+      "testUSDT": "0",
+      "avs": "0"
+    },
+    "tradingSettlement": {
+      "testUSDT": "0",
+      "avs": "0"
+    },
+    "tradingDestination": {
+      "address": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+      "testUSDT": "9595969191881564352011",
+      "avs": "0",
+      "native": "0"
+    },
+    "orderCount": "8",
+    "settlementCount": "0",
+    "marketplaceAuthorized": true,
+    "users": {
+      "0x25cb6e07fe7bdc61E3157c5bc207644769e2b0c9": {
+        "avs": "0",
+        "testUSDT": "0"
+      },
+      "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A": {
+        "avs": "10000000000000000000000",
+        "testUSDT": "0"
+      },
+      "0x9b694C3D3658c84DB03198e806e150c9A89b5010": {
+        "avs": "0",
+        "testUSDT": "101000000000000000000"
+      },
+      "0x4012d83Cb22A1a8de3Ef3a3aBF4D2f33FC4832d9": {
+        "avs": "0",
+        "testUSDT": "0"
+      },
+      "0xc88B32Dc493A8243dc8DA4fF07B37828252770D5": {
+        "avs": "100000000000000000000",
+        "testUSDT": "959996000000000000"
+      },
+      "0x6ce220164daf373DE671b2337CB3A022D4a71BF4": {
+        "avs": "0",
+        "testUSDT": "0"
+      },
+      "0x39c2Aef1d7b096150C613eFdACE0aF1EF45AC290": {
+        "avs": "0",
+        "testUSDT": "2500503990888194686"
+      },
+      "0xAdB01bD7Ddf8D7d0e5c91612985909AaFE9e3ad0": {
+        "avs": "999999999999995343",
+        "testUSDT": "10003990497936511"
+      }
+    }
+  },
+  "invariantComparison": {
+    "exactEconomicStateMatch": true,
+    "coreRuntimeExactMatch": true,
+    "marketplaceAuthorizationUnchanged": true,
+    "deploymentLogsEmpty": true,
+    "noEconomicEvent": true
+  },
+  "gatewayBootstrap": {
+    "chainId": "97",
+    "economicGeneration": "1",
+    "accessApiVersion": [
+      "1",
+      "1",
+      "0"
+    ],
+    "discoveredModules": {
+      "AVS_TOKEN": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+      "LEDGER": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+      "VAULT": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+      "MARKETPLACE": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+      "TRADING_SETTLEMENT": "0x51F98c51E1E669d2a25df136a150401352586690",
+      "ACCOUNT_POLICY": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+      "MIGRATION": "0x0000000000000000000000000000000000000000",
+      "PROTOCOL_LENS": "0x7ca0b7dD14A0991eBe029508e0F4Fa03cB0b007b"
+    },
+    "discoveredCodehashes": {
+      "AVS_TOKEN": "0x771489fbe6e26bfc5408070a97d11b9f01d8f20b6d64dc83b37f7715adc3b012",
+      "LEDGER": "0xded97e7507c4452e3f7e4e08e83569efd7bee0901c441772111771de923ec5d6",
+      "VAULT": "0xfe4089d76774c5f48630c0c6c44aec92ce674c3a88bff680255e45d1762541cc",
+      "MARKETPLACE": "0xb333c39dd1d109870a8fdd4e7dfac16e6a3d7dd9405f960475cdc77c36c8c048",
+      "TRADING_SETTLEMENT": "0x41e6e9ed1bb10ec1b0588b500570ef3be21776aff254b5b273db206c94c0fbc2",
+      "ACCOUNT_POLICY": "0xb3369e8304e143d1fc54be74b05ed969a58fab80cf2ca062b457190042eb6f2c",
+      "MIGRATION": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+      "PROTOCOL_LENS": "0xc305a9af21b24b0ec4684d4220982962328b03040315bf25cdd07a60aa28754e"
+    },
+    "protocolSnapshot": [
+      "128711917",
+      "1788366868",
+      "97",
+      "1",
+      "1000202040006117641",
+      "10103040806101794293590",
+      "10100999999999999995343",
+      "10100999999999999995343",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "507071614220229941579",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "marketplaceSnapshot": [
+      "128711917",
+      "1788366868",
+      "97",
+      "1",
+      "8",
+      "9",
+      "0",
+      "0",
+      "507071614220229941579",
+      "0",
+      "2020604121200238842",
+      "0",
+      "507071614220229941579",
+      "0",
+      "0",
+      "0",
+      "0",
+      "16",
+      "64",
+      true
+    ],
+    "userSnapshot": [
+      "128711917",
+      "1788366868",
+      "97",
+      "1",
+      false,
+      true,
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "orderPagination": [
+      "8",
+      "7",
+      "6",
+      "5",
+      "4",
+      "3",
+      "2",
+      "1"
+    ],
+    "settlementPagination": [],
+    "wiringHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "balances": {
+      "native": "0",
+      "testUSDT": "0",
+      "avs": "0"
+    }
+  },
+  "coreRuntimeAfter": {
+    "testUSDT": {
+      "codehash": "0xfc7ad35d21774bca95105ff1bb8df7aae2dc547ae91b69bd80be02d33d8ee4be",
+      "size": 2000
+    },
+    "avsToken": {
+      "codehash": "0x771489fbe6e26bfc5408070a97d11b9f01d8f20b6d64dc83b37f7715adc3b012",
+      "size": 4491
+    },
+    "ledger": {
+      "codehash": "0xded97e7507c4452e3f7e4e08e83569efd7bee0901c441772111771de923ec5d6",
+      "size": 8761
+    },
+    "vault": {
+      "codehash": "0xfe4089d76774c5f48630c0c6c44aec92ce674c3a88bff680255e45d1762541cc",
+      "size": 8706
+    },
+    "tradingSettlement": {
+      "codehash": "0x41e6e9ed1bb10ec1b0588b500570ef3be21776aff254b5b273db206c94c0fbc2",
+      "size": 23187
+    },
+    "accountPolicy": {
+      "codehash": "0xb3369e8304e143d1fc54be74b05ed969a58fab80cf2ca062b457190042eb6f2c",
+      "size": 532
+    },
+    "marketplace": {
+      "codehash": "0xb333c39dd1d109870a8fdd4e7dfac16e6a3d7dd9405f960475cdc77c36c8c048",
+      "size": 22649
+    },
+    "oldLens": {
+      "codehash": "0x4f48c518a64522a1a4e6da22918c966d211088ea27328b2f156a8cf0031ac82f",
+      "size": 18914
+    },
+    "oldGateway": {
+      "codehash": "0x1e3e0df8cc7947f1b837cdee95cd3acec489b47524a100e989e43715adf2b626",
+      "size": 13304
+    }
+  }
+}

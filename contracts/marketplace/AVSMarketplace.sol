@@ -5,6 +5,8 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import {
     IAVSMarketplaceLedger,
@@ -27,7 +29,7 @@ import {
  * FIFO applies among orders executable by the selected source. A temporarily
  * unexecutable order is skipped without mutation and retains future priority.
  */
-contract AVSMarketplace is ReentrancyGuard {
+contract AVSMarketplace is EIP712, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     uint256 public constant SCALE = 1e18;
@@ -42,6 +44,25 @@ contract AVSMarketplace is ReentrancyGuard {
     uint256 public constant MAX_MATCHES_PER_CALL = 256;
     uint256 public constant DEFAULT_MAX_SCANS_PER_CALL = 64;
     uint256 public constant MAX_SCANS_PER_CALL = 1_024;
+    uint256 public constant MAX_ORDER_PAGE_SIZE = 100;
+    uint256 public constant DEPLOYMENT_GENERATION = 1;
+    string public constant DOMAIN_NAME = "AVS Marketplace";
+    string public constant DOMAIN_VERSION = "1";
+    bytes32 public constant MARKET_BUY_INTENT_TYPEHASH = keccak256(
+        "MarketBuyIntent(address owner,address beneficiary,uint256 quantityAVS,uint256 requestedMaxMatches,uint256 nonce,uint256 deadline,uint256 deploymentGeneration)"
+    );
+    bytes32 public constant TRIGGERED_BUY_INTENT_TYPEHASH = keccak256(
+        "TriggeredBuyIntent(address owner,address beneficiary,uint256 quantityAVS,uint256 triggerNAV,uint256 requestedMaxMatches,uint256 nonce,uint256 deadline,uint256 deploymentGeneration)"
+    );
+    bytes32 public constant MARKET_SELL_INTENT_TYPEHASH = keccak256(
+        "MarketSellIntent(address owner,address beneficiary,uint256 quantityAVS,uint256 requestedMaxMatches,uint256 nonce,uint256 deadline,uint256 deploymentGeneration)"
+    );
+    bytes32 public constant TRIGGERED_SELL_INTENT_TYPEHASH = keccak256(
+        "TriggeredSellIntent(address owner,address beneficiary,uint256 quantityAVS,uint256 triggerNAV,uint256 requestedMaxMatches,uint256 nonce,uint256 deadline,uint256 deploymentGeneration)"
+    );
+    bytes32 public constant CANCEL_INTENT_TYPEHASH = keccak256(
+        "CancelIntent(address owner,address beneficiary,uint256 orderId,uint256 nonce,uint256 deadline,uint256 deploymentGeneration)"
+    );
 
     enum OrderSide {
         Buy,
@@ -70,6 +91,56 @@ contract AVSMarketplace is ReentrancyGuard {
         uint256 createdAt;
         uint256 previous;
         uint256 next;
+        // Appended to preserve the legacy getter positions for every
+        // pre-existing Order field.
+        address beneficiary;
+    }
+
+    struct MarketBuyIntent {
+        address owner;
+        address beneficiary;
+        uint256 quantityAVS;
+        uint256 requestedMaxMatches;
+        uint256 nonce;
+        uint256 deadline;
+        uint256 deploymentGeneration;
+    }
+    struct TriggeredBuyIntent {
+        address owner;
+        address beneficiary;
+        uint256 quantityAVS;
+        uint256 triggerNAV;
+        uint256 requestedMaxMatches;
+        uint256 nonce;
+        uint256 deadline;
+        uint256 deploymentGeneration;
+    }
+    struct MarketSellIntent {
+        address owner;
+        address beneficiary;
+        uint256 quantityAVS;
+        uint256 requestedMaxMatches;
+        uint256 nonce;
+        uint256 deadline;
+        uint256 deploymentGeneration;
+    }
+    struct TriggeredSellIntent {
+        address owner;
+        address beneficiary;
+        uint256 quantityAVS;
+        uint256 triggerNAV;
+        uint256 requestedMaxMatches;
+        uint256 nonce;
+        uint256 deadline;
+        uint256 deploymentGeneration;
+    }
+    struct CancelIntent {
+        address owner;
+        address beneficiary;
+        uint256 orderId;
+        uint256 nonce;
+        uint256 deadline;
+        uint256 deploymentGeneration;
     }
 
     struct DailyProtocolSell {
@@ -127,6 +198,10 @@ contract AVSMarketplace is ReentrancyGuard {
     mapping(address account => uint256) public userOpenSellEscrow;
     mapping(address account => DailyProtocolSell)
         public dailyProtocolSell;
+    mapping(address account => uint256) public nonces;
+    mapping(address account => mapping(uint256 nonce => bool)) private _nonceUsed;
+    uint256[] private _orderIds;
+    mapping(address account => uint256[]) private _userOrderIds;
 
     event OrderCreated(
         uint256 indexed orderId,
@@ -245,6 +320,11 @@ contract AVSMarketplace is ReentrancyGuard {
     error MaxSupplyExceeded(uint256 requested, uint256 available);
     error InvalidPrimaryIssuance(uint256 shares, uint256 requested);
     error InvalidContract(address candidate);
+    error InvalidSignature();
+    error IntentExpired(uint256 deadline);
+    error NonceAlreadyUsed(address account, uint256 nonce);
+    error InvalidDeploymentGeneration(uint256 generation);
+    error InvalidPageSize(uint256 requested, uint256 maximum);
 
     modifier onlyOwner() {
         if (msg.sender != owner) revert Unauthorized(msg.sender);
@@ -263,7 +343,7 @@ contract AVSMarketplace is ReentrancyGuard {
         address avsLedger,
         address avsVault,
         address initialSettlementHook
-    ) {
+    ) EIP712(DOMAIN_NAME, DOMAIN_VERSION) {
         if (initialOwner == address(0)) revert InvalidAddress();
         _requireContract(usdt);
         _requireContract(avsToken);
@@ -325,6 +405,39 @@ contract AVSMarketplace is ReentrancyGuard {
         return USDT.balanceOf(address(this));
     }
 
+    /// @notice Number of successfully consumed explicit intent nonces for an account.
+    function isNonceUsed(address account, uint256 nonce) external view returns (bool) {
+        return _nonceUsed[account][nonce];
+    }
+
+    function orderCount() external view returns (uint256) {
+        return _orderIds.length;
+    }
+
+    function userOrderCount(address account) external view returns (uint256) {
+        return _userOrderIds[account].length;
+    }
+
+    /// @notice Returns order IDs in creation order, or reverse creation order.
+    /// @dev `offset` is measured from the selected end and a page larger than
+    /// MAX_ORDER_PAGE_SIZE is rejected to keep the call bounded.
+    function getOrderIds(
+        uint256 offset,
+        uint256 limit,
+        bool newestFirst
+    ) external view returns (uint256[] memory) {
+        return _pageOrderIds(_orderIds, offset, limit, newestFirst);
+    }
+
+    function getUserOrderIds(
+        address account,
+        uint256 offset,
+        uint256 limit,
+        bool newestFirst
+    ) external view returns (uint256[] memory) {
+        return _pageOrderIds(_userOrderIds[account], offset, limit, newestFirst);
+    }
+
     function accountingSolvent() external view returns (bool) {
         return
             userEscrowAVS + protocolInventoryAVS <=
@@ -345,6 +458,7 @@ contract AVSMarketplace is ReentrancyGuard {
         uint256 nav = currentNAV();
         orderId = _createBuy(
             msg.sender,
+            msg.sender,
             OrderType.Market,
             quantityAVS,
             nav
@@ -363,6 +477,7 @@ contract AVSMarketplace is ReentrancyGuard {
         if (triggerNAV == 0) revert InvalidTriggerNAV();
         orderId = _createBuy(
             msg.sender,
+            msg.sender,
             OrderType.Triggered,
             quantityAVS,
             triggerNAV
@@ -376,6 +491,7 @@ contract AVSMarketplace is ReentrancyGuard {
     ) external nonReentrant returns (uint256 orderId) {
         uint256 nav = currentNAV();
         orderId = _createSell(
+            msg.sender,
             msg.sender,
             OrderType.Market,
             quantityAVS,
@@ -394,6 +510,7 @@ contract AVSMarketplace is ReentrancyGuard {
     ) external nonReentrant returns (uint256 orderId) {
         if (triggerNAV == 0) revert InvalidTriggerNAV();
         orderId = _createSell(
+            msg.sender,
             msg.sender,
             OrderType.Triggered,
             quantityAVS,
@@ -414,6 +531,65 @@ contract AVSMarketplace is ReentrancyGuard {
         _cancelRemaining(orderId);
     }
 
+    function placeMarketBuyWithSignature(
+        MarketBuyIntent calldata intent,
+        bytes calldata signature
+    ) external nonReentrant returns (uint256 orderId) {
+        _verifyAndUse(intent.owner, intent.nonce, intent.deadline, intent.deploymentGeneration,
+            _hashMarketBuyIntent(intent), signature);
+        uint256 nav = currentNAV();
+        orderId = _createBuy(intent.owner, intent.beneficiary, OrderType.Market, intent.quantityAVS, nav);
+        _processPriority(_boundedMatches(intent.requestedMaxMatches));
+        if (orders[orderId].status == OrderStatus.Open) _cancelRemaining(orderId);
+    }
+
+    function placeTriggeredBuyWithSignature(
+        TriggeredBuyIntent calldata intent,
+        bytes calldata signature
+    ) external nonReentrant returns (uint256 orderId) {
+        if (intent.triggerNAV == 0) revert InvalidTriggerNAV();
+        _verifyAndUse(intent.owner, intent.nonce, intent.deadline, intent.deploymentGeneration,
+            _hashTriggeredBuyIntent(intent), signature);
+        orderId = _createBuy(intent.owner, intent.beneficiary, OrderType.Triggered, intent.quantityAVS, intent.triggerNAV);
+        _processPriority(_boundedMatches(intent.requestedMaxMatches));
+    }
+
+    function placeMarketSellWithSignature(
+        MarketSellIntent calldata intent,
+        bytes calldata signature
+    ) external nonReentrant returns (uint256 orderId) {
+        _verifyAndUse(intent.owner, intent.nonce, intent.deadline, intent.deploymentGeneration,
+            _hashMarketSellIntent(intent), signature);
+        uint256 nav = currentNAV();
+        orderId = _createSell(intent.owner, intent.beneficiary, OrderType.Market, intent.quantityAVS, nav);
+        _processPriority(_boundedMatches(intent.requestedMaxMatches));
+        if (orders[orderId].status == OrderStatus.Open) _cancelRemaining(orderId);
+    }
+
+    function placeTriggeredSellWithSignature(
+        TriggeredSellIntent calldata intent,
+        bytes calldata signature
+    ) external nonReentrant returns (uint256 orderId) {
+        if (intent.triggerNAV == 0) revert InvalidTriggerNAV();
+        _verifyAndUse(intent.owner, intent.nonce, intent.deadline, intent.deploymentGeneration,
+            _hashTriggeredSellIntent(intent), signature);
+        orderId = _createSell(intent.owner, intent.beneficiary, OrderType.Triggered, intent.quantityAVS, intent.triggerNAV);
+        _processPriority(_boundedMatches(intent.requestedMaxMatches));
+    }
+
+    function cancelOrderWithSignature(
+        CancelIntent calldata intent,
+        bytes calldata signature
+    ) external nonReentrant {
+        _verifyAndUse(intent.owner, intent.nonce, intent.deadline, intent.deploymentGeneration,
+            _hashCancelIntent(intent), signature);
+        Order storage order = orders[intent.orderId];
+        if (order.owner == address(0)) revert InvalidOrder(intent.orderId);
+        if (order.owner != intent.owner || order.beneficiary != intent.beneficiary) revert InvalidSignature();
+        if (order.status != OrderStatus.Open) revert OrderNotOpen(intent.orderId);
+        _cancelRemaining(intent.orderId);
+    }
+
     /**
      * @notice Restricted settlement hook; it chooses no order IDs.
      * Matching is selected from the on-chain queues and current Ledger NAV.
@@ -429,6 +605,92 @@ contract AVSMarketplace is ReentrancyGuard {
             buyMatchCursor,
             sellMatchCursor
         );
+    }
+
+    function _verifyAndUse(
+        address intentOwner,
+        uint256 nonce,
+        uint256 deadline,
+        uint256 generation,
+        bytes32 digest,
+        bytes calldata signature
+    ) private {
+        if (intentOwner == address(0)) revert InvalidAddress();
+        if (generation != DEPLOYMENT_GENERATION) {
+            revert InvalidDeploymentGeneration(generation);
+        }
+        if (block.timestamp > deadline) revert IntentExpired(deadline);
+        if (_nonceUsed[intentOwner][nonce]) {
+            revert NonceAlreadyUsed(intentOwner, nonce);
+        }
+        if (!SignatureChecker.isValidSignatureNow(intentOwner, digest, signature)) {
+            revert InvalidSignature();
+        }
+        // This is deliberately after all validation and immediately before
+        // intent execution. A reverted execution also reverts this write.
+        _nonceUsed[intentOwner][nonce] = true;
+        nonces[intentOwner] += 1;
+    }
+
+    function _hashMarketBuyIntent(MarketBuyIntent calldata intent) private view returns (bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(
+            MARKET_BUY_INTENT_TYPEHASH, intent.owner, intent.beneficiary,
+            intent.quantityAVS, intent.requestedMaxMatches, intent.nonce,
+            intent.deadline, intent.deploymentGeneration
+        )));
+    }
+
+    function _hashTriggeredBuyIntent(TriggeredBuyIntent calldata intent) private view returns (bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(
+            TRIGGERED_BUY_INTENT_TYPEHASH, intent.owner, intent.beneficiary,
+            intent.quantityAVS, intent.triggerNAV, intent.requestedMaxMatches,
+            intent.nonce, intent.deadline, intent.deploymentGeneration
+        )));
+    }
+
+    function _hashMarketSellIntent(MarketSellIntent calldata intent) private view returns (bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(
+            MARKET_SELL_INTENT_TYPEHASH, intent.owner, intent.beneficiary,
+            intent.quantityAVS, intent.requestedMaxMatches, intent.nonce,
+            intent.deadline, intent.deploymentGeneration
+        )));
+    }
+
+    function _hashTriggeredSellIntent(TriggeredSellIntent calldata intent) private view returns (bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(
+            TRIGGERED_SELL_INTENT_TYPEHASH, intent.owner, intent.beneficiary,
+            intent.quantityAVS, intent.triggerNAV, intent.requestedMaxMatches,
+            intent.nonce, intent.deadline, intent.deploymentGeneration
+        )));
+    }
+
+    function _hashCancelIntent(CancelIntent calldata intent) private view returns (bytes32) {
+        return _hashTypedDataV4(keccak256(abi.encode(
+            CANCEL_INTENT_TYPEHASH, intent.owner, intent.beneficiary,
+            intent.orderId, intent.nonce, intent.deadline,
+            intent.deploymentGeneration
+        )));
+    }
+
+    function _pageOrderIds(
+        uint256[] storage ids,
+        uint256 offset,
+        uint256 limit,
+        bool newestFirst
+    ) private view returns (uint256[] memory page) {
+        if (limit > MAX_ORDER_PAGE_SIZE) {
+            revert InvalidPageSize(limit, MAX_ORDER_PAGE_SIZE);
+        }
+        uint256 count = ids.length;
+        if (offset >= count || limit == 0) return new uint256[](0);
+        uint256 available = count - offset;
+        uint256 length = Math.min(limit, available);
+        page = new uint256[](length);
+        for (uint256 i; i < length; ++i) {
+            page[i] = newestFirst
+                ? ids[count - 1 - offset - i]
+                : ids[offset + i];
+        }
     }
 
     /**
@@ -530,11 +792,12 @@ contract AVSMarketplace is ReentrancyGuard {
 
     function _createBuy(
         address buyer,
+        address beneficiary,
         OrderType orderType,
         uint256 quantityAVS,
         uint256 triggerNAV
     ) private returns (uint256 orderId) {
-        if (quantityAVS == 0 || buyer == address(0)) {
+        if (quantityAVS == 0 || buyer == address(0) || beneficiary == address(0)) {
             revert InvalidAmount();
         }
 
@@ -562,9 +825,12 @@ contract AVSMarketplace is ReentrancyGuard {
             remainingUSDT: requiredUSDT,
             createdAt: block.timestamp,
             previous: 0,
-            next: 0
+            next: 0,
+            beneficiary: beneficiary
         });
         buyerEscrowUSDT += requiredUSDT;
+        _orderIds.push(orderId);
+        _userOrderIds[buyer].push(orderId);
         _append(OrderSide.Buy, orderId);
         emit OrderCreated(
             orderId,
@@ -579,11 +845,12 @@ contract AVSMarketplace is ReentrancyGuard {
 
     function _createSell(
         address seller,
+        address beneficiary,
         OrderType orderType,
         uint256 quantityAVS,
         uint256 triggerNAV
     ) private returns (uint256 orderId) {
-        if (quantityAVS == 0 || seller == address(0)) {
+        if (quantityAVS == 0 || seller == address(0) || beneficiary == address(0)) {
             revert InvalidAmount();
         }
 
@@ -600,10 +867,13 @@ contract AVSMarketplace is ReentrancyGuard {
             remainingUSDT: 0,
             createdAt: block.timestamp,
             previous: 0,
-            next: 0
+            next: 0,
+            beneficiary: beneficiary
         });
         userEscrowAVS += quantityAVS;
         userOpenSellEscrow[seller] += quantityAVS;
+        _orderIds.push(orderId);
+        _userOrderIds[seller].push(orderId);
         _append(OrderSide.Sell, orderId);
         emit OrderCreated(
             orderId,
@@ -710,10 +980,10 @@ contract AVSMarketplace is ReentrancyGuard {
         userEscrowAVS -= quantity;
         userOpenSellEscrow[sellOrder.owner] -= quantity;
 
-        _pushExact(USDT, sellOrder.owner, sellerProceeds);
+        _pushExact(USDT, sellOrder.beneficiary, sellerProceeds);
         _collectFee(buyOrderId, buyerFee);
         _collectFee(sellOrderId, sellerFee);
-        _pushExact(IERC20(address(AVS)), buyOrder.owner, quantity);
+        _pushExact(IERC20(address(AVS)), buyOrder.beneficiary, quantity);
 
         _recordBuyFill(
             buyOrderId,
@@ -734,8 +1004,8 @@ contract AVSMarketplace is ReentrancyGuard {
         emit SecondaryTradeExecuted(
             buyOrderId,
             sellOrderId,
-            buyOrder.owner,
-            sellOrder.owner,
+            buyOrder.beneficiary,
+            sellOrder.beneficiary,
             quantity,
             nav,
             grossValue,
@@ -772,7 +1042,7 @@ contract AVSMarketplace is ReentrancyGuard {
 
         bytes32 treasuryId = _recordTreasuryRelease(quantity, grossValue);
         _collectFee(buyOrderId, buyerFee);
-        _pushExact(IERC20(address(AVS)), buyOrder.owner, quantity);
+        _pushExact(IERC20(address(AVS)), buyOrder.beneficiary, quantity);
 
         _recordBuyFill(
             buyOrderId,
@@ -784,7 +1054,7 @@ contract AVSMarketplace is ReentrancyGuard {
         );
         emit ProtocolInventorySold(
             buyOrderId,
-            buyOrder.owner,
+            buyOrder.beneficiary,
             treasuryId,
             quantity,
             nav,
@@ -831,7 +1101,7 @@ contract AVSMarketplace is ReentrancyGuard {
         buyerEscrowUSDT -= totalCost;
         uint256 sharesToMint = _deliverPrimaryCapital(
             capitalId,
-            buyOrder.owner,
+            buyOrder.beneficiary,
             capitalAmount
         );
         if (sharesToMint != quotedShares) {
@@ -877,7 +1147,7 @@ contract AVSMarketplace is ReentrancyGuard {
         );
         emit PrimaryIssuanceExecuted(
             buyOrderId,
-            orders[buyOrderId].owner,
+            orders[buyOrderId].beneficiary,
             fill.capitalId,
             fill.quantity,
             fill.capitalAmount,
@@ -982,7 +1252,7 @@ contract AVSMarketplace is ReentrancyGuard {
         );
         _pushExact(
             USDT,
-            sellOrder.owner,
+            sellOrder.beneficiary,
             quote.grossValue - quote.sellerFee
         );
         _collectFee(sellOrderId, quote.buyerFee);
@@ -998,7 +1268,7 @@ contract AVSMarketplace is ReentrancyGuard {
         );
         emit ProtocolInventoryPurchased(
             sellOrderId,
-            sellOrder.owner,
+            sellOrder.beneficiary,
             treasuryId,
             quote.quantity,
             nav,
@@ -1051,7 +1321,7 @@ contract AVSMarketplace is ReentrancyGuard {
             if (refund != 0) {
                 order.remainingUSDT = 0;
                 buyerEscrowUSDT -= refund;
-                _pushExact(USDT, order.owner, refund);
+                _pushExact(USDT, order.beneficiary, refund);
             }
             _remove(OrderSide.Buy, orderId);
             order.status = OrderStatus.Filled;
@@ -1121,7 +1391,7 @@ contract AVSMarketplace is ReentrancyGuard {
             _remove(OrderSide.Buy, orderId);
             order.status = OrderStatus.Cancelled;
             if (refund != 0) {
-                _pushExact(USDT, order.owner, refund);
+                _pushExact(USDT, order.beneficiary, refund);
             }
         } else {
             refund = order.remainingAVS;
@@ -1131,7 +1401,7 @@ contract AVSMarketplace is ReentrancyGuard {
             _remove(OrderSide.Sell, orderId);
             order.status = OrderStatus.Cancelled;
             if (refund != 0) {
-                _pushExact(IERC20(address(AVS)), order.owner, refund);
+                _pushExact(IERC20(address(AVS)), order.beneficiary, refund);
             }
         }
         emit OrderCancelled(orderId, order.owner, refund);

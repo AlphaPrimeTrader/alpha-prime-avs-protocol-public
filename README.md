@@ -15,6 +15,8 @@ on-chain Smart Accounts and Passkey authorization.
 - ERC-4337 / Passkey authorization: **PASS**
 - Phase 3A security-kernel foundation: **PASS — EXPERIMENTAL**
 - Phase 3B atomic Recovery root rotation: **PASS — EXPERIMENTAL**
+- Phase 3B.2 immutable Access API v1.1.0: **PASS — BSC TESTNET VERIFIED**
+- Phase 3C first Trading Settlement: **PASS — BSC TESTNET VERIFIED**
 - Phase 4A AVS Ledger foundation: **PASS — BSC TESTNET VERIFIED**
 - Phase 4B AVS Token foundation: **PASS — BSC TESTNET VERIFIED**
 - Phase 4C AVS Vault foundation: **PASS — BSC TESTNET CORE BINDINGS**
@@ -24,12 +26,13 @@ on-chain Smart Accounts and Passkey authorization.
 - BSC Testnet deployment and verification: **PASS**
 - Mainnet deployment: **NOT STARTED**
 - Production security audit: **NOT COMPLETED**
-- Paymaster, Pools, Marketplace, and Trading: **NOT IMPLEMENTED**
+- Paymaster and Pools: **NOT IMPLEMENTED**
+- Marketplace lifecycle and Trading Settlement: **PASS — EXPERIMENTAL BSC TESTNET**
 
-This checkpoint includes the frozen Phase 3B account deployment, the canonical
-Phase 4A BSC Testnet Ledger, and the unconfigured canonical Phase 4B BSC
-Testnet Token. It does not claim that the current Smart Account or economic
-model is the final product architecture.
+This checkpoint includes Economic Generation 1, the immutable Access API
+v1.1.0, the completed primary capital and Marketplace lifecycle, and the first
+Trading Settlement on BSC Testnet. It does not claim that the current
+Smart Account or economic model is the final product architecture.
 
 ## Current experimental account model
 
@@ -84,6 +87,50 @@ The Phase 4D migration design, Testnet deployment, and execution evidence are
 documented in
 [`docs/phases/phase-04d-migration.md`](docs/phases/phase-04d-migration.md).
 
+## Developer Access — BSC Testnet
+
+AVS currently exposes an immutable Access API for direct blockchain
+integrations.
+
+| Property             | Current value |
+| -------------------- | ------------- |
+| Network              | BNB Smart Chain Testnet |
+| Chain ID             | `97` |
+| Economic Generation  | `1` |
+| Access API           | `v1.1.0` |
+| Gateway              | `0x53818cc4105b918042a3799e757771A4555C60F0` |
+| Lens                 | `0x7ca0b7dD14A0991eBe029508e0F4Fa03cB0b007b` |
+
+A developer can start with a BSC RPC, the AVSGateway address, and the
+AVSGateway ABI. The Gateway discovers the current protocol modules and exposes
+the protocol read layer; integrations should discover module addresses through
+the Gateway rather than hard-coding every module independently.
+
+Applications can verify the chain ID, Economic Generation, Access API version,
+module addresses and runtime code hashes, wiring health, protocol and
+Marketplace snapshots, order history and pagination, and Trading Settlement
+history and pagination.
+
+The public Gateway is an integration and access layer. It does not grant
+authority to fabricate trading activity, submit arbitrary protocol PnL,
+modify NAV directly, mint AVS arbitrarily, bypass Marketplace authorization,
+or obtain protocol administration. Trading Settlement submission is separately
+authorization-gated by the Trading Settlement contract.
+
+The Gateway is non-custodial. Marketplace remains the EIP-712 verifying
+contract, and user token approvals are granted directly to Marketplace.
+Gateway must not receive user token allowances merely because it is the
+frontend integration entry point.
+
+All addresses in this section are **BSC TESTNET ONLY**. Do not treat them as
+Mainnet deployments. No Mainnet deployment is represented by this checkpoint.
+Economic Generation `1` and Access API version `1.1.0` are separate concepts;
+an Access API update does not automatically change the economic generation.
+
+The previous Access API v1.0.0 endpoints are historical only:
+`0x18097B9Af3AfFf28B07Bf4C762e50DF4802bB778` (Gateway) and
+`0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15` (Lens).
+
 ## Security boundaries
 
 1. User financial authorization is enforced on-chain.
@@ -125,6 +172,7 @@ pnpm run typecheck
 pnpm --filter @workspace/passkey-demo test:recovery-kit
 pnpm --filter @workspace/passkey-demo run build
 pnpm run phase3b:bsc:verify
+pnpm hardhat test test/access/AVSAccessLayer.test.ts
 pnpm run phase4a:bsc:preflight
 pnpm run phase4b:local:validate
 pnpm run phase4b:bsc:verify
@@ -135,10 +183,8 @@ explicit Testnet confirmation variable and are not part of ordinary validation.
 
 ## Publication status
 
-This repository records a frozen experimental Testnet account checkpoint, the
-Phase 4B AVS Token, the revised Phase 4C Ledger, the Testnet-only TestUSDT asset,
-the Phase 4C Vault, and the completed Phase 4D Testnet rehearsal. Phase 4D
-deployed and source-verified its Testnet-only legacy mocks, Account Policy
-adapter, and Migration bridge, then migrated one approved 12,000 TestUSDT
-balance into 12,000 AVS shares. Trade Settlement, Marketplace, and Trading
-remain unconfigured; no Mainnet release is authorized.
+This repository records the experimental BSC Testnet account and economic
+checkpoint, Economic Generation 1, Access API v1.1.0, the completed primary
+capital and Marketplace lifecycle, and the first Trading Settlement. It also
+contains the later Ledger, Token, Vault, and Migration development records.
+No Mainnet release is authorized.

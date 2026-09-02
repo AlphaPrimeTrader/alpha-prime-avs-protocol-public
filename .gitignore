@@ -66,3 +66,6 @@ secrets/
 # Local uploads and generated evidence
 attached_assets/
 screenshots/
+
+# Replit Agent workspace state
+/.agents/

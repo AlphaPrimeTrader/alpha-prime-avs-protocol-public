@@ -1,0 +1,740 @@
+{
+  "schemaVersion": 1,
+  "stage": "pass",
+  "classification": "BSC TESTNET FIRST REAL AVSGATEWAY FINANCIAL CYCLE — ONE MARKET BUY ONLY",
+  "network": "bscTestnet",
+  "chainId": "97",
+  "deploymentGeneration": "1",
+  "manifest": "deployments/bsc-testnet/phase2-access-layer-integrated.json",
+  "addresses": {
+    "AVSGateway": "0x18097B9Af3AfFf28B07Bf4C762e50DF4802bB778",
+    "AVSProtocolLens": "0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15",
+    "AVSMarketplace": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+    "AVSToken": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+    "AVSLedger": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+    "AVSVault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+    "AVSTradingSettlement": "0x51F98c51E1E669d2a25df136a150401352586690",
+    "AccountPolicyMock": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+    "TestUSDT": "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db",
+    "tradingDestination": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+    "migration": "0x0000000000000000000000000000000000000000"
+  },
+  "abandonedCandidate": {
+    "address": "0xB0437ffbCfA182cbafdBE43067427b4911C41098",
+    "classification": "AUTHORIZED / NO ECONOMIC ACTIVITY / KEY NOT RETAINED",
+    "authorization": {
+      "transactionHash": "0x90c32fc37c991dec0ea71a79cee8e9090f8cc8fd6183e8f17556d0494da9f4f7",
+      "receiptBlock": 128699737,
+      "readbackBlock": 128700585,
+      "resultingAuthorization": true,
+      "economicActivity": false
+    }
+  },
+  "testUser": {
+    "address": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+    "kind": "dedicated ephemeral EOA",
+    "privateKeyRecorded": false
+  },
+  "preflight": {
+    "block": 128700583,
+    "discoveredModules": {
+      "AVSToken": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+      "AVSLedger": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+      "AVSVault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+      "AVSMarketplace": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+      "AVSTradingSettlement": "0x51F98c51E1E669d2a25df136a150401352586690",
+      "AccountPolicyMock": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+      "migration": "0x0000000000000000000000000000000000000000",
+      "AVSProtocolLens": "0x822555dE56fe9Fc2d4DF59E75bf59DF05e233F15"
+    },
+    "wiringHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "economicState": {
+      "totalSupply": "0",
+      "totalNetAssets": "0",
+      "currentAVSValue": "1000000000000000000",
+      "settlementCount": "0",
+      "orderCount": "0"
+    },
+    "eip712Domain": {
+      "name": "AVS Marketplace",
+      "version": "1",
+      "chainId": "97",
+      "verifyingContract": "0x9AE0729C414995470b44Db8caB8fc08086520b33"
+    },
+    "gatewayBalances": {
+      "native": "0",
+      "testUSDT": "0",
+      "avs": "0"
+    },
+    "sourceCalculation": {
+      "capital": "10000000000000000000000",
+      "buyerFeeBps": "2",
+      "buyerFee": "2000000000000000000",
+      "userPayment": "10002000000000000000000",
+      "marketplaceAllocationBps": "500",
+      "marketplaceCapitalAllocation": "500000000000000000000",
+      "productiveCapital": "9500000000000000000000",
+      "expectedMintedAVS": "10000000000000000000000",
+      "expectedTotalNetAssets": "10002000000000000000000",
+      "expectedCurrentAVSValue": "1000200000000000000"
+    }
+  },
+  "infrastructure": {
+    "nativeFunding": {
+      "hash": "0xb8831c018f6f7d12f0d9bb30b1398c4d9fb03da0ee93580a23a1cc746d67e5fe",
+      "block": 128700589,
+      "gasUsed": "21000"
+    },
+    "authorization": {
+      "required": true,
+      "hash": "0xae0d87b66293b006474936c6e98965bd844f03ea80096af16096672e19648069",
+      "block": 128700593,
+      "gasUsed": "50893",
+      "value": true,
+      "receiptBlock": 128700593,
+      "readbackBlock": 128700593,
+      "retries": 0,
+      "provider": "configured BSC Testnet RPC",
+      "resultingState": true
+    },
+    "testUsdtFunding": {
+      "hash": "0x95c6f94db6b9f6805b1f10b758fe6b63d145dc76551f4ae7edf5cf3ed98d74f3",
+      "block": 128700598,
+      "gasUsed": "70602",
+      "value": "10002000000000000000000",
+      "receiptBlock": 128700598,
+      "readbackBlock": 128700598,
+      "retries": 0,
+      "provider": "configured BSC Testnet RPC",
+      "resultingBalance": "10002000000000000000000"
+    },
+    "marketplaceApproval": {
+      "hash": "0xe9f6b041f2c803279b009e10ebd8f01b44b7c85ce60caac855bf83b35d14caa9",
+      "block": 128700603,
+      "gasUsed": "46390"
+    },
+    "allowancesBeforeExecution": {
+      "marketplace": "10002000000000000000000",
+      "gateway": "0"
+    },
+    "approvalConfirmation": {
+      "value": {
+        "marketplace": "10002000000000000000000",
+        "gateway": "0"
+      },
+      "receiptBlock": 128700603,
+      "readbackBlock": 128700603,
+      "retries": 0,
+      "provider": "configured BSC Testnet RPC"
+    }
+  },
+  "signedIntent": {
+    "domain": {
+      "name": "AVS Marketplace",
+      "version": "1",
+      "chainId": "97",
+      "verifyingContract": "0x9AE0729C414995470b44Db8caB8fc08086520b33"
+    },
+    "intent": {
+      "owner": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+      "beneficiary": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+      "quantityAVS": "10000000000000000000000",
+      "requestedMaxMatches": "1",
+      "nonce": "1",
+      "deadline": "1788365376",
+      "deploymentGeneration": "1"
+    },
+    "structHash": "0xed8bc5e3a97bab4f92aa7ad44de5ca1ca03802528e6f233bb5119160b9acdf27",
+    "typedDataDigest": "0x0854035ab1ef6b7f13d653e25b11c5b831d9ebbfb6aa8d270fa9649e8f666f7b",
+    "recoveredSigner": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+    "signatureRecorded": false
+  },
+  "submission": {
+    "transactionHash": "0x3b6021ec65c12c53c0c5fd9c8850899e35a6e3e371b9d7c202c6fa2b53fd98f2",
+    "transactionSender": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+    "signedOwner": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+    "beneficiary": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+    "nonce": "1",
+    "deadline": "1788365376",
+    "block": 128700614,
+    "blockTimestamp": 1788361782,
+    "gasUsed": "1084072",
+    "orderId": "1",
+    "orderOutcome": {
+      "status": "Filled",
+      "remainingAVS": "0",
+      "remainingUSDT": "0"
+    },
+    "events": [
+      {
+        "logIndex": 25,
+        "contract": "TestUSDT",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+          "to": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "value": "10002000000000000000000"
+        }
+      },
+      {
+        "logIndex": 26,
+        "contract": "AVSMarketplace",
+        "event": "OrderCreated",
+        "arguments": {
+          "orderId": "1",
+          "owner": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+          "side": "0",
+          "orderType": "0",
+          "quantityAVS": "10000000000000000000000",
+          "triggerNAV": "1000000000000000000",
+          "escrowedAmount": "10002000000000000000000"
+        }
+      },
+      {
+        "logIndex": 27,
+        "contract": "TestUSDT",
+        "event": "Approval",
+        "arguments": {
+          "owner": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "spender": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "value": "10000000000000000000000"
+        }
+      },
+      {
+        "logIndex": 28,
+        "contract": "TestUSDT",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "to": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "value": "10000000000000000000000"
+        }
+      },
+      {
+        "logIndex": 29,
+        "contract": "AVSLedger",
+        "event": "CapitalInflowRecorded",
+        "arguments": {
+          "capitalId": "0xd32851eef2d1d3da0ca724bc8ac1fce666059f095ba34857e5bc6d5adfd84e0b",
+          "beneficiary": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+          "capitalAmount": "10000000000000000000000",
+          "sharesQuoted": "10000000000000000000000",
+          "totalSupplyBefore": "0",
+          "avsValueBefore": "1000000000000000000"
+        }
+      },
+      {
+        "logIndex": 30,
+        "contract": "AVSToken",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x0000000000000000000000000000000000000000",
+          "to": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+          "value": "10000000000000000000000"
+        }
+      },
+      {
+        "logIndex": 31,
+        "contract": "AVSVault",
+        "event": "CapitalAllocated",
+        "arguments": {
+          "capitalAmount": "10000000000000000000000",
+          "marketplaceLiquidity": "500000000000000000000",
+          "tradingCapital": "9500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 32,
+        "contract": "TestUSDT",
+        "event": "Approval",
+        "arguments": {
+          "owner": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "spender": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "value": "9500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 33,
+        "contract": "TestUSDT",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "to": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "value": "9500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 34,
+        "contract": "TestUSDT",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "to": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+          "value": "9500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 35,
+        "contract": "AVSTradingSettlement",
+        "event": "ProductiveCapitalForwarded",
+        "arguments": {
+          "vault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "tradingDestination": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+          "amount": "9500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 36,
+        "contract": "TestUSDT",
+        "event": "Approval",
+        "arguments": {
+          "owner": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "spender": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "value": "0"
+        }
+      },
+      {
+        "logIndex": 37,
+        "contract": "AVSVault",
+        "event": "ExcessRoutedToTrading",
+        "arguments": {
+          "amount": "9500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 38,
+        "contract": "AVSVault",
+        "event": "PendingTradingCapitalRouted",
+        "arguments": {
+          "amount": "9500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 39,
+        "contract": "AVSVault",
+        "event": "MarketplaceCapitalReceived",
+        "arguments": {
+          "capitalId": "0xd32851eef2d1d3da0ca724bc8ac1fce666059f095ba34857e5bc6d5adfd84e0b",
+          "beneficiary": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+          "amount": "10000000000000000000000",
+          "sharesToMint": "10000000000000000000000"
+        }
+      },
+      {
+        "logIndex": 40,
+        "contract": "TestUSDT",
+        "event": "Approval",
+        "arguments": {
+          "owner": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "spender": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "value": "0"
+        }
+      },
+      {
+        "logIndex": 41,
+        "contract": "TestUSDT",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "to": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "value": "500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 42,
+        "contract": "AVSVault",
+        "event": "MarketLiquidityProvided",
+        "arguments": {
+          "amount": "500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 43,
+        "contract": "AVSVault",
+        "event": "MarketplaceLiquidityReleased",
+        "arguments": {
+          "amount": "500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 44,
+        "contract": "AVSMarketplace",
+        "event": "ProtocolLiquiditySynced",
+        "arguments": {
+          "amount": "500000000000000000000"
+        }
+      },
+      {
+        "logIndex": 45,
+        "contract": "TestUSDT",
+        "event": "Approval",
+        "arguments": {
+          "owner": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "spender": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "value": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 46,
+        "contract": "TestUSDT",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "to": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "value": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 47,
+        "contract": "AVSLedger",
+        "event": "ProtocolRevenueRecorded",
+        "arguments": {
+          "revenueId": "0x753b281dce3e9754ca58b403004c3c337ae157536db9165467f11931f700a618",
+          "amount": "2000000000000000000",
+          "totalSupplyAtRecord": "10000000000000000000000",
+          "avsValueBefore": "1000000000000000000",
+          "avsValueAfter": "1000200000000000000",
+          "timestamp": "1788361782"
+        }
+      },
+      {
+        "logIndex": 48,
+        "contract": "AVSVault",
+        "event": "ProtocolRevenueReceived",
+        "arguments": {
+          "revenueId": "0x753b281dce3e9754ca58b403004c3c337ae157536db9165467f11931f700a618",
+          "source": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "amount": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 49,
+        "contract": "TestUSDT",
+        "event": "Approval",
+        "arguments": {
+          "owner": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "spender": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "value": "0"
+        }
+      },
+      {
+        "logIndex": 50,
+        "contract": "TestUSDT",
+        "event": "Transfer",
+        "arguments": {
+          "from": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+          "to": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "value": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 51,
+        "contract": "AVSVault",
+        "event": "MarketLiquidityProvided",
+        "arguments": {
+          "amount": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 52,
+        "contract": "AVSVault",
+        "event": "MarketplaceLiquidityReleased",
+        "arguments": {
+          "amount": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 53,
+        "contract": "AVSMarketplace",
+        "event": "ProtocolLiquiditySynced",
+        "arguments": {
+          "amount": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 54,
+        "contract": "AVSMarketplace",
+        "event": "MarketplaceFeeCollected",
+        "arguments": {
+          "revenueId": "0x753b281dce3e9754ca58b403004c3c337ae157536db9165467f11931f700a618",
+          "orderId": "1",
+          "amount": "2000000000000000000"
+        }
+      },
+      {
+        "logIndex": 55,
+        "contract": "AVSMarketplace",
+        "event": "OrderFilled",
+        "arguments": {
+          "orderId": "1",
+          "filledAVS": "10000000000000000000000",
+          "executionNAV": "1000000000000000000",
+          "grossValue": "10000000000000000000000",
+          "buyerFee": "2000000000000000000",
+          "sellerFee": "0",
+          "refundedAmount": "0"
+        }
+      },
+      {
+        "logIndex": 56,
+        "contract": "AVSMarketplace",
+        "event": "PrimaryIssuanceExecuted",
+        "arguments": {
+          "buyOrderId": "1",
+          "beneficiary": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+          "capitalId": "0xd32851eef2d1d3da0ca724bc8ac1fce666059f095ba34857e5bc6d5adfd84e0b",
+          "quantityAVS": "10000000000000000000000",
+          "capitalAmount": "10000000000000000000000",
+          "executionNAV": "1000000000000000000",
+          "buyerFee": "2000000000000000000"
+        }
+      }
+    ]
+  },
+  "replayTest": {
+    "method": "eth_call",
+    "exactOriginalCalldata": true,
+    "originalTransactionHash": "0x3b6021ec65c12c53c0c5fd9c8850899e35a6e3e371b9d7c202c6fa2b53fd98f2",
+    "transactionSender": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+    "reverted": true,
+    "customError": "NonceAlreadyUsed",
+    "selector": "0xe90aded4",
+    "arguments": {
+      "account": "0x007C0A1ec6714f36c2829eBd21f9a27837D5B57A",
+      "nonce": "1"
+    },
+    "stateAfterReplay": {
+      "totalSupply": "10000000000000000000000",
+      "totalNetAssets": "10002000000000000000000",
+      "currentAVSValue": "1000200000000000000",
+      "userAVS": "10000000000000000000000",
+      "marketplaceTestUSDT": "502000000000000000000",
+      "vaultTestUSDT": "0",
+      "settlementTestUSDT": "0",
+      "tradingDestinationTestUSDT": "9500000000000000000000",
+      "protocolRevenue": "2000000000000000000",
+      "orderCount": "1",
+      "settlementCount": "0",
+      "nonceUsed": true,
+      "gatewayNative": "0",
+      "gatewayTestUSDT": "0",
+      "gatewayAVS": "0",
+      "gatewayAllowance": "0"
+    }
+  },
+  "postState": {
+    "before": {
+      "block": 128700604,
+      "userTestUSDT": "10002000000000000000000",
+      "userAVS": "0",
+      "totalSupply": "0",
+      "totalNetAssets": "0",
+      "currentAVSValue": "1000000000000000000",
+      "marketplaceTestUSDT": "0",
+      "vaultTestUSDT": "0",
+      "settlementTestUSDT": "0",
+      "tradingDestinationTestUSDT": "0",
+      "protocolRevenue": "0",
+      "totalGrossProfit": "0",
+      "totalLoss": "0",
+      "totalBuybackAllocated": "0",
+      "settlementCount": "0",
+      "orderCount": "0",
+      "nonceCount": "0",
+      "nonceUsed": false
+    },
+    "after": {
+      "block": 128700614,
+      "blockTimestamp": 1788361782,
+      "userTestUSDT": "0",
+      "userAVS": "10000000000000000000000",
+      "totalSupply": "10000000000000000000000",
+      "totalNetAssets": "10002000000000000000000",
+      "currentAVSValue": "1000200000000000000",
+      "marketplaceTestUSDT": "502000000000000000000",
+      "vaultTestUSDT": "0",
+      "settlementTestUSDT": "0",
+      "tradingDestinationTestUSDT": "9500000000000000000000",
+      "protocolRevenue": "2000000000000000000",
+      "protocolLiquidityUSDT": "502000000000000000000",
+      "totalGrossProfit": "0",
+      "totalLoss": "0",
+      "totalBuybackAllocated": "0",
+      "settlementCount": "0",
+      "orderCount": "1",
+      "nonceCount": "1",
+      "nonceUsed": true,
+      "marketplaceAllowance": "0",
+      "gatewayAllowance": "0",
+      "gatewayNative": "0",
+      "gatewayTestUSDT": "0",
+      "gatewayAVS": "0"
+    }
+  },
+  "gatewayReadback": {
+    "economicCertificationBlock": 128700614,
+    "economicCertificationBlockTimestamp": 1788361782,
+    "pinnedReadbackBlock": 128700833,
+    "pinnedReadbackBlockTimestamp": 1788361880,
+    "providerArchiveReadFallback": true,
+    "providerArchiveReadError": "missing trie node",
+    "deploymentGeneration": "1",
+    "protocolSnapshot": [
+      "128700833",
+      "1788361880",
+      "97",
+      "1",
+      "1000200000000000000",
+      "10002000000000000000000",
+      "10000000000000000000000",
+      "10000000000000000000000",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "502000000000000000000",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "userSnapshot": [
+      "128700833",
+      "1788361880",
+      "97",
+      "1",
+      true,
+      true,
+      "10000000000000000000000",
+      "0",
+      "10002000000000000000000",
+      "0",
+      "0",
+      "1",
+      "0"
+    ],
+    "marketplaceSnapshot": [
+      "128700833",
+      "1788361880",
+      "97",
+      "1",
+      "1",
+      "2",
+      "0",
+      "0",
+      "502000000000000000000",
+      "0",
+      "2000000000000000000",
+      "0",
+      "502000000000000000000",
+      "0",
+      "0",
+      "0",
+      "0",
+      "16",
+      "64",
+      true
+    ],
+    "wiringHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "globalOrders": [
+      "1"
+    ],
+    "userOrders": [
+      "1"
+    ],
+    "settlementPage": []
+  },
+  "reconciliation": {
+    "capitalContribution": "10000000000000000000000",
+    "buyerFee": "2000000000000000000",
+    "userPayment": "10002000000000000000000",
+    "avsMinted": "10000000000000000000000",
+    "marketplaceCapitalAllocation": "500000000000000000000",
+    "productiveCapital": "9500000000000000000000",
+    "protocolRevenue": "2000000000000000000",
+    "totalNetAssets": "10002000000000000000000",
+    "currentAVSValue": "1000200000000000000",
+    "capitalCountedAsTradingProfit": false,
+    "buyerFeeCountedAsTradingProfit": false,
+    "buyerFeeRecordedAsProtocolRevenue": true,
+    "totalGrossProfit": "0",
+    "totalLoss": "0",
+    "totalBuybackAllocated": "0",
+    "settlementCount": "0",
+    "discrepancy": null
+  },
+  "constraints": {
+    "exactlyOneSuccessfulEconomicBuy": true,
+    "successfulEconomicBuys": 1,
+    "signedByReplacementUser": true,
+    "routedThroughAVSGateway": true,
+    "marketplaceIndependentlyAuthenticatedUser": true,
+    "gatewayHeldAssets": false,
+    "replayRejected": true,
+    "abandonedCandidateEconomicActivity": false,
+    "directMarketplaceBuy": false,
+    "sell": false,
+    "triggeredOrder": false,
+    "cancellation": false,
+    "tradingSettlementSubmitted": false,
+    "migrationExecuted": false,
+    "redeployed": false,
+    "configurationLocked": false,
+    "ownershipRenounced": false,
+    "mainnetInteraction": false,
+    "commit": false,
+    "push": false
+  },
+  "ephemeralKeyHandling": {
+    "availableInMemoryForCompleteTransactionSequence": true,
+    "printed": false,
+    "persistedInSourceLogsReportsEvidenceOrGit": false,
+    "retainedAfterExecutorExit": false
+  }
+}

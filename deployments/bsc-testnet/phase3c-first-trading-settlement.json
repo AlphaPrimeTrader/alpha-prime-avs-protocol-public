@@ -1,0 +1,854 @@
+{
+  "schemaVersion": 1,
+  "stage": "pass",
+  "network": "bscTestnet",
+  "chainId": "97",
+  "economicGeneration": "1",
+  "accessApiVersion": "1.1.0",
+  "currentGateway": "0x53818cc4105b918042a3799e757771A4555C60F0",
+  "currentLens": "0x7ca0b7dD14A0991eBe029508e0F4Fa03cB0b007b",
+  "economicModules": {
+    "token": "0x20dddf3De5042cf23a1b94af2C660120c324e1Ac",
+    "ledger": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+    "vault": "0x0E9f9cea8349F4718d08d23e003258c0f717edC3",
+    "settlement": "0x51F98c51E1E669d2a25df136a150401352586690",
+    "marketplace": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+    "accountPolicy": "0xa6De468dd5A6222a1e5664124aB6975023AF0CF3",
+    "testUSDT": "0x28c203F523feb6f6B7aE54d49bb6d7C1dEf9a9Db"
+  },
+  "preflight": {
+    "block": 128712842,
+    "protocolVersion": [
+      "1",
+      "1",
+      "0"
+    ],
+    "deploymentGeneration": "1",
+    "gatewayHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "lensHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "settlementCount": "0",
+    "economicState": {
+      "totalSupply": "10100999999999999995343",
+      "totalNetAssets": "10103040806101794293590",
+      "currentAVSValue": "1000202040006117641",
+      "totalGrossProfit": "0",
+      "totalLoss": "0",
+      "totalBuybackAllocated": "0",
+      "buybackReserve": "0",
+      "protocolRevenue": "2020604121200238842",
+      "orderCount": "8",
+      "settlementCount": "0",
+      "physical": {
+        "marketplace": {
+          "avs": "0",
+          "testUSDT": "507071614220229941579"
+        },
+        "vault": {
+          "avs": "0",
+          "testUSDT": "0"
+        },
+        "settlement": {
+          "avs": "0",
+          "testUSDT": "0"
+        },
+        "tradingDestination": {
+          "address": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+          "avs": "0",
+          "testUSDT": "9595969191881564352011"
+        },
+        "gateway": {
+          "native": "0",
+          "avs": "0",
+          "testUSDT": "0"
+        }
+      }
+    },
+    "protocolSnapshot": [
+      "128712850",
+      "1788367288",
+      "97",
+      "1",
+      "1000202040006117641",
+      "10103040806101794293590",
+      "10100999999999999995343",
+      "10100999999999999995343",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0",
+      "507071614220229941579",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "marketplaceSnapshot": [
+      "128712850",
+      "1788367288",
+      "97",
+      "1",
+      "8",
+      "9",
+      "0",
+      "0",
+      "507071614220229941579",
+      "0",
+      "2020604121200238842",
+      "0",
+      "507071614220229941579",
+      "0",
+      "0",
+      "0",
+      "0",
+      "16",
+      "64",
+      true
+    ],
+    "roleStateBefore": {
+      "relayer": false,
+      "tradeSigner": false,
+      "serverSigner": false
+    }
+  },
+  "temporaryOperationalRoles": {
+    "relayer": "0x382CcCE7aB7F16104779EFA6b273B9318cd91dD3",
+    "tradeSigner": "0xf75A11EBe1a877e8306DD82271DF0D864431a992",
+    "serverSigner": "0x9566298D871430cf4fc70489808f32Cc2Ac8ed8C"
+  },
+  "roleConfiguration": [
+    {
+      "label": "authorize temporary relayer",
+      "hash": "0x011f486c74714b839c9f7ad8ac04bdb5256a5982b15c60fe993d6cabcf373ccd",
+      "block": 128712855,
+      "gasUsed": "52693",
+      "events": [
+        {
+          "logIndex": 7,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "RelayerAuthorizationUpdated",
+          "args": [
+            "0x382CcCE7aB7F16104779EFA6b273B9318cd91dD3",
+            true
+          ]
+        }
+      ]
+    },
+    {
+      "label": "authorize temporary trade signer",
+      "hash": "0x9fcb98c7d0629825c2c258ff047eff292341ca0d28d06e61af0728077e984ea4",
+      "block": 128712860,
+      "gasUsed": "52783",
+      "events": [
+        {
+          "logIndex": 0,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "TradeSignerAuthorizationUpdated",
+          "args": [
+            "0xf75A11EBe1a877e8306DD82271DF0D864431a992",
+            true
+          ]
+        }
+      ]
+    },
+    {
+      "label": "authorize temporary server signer",
+      "hash": "0xa919aaec593520f4b8e38f9cb8cb4cfdf55791616f8512af6259bdc30f8f6a46",
+      "block": 128712864,
+      "gasUsed": "52773",
+      "events": [
+        {
+          "logIndex": 84,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "ServerSignerAuthorizationUpdated",
+          "args": [
+            "0x9566298D871430cf4fc70489808f32Cc2Ac8ed8C",
+            true
+          ]
+        }
+      ]
+    },
+    {
+      "label": "fund temporary relayer gas",
+      "hash": "0x44ca57cf0715b17c6c593d94c6dcd96eccf4948c1f4fa598f930c58dc349f95c",
+      "block": 128712868,
+      "gasUsed": "21000",
+      "events": []
+    }
+  ],
+  "settlement": {
+    "core": {
+      "identity": {
+        "settlementId": "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+        "positionId": "0xbf753201037c570053ec2d5ebe4a91f29328dec81dd7541bcf1d5d80ae698ada",
+        "sequence": "1001",
+        "executionHash": "0x7db33cd9072bf29ea1a4add19761e3adeb69c0117d7cf1d03a7f5fae1d121419"
+      },
+      "metadata": {
+        "strategy": "Cross-CEX Arbitrage",
+        "executionType": "FINAL_CLOSE",
+        "symbol": "BTC/USDT",
+        "baseAsset": "BTC",
+        "quoteAsset": "USDT",
+        "venues": "Binance,KuCoin"
+      },
+      "capital": {
+        "protocolCapitalUsd": "9500000000000000000000",
+        "borrowedCapitalUsd": "0",
+        "grossNotionalUsd": "60000000000000000000000",
+        "quantity": "1000000000000000000",
+        "entryPrice": "60000000000000000000000",
+        "exitPrice": "61000000000000000000000",
+        "averageEntryPrice": "60000000000000000000000"
+      },
+      "economics": {
+        "grossPnlUsd": "110000000000000000000",
+        "tradingFeesUsd": "10000000000000000000",
+        "networkFeesUsd": "0",
+        "financingFeesUsd": "0",
+        "otherFeesUsd": "0"
+      },
+      "timing": {
+        "openedAt": "1788363695",
+        "closedAt": "1788367235",
+        "executionMs": "742"
+      }
+    },
+    "legs": [
+      {
+        "legIndex": 0,
+        "venue": "Binance",
+        "action": "BUY",
+        "assetIn": "USDT",
+        "assetOut": "BTC",
+        "amountIn": "60000000000000000000000",
+        "amountOut": "1000000000000000000",
+        "executionPrice": "60000000000000000000000",
+        "externalReference": "0x1ddfded0146266745833701e43f35abc6a577aba03cb68fee9ffcb68aeae70f2"
+      },
+      {
+        "legIndex": 1,
+        "venue": "KuCoin",
+        "action": "SELL",
+        "assetIn": "BTC",
+        "assetOut": "USDT",
+        "amountIn": "1000000000000000000",
+        "amountOut": "61000000000000000000000",
+        "executionPrice": "61000000000000000000000",
+        "externalReference": "0x69a8641b88dd97868ed9911c77272322024d389390aefb81f685f925b38d3ef2"
+      }
+    ],
+    "extraFields": [
+      {
+        "key": "riskBand",
+        "value": "A"
+      },
+      {
+        "key": "closeReason",
+        "value": "first-real-testnet-settlement"
+      }
+    ],
+    "authorization": {
+      "settlementHash": "0x5f763a2812996da0563fc39e1c5ff6985221aa55547aacd62b4bcfc8ca1bf36f",
+      "tradeSignatureRecorded": true,
+      "serverSignatureRecorded": true
+    },
+    "domain": {
+      "name": "Alpha Prime AVS Trading Settlement",
+      "version": "1",
+      "chainId": "97",
+      "verifyingContract": "0x51F98c51E1E669d2a25df136a150401352586690"
+    },
+    "digest": "0x6b75d472ecfc55c9e383c302f19916a016173bea3bef159f02f55f941e16fc8f",
+    "settlementHash": "0x5f763a2812996da0563fc39e1c5ff6985221aa55547aacd62b4bcfc8ca1bf36f",
+    "settlementId": "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+    "expected": {
+      "grossPnlUsd": "110000000000000000000",
+      "feesUsd": "10000000000000000000",
+      "netRealizedPnlUsd": "100000000000000000000",
+      "buybackAllocation": "10000000000000000000",
+      "holderNetAssets": "90000000000000000000"
+    },
+    "positionId": "0xbf753201037c570053ec2d5ebe4a91f29328dec81dd7541bcf1d5d80ae698ada",
+    "sequence": "1001",
+    "executionHash": "0x7db33cd9072bf29ea1a4add19761e3adeb69c0117d7cf1d03a7f5fae1d121419",
+    "legsHash": "0xc1c342164ddd1a3480cd2a0c2c2fbe220d9cb7f7f310d74042a5dc43cc5f512c",
+    "extrasHash": "0xe42fdbf3577ccb5944c2899b25c8d9c7f4c4a1dd3d32780b7745b21115e86891",
+    "transaction": {
+      "label": "submit exactly one finalized trading settlement",
+      "hash": "0xf64a5aa82ac3bee9fc57eb5ddb72cdc53af3e1412746647abab3f53e475ff545",
+      "block": 128712875,
+      "gasUsed": "1824200",
+      "events": [
+        {
+          "logIndex": 10,
+          "address": "0x720B9af851C954Fb7749De6a4CF3369EDB3d5B8D",
+          "contract": "AVSLedger",
+          "event": "TradingSettlementRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "100000000000000000000",
+            "10000000000000000000",
+            "90000000000000000000",
+            "10100999999999999995343",
+            "1000202040006117641",
+            "1009112048916126551",
+            "1788367299"
+          ]
+        },
+        {
+          "logIndex": 11,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "ExecutionLegRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "0",
+            "Binance",
+            "BUY",
+            "0x1ddfded0146266745833701e43f35abc6a577aba03cb68fee9ffcb68aeae70f2"
+          ]
+        },
+        {
+          "logIndex": 12,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "ExecutionLegAmountsRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "0",
+            "USDT",
+            "BTC",
+            "60000000000000000000000",
+            "1000000000000000000",
+            "60000000000000000000000"
+          ]
+        },
+        {
+          "logIndex": 13,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "ExecutionLegRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "1",
+            "KuCoin",
+            "SELL",
+            "0x69a8641b88dd97868ed9911c77272322024d389390aefb81f685f925b38d3ef2"
+          ]
+        },
+        {
+          "logIndex": 14,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "ExecutionLegAmountsRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "1",
+            "BTC",
+            "USDT",
+            "1000000000000000000",
+            "61000000000000000000000",
+            "61000000000000000000000"
+          ]
+        },
+        {
+          "logIndex": 15,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "ExtraFieldRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "0",
+            "riskBand",
+            "A"
+          ]
+        },
+        {
+          "logIndex": 16,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "ExtraFieldRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "1",
+            "closeReason",
+            "first-real-testnet-settlement"
+          ]
+        },
+        {
+          "logIndex": 17,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "SettlementFinalized",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "0xbf753201037c570053ec2d5ebe4a91f29328dec81dd7541bcf1d5d80ae698ada",
+            "1001",
+            "Cross-CEX Arbitrage",
+            "BTC/USDT",
+            "100000000000000000000",
+            "1000202040006117641",
+            "1009112048916126551",
+            "1788367299",
+            "0x7db33cd9072bf29ea1a4add19761e3adeb69c0117d7cf1d03a7f5fae1d121419",
+            "0x5f763a2812996da0563fc39e1c5ff6985221aa55547aacd62b4bcfc8ca1bf36f",
+            "0x382CcCE7aB7F16104779EFA6b273B9318cd91dD3"
+          ]
+        },
+        {
+          "logIndex": 18,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "SettlementMetadataRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "FINAL_CLOSE",
+            "Binance,KuCoin",
+            "1788363695",
+            "1788367235",
+            "742"
+          ]
+        },
+        {
+          "logIndex": 19,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "SettlementEconomicsRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "9500000000000000000000",
+            "0",
+            "60000000000000000000000",
+            "1000000000000000000",
+            "110000000000000000000",
+            "10000000000000000000",
+            "0",
+            "0",
+            "0",
+            "10000000000000000000"
+          ]
+        },
+        {
+          "logIndex": 20,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "SettlementPricesRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "60000000000000000000000",
+            "61000000000000000000000",
+            "60000000000000000000000"
+          ]
+        },
+        {
+          "logIndex": 21,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "SettlementAuthenticationRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "0xf75A11EBe1a877e8306DD82271DF0D864431a992",
+            "0x9566298D871430cf4fc70489808f32Cc2Ac8ed8C",
+            "0x382CcCE7aB7F16104779EFA6b273B9318cd91dD3"
+          ]
+        },
+        {
+          "logIndex": 22,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "SettlementAssetsRecorded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "BTC",
+            "USDT"
+          ]
+        },
+        {
+          "logIndex": 23,
+          "address": "0x9AE0729C414995470b44Db8caB8fc08086520b33",
+          "contract": "AVSMarketplace",
+          "event": "MatchingProgress",
+          "args": [
+            "128712875",
+            "0",
+            "0",
+            "0"
+          ]
+        },
+        {
+          "logIndex": 24,
+          "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+          "contract": "AVSTradingSettlement",
+          "event": "MarketplaceProcessingSucceeded",
+          "args": [
+            "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+            "1009112048916126551"
+          ]
+        }
+      ]
+    }
+  },
+  "postSettlement": {
+    "certificationBlock": 128712876,
+    "economicState": {
+      "totalSupply": "10100999999999999995343",
+      "totalNetAssets": "10193040806101794293590",
+      "currentAVSValue": "1009112048916126551",
+      "totalGrossProfit": "100000000000000000000",
+      "totalLoss": "0",
+      "totalBuybackAllocated": "10000000000000000000",
+      "buybackReserve": "10000000000000000000",
+      "protocolRevenue": "2020604121200238842",
+      "orderCount": "8",
+      "settlementCount": "1",
+      "physical": {
+        "marketplace": {
+          "avs": "0",
+          "testUSDT": "507071614220229941579"
+        },
+        "vault": {
+          "avs": "0",
+          "testUSDT": "0"
+        },
+        "settlement": {
+          "avs": "0",
+          "testUSDT": "0"
+        },
+        "tradingDestination": {
+          "address": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+          "avs": "0",
+          "testUSDT": "9595969191881564352011"
+        },
+        "gateway": {
+          "native": "0",
+          "avs": "0",
+          "testUSDT": "0"
+        }
+      }
+    },
+    "expectedState": {
+      "totalSupply": "10100999999999999995343",
+      "totalNetAssets": "10193040806101794293590",
+      "currentAVSValue": "1009112048916126551",
+      "totalGrossProfit": "100000000000000000000",
+      "totalLoss": "0",
+      "totalBuybackAllocated": "10000000000000000000",
+      "buybackReserve": "10000000000000000000",
+      "protocolRevenue": "2020604121200238842",
+      "orderCount": "8",
+      "settlementCount": "1",
+      "physical": {
+        "marketplace": {
+          "avs": "0",
+          "testUSDT": "507071614220229941579"
+        },
+        "vault": {
+          "avs": "0",
+          "testUSDT": "0"
+        },
+        "settlement": {
+          "avs": "0",
+          "testUSDT": "0"
+        },
+        "tradingDestination": {
+          "address": "0x6EB22C5a4B8376A6351ec0869fd7F31A2F6601e8",
+          "avs": "0",
+          "testUSDT": "9595969191881564352011"
+        },
+        "gateway": {
+          "native": "0",
+          "avs": "0",
+          "testUSDT": "0"
+        }
+      }
+    },
+    "gatewayHealth": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "protocolSnapshot": [
+      "128712876",
+      "1788367300",
+      "97",
+      "1",
+      "1009112048916126551",
+      "10193040806101794293590",
+      "10100999999999999995343",
+      "10100999999999999995343",
+      "100000000000000000000",
+      "0",
+      "10000000000000000000",
+      "10000000000000000000",
+      "0",
+      "1",
+      "507071614220229941579",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "marketplaceSnapshot": [
+      "128712876",
+      "1788367300",
+      "97",
+      "1",
+      "8",
+      "9",
+      "0",
+      "0",
+      "507071614220229941579",
+      "0",
+      "2020604121200238842",
+      "0",
+      "507071614220229941579",
+      "0",
+      "0",
+      "0",
+      "0",
+      "16",
+      "64",
+      true
+    ],
+    "settlementPaginationOldestFirst": [
+      "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e"
+    ],
+    "settlementPaginationNewestFirst": [
+      "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e"
+    ],
+    "settlementSummary": [
+      "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+      "0xbf753201037c570053ec2d5ebe4a91f29328dec81dd7541bcf1d5d80ae698ada",
+      "1001",
+      "100000000000000000000",
+      "1009112048916126551",
+      "1788367299",
+      true
+    ],
+    "settlementRecord": [
+      "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+      "0xbf753201037c570053ec2d5ebe4a91f29328dec81dd7541bcf1d5d80ae698ada",
+      "0x7db33cd9072bf29ea1a4add19761e3adeb69c0117d7cf1d03a7f5fae1d121419",
+      "0x5f763a2812996da0563fc39e1c5ff6985221aa55547aacd62b4bcfc8ca1bf36f",
+      "0xc1c342164ddd1a3480cd2a0c2c2fbe220d9cb7f7f310d74042a5dc43cc5f512c",
+      "0xe42fdbf3577ccb5944c2899b25c8d9c7f4c4a1dd3d32780b7745b21115e86891",
+      "1001",
+      true
+    ],
+    "settlementDetails": [
+      [
+        "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+        "0xbf753201037c570053ec2d5ebe4a91f29328dec81dd7541bcf1d5d80ae698ada",
+        "0x7db33cd9072bf29ea1a4add19761e3adeb69c0117d7cf1d03a7f5fae1d121419",
+        "0x5f763a2812996da0563fc39e1c5ff6985221aa55547aacd62b4bcfc8ca1bf36f",
+        "0xc1c342164ddd1a3480cd2a0c2c2fbe220d9cb7f7f310d74042a5dc43cc5f512c",
+        "0xe42fdbf3577ccb5944c2899b25c8d9c7f4c4a1dd3d32780b7745b21115e86891",
+        "1001",
+        true
+      ],
+      [
+        "9500000000000000000000",
+        "0",
+        "60000000000000000000000",
+        "110000000000000000000",
+        "10000000000000000000",
+        "100000000000000000000",
+        "1000202040006117641",
+        "1009112048916126551"
+      ],
+      [
+        "1788363695",
+        "1788367235",
+        "1788367299"
+      ],
+      [
+        "0xf75A11EBe1a877e8306DD82271DF0D864431a992",
+        "0x9566298D871430cf4fc70489808f32Cc2Ac8ed8C",
+        "0x382CcCE7aB7F16104779EFA6b273B9318cd91dD3"
+      ],
+      [
+        "Cross-CEX Arbitrage",
+        "FINAL_CLOSE",
+        "BTC/USDT",
+        "BTC",
+        "USDT",
+        "Binance,KuCoin",
+        "1000000000000000000",
+        "60000000000000000000000",
+        "61000000000000000000000",
+        "60000000000000000000000",
+        "742"
+      ],
+      [
+        "10000000000000000000",
+        "0",
+        "0",
+        "0"
+      ],
+      [
+        [
+          "0",
+          "Binance",
+          "BUY",
+          "USDT",
+          "BTC",
+          "60000000000000000000000",
+          "1000000000000000000",
+          "60000000000000000000000",
+          "0x1ddfded0146266745833701e43f35abc6a577aba03cb68fee9ffcb68aeae70f2"
+        ],
+        [
+          "1",
+          "KuCoin",
+          "SELL",
+          "BTC",
+          "USDT",
+          "1000000000000000000",
+          "61000000000000000000000",
+          "61000000000000000000000",
+          "0x69a8641b88dd97868ed9911c77272322024d389390aefb81f685f925b38d3ef2"
+        ]
+      ],
+      [
+        [
+          "riskBand",
+          "A"
+        ],
+        [
+          "closeReason",
+          "first-real-testnet-settlement"
+        ]
+      ]
+    ],
+    "marketplaceHookEvents": [
+      {
+        "logIndex": 24,
+        "address": "0x51F98c51E1E669d2a25df136a150401352586690",
+        "contract": "AVSTradingSettlement",
+        "event": "MarketplaceProcessingSucceeded",
+        "args": [
+          "0x1bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e",
+          "1009112048916126551"
+        ]
+      }
+    ]
+  },
+  "replayTest": {
+    "reverted": true,
+    "errorName": null,
+    "selector": "0xeeb04c051bdf3fc68d750782c307910e624c0a41e6a5962b571e31d8869fcef3335e570e"
+  },
+  "invalidSignatureTest": {
+    "reverted": true,
+    "method": "eth_call",
+    "case": "fresh settlement identity with grossPnlUsd mutated after settlementHash was signed",
+    "sequence": "1002",
+    "positionId": "0x64c04584d2c8f07ff2713f46f9d50e1ee390aaab38b04bd83eae447a97472bc2",
+    "executionHash": "0x92b16be894bab6fef3f82c5b3a30b290af6aa66058e7b5064d198fe032978be4",
+    "settlementId": "0xf7e044e9384139e5285a2566bfaf4fc77b5727d4c49d09163e1ed60e41f99720",
+    "signedSettlementHash": "0xfaa4a4ba00ece1f95edbd465454af2ce15714b7c57296117d29370326f3952c1",
+    "errorName": "SettlementHashMismatch",
+    "selector": "0xdce1df85",
+    "revertData": "0xdce1df85faa4a4ba00ece1f95edbd465454af2ce15714b7c57296117d29370326f3952c1866b565225eef1f2598844e8af06012d6d83ae55b1ef7c32ff21188eec47df84",
+    "noStateChange": true
+  },
+  "cleanup": {
+    "transactions": [
+      {
+        "label": "return unused temporary relayer gas",
+        "hash": "0xd4b37a2e697ed7ec670f478ca987389faf8e23676c5de6d5f17432663457c87d",
+        "block": 128713108,
+        "gasUsed": "21000"
+      }
+    ],
+    "relayerAuthorized": false,
+    "tradeSignerAuthorized": false,
+    "serverSignerAuthorized": false,
+    "relayerNativeBalance": "9817580000000000",
+    "keysDeleted": true,
+    "invalidSignatureTestRoleTransactions": [
+      {
+        "label": "authorize temporary relayer for invalid-signature eth_call",
+        "hash": "0x9b4bef8cfa73d3bdd52d4425088bb7b4251844a74b25eb44bbba109c25af9746",
+        "block": 128713302,
+        "gasUsed": "52693"
+      },
+      {
+        "label": "revoke temporary relayer for invalid-signature eth_call",
+        "hash": "0x42eb4c699a5169ddbd5d9cdc7cf4a96b813e95429e5bbe6ff39fab50a82864b4",
+        "block": 128713308,
+        "gasUsed": "25998"
+      }
+    ]
+  }
+}
